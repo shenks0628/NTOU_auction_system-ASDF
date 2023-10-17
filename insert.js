@@ -34,7 +34,6 @@ const start = () => {
 const insert = async () => {
     try {
         console.log("abc");
-        let imgSrc = document.getElementById("imgSrc").value;
         let imgs0 = document.getElementById("imgs0").value;
         let imgs1 = document.getElementById("imgs1").value;
         let imgs2 = document.getElementById("imgs2").value;
@@ -45,7 +44,6 @@ const insert = async () => {
         let seller_email = document.getElementById("seller_email").value;
         let seller_imgSrc = document.getElementById("seller_imgSrc").value;
         let { id } = await addDoc(collection(db, "products"), {
-            imgSrc: imgSrc,
             imgs: [],
             name: name,
             price: price,
