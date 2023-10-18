@@ -47,7 +47,8 @@ const insert = async () => {
             imgs: [],
             name: name,
             price: price,
-            seller: {email: seller_email, imgSrc: seller_imgSrc},
+            seller: seller_email,
+            sellerImg: seller_imgSrc,
             time: serverTimestamp(),
             availability: true
         });
