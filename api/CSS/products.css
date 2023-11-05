@@ -1,0 +1,47 @@
+.product {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.product h2 {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.product p {
+    font-size: 16px;
+    color: #888;
+}
+
+.product button {
+    display: block;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.product button:hover {
+    background-color: #555;
+}
+
+.product-detail {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+    .product {
+        padding: 10px;
+    }
+
+    .product h2 {
+        font-size: 18px;
+    }
+}
