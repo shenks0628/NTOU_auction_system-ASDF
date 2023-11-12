@@ -56,7 +56,7 @@ const start1 = () => {
 
 const start = () => {
     const user = auth.currentUser;
-    if (true) {
+    if (user) {
         // const userId = "ethan147852369@gmail.com";
         const userId = user.email;
 
