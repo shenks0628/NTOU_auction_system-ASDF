@@ -3,7 +3,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase
 import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -55,39 +55,73 @@ const start1 = () => {
 };
 
 const start = () => {
-    const user = auth.currentUser;
-    if (user) {
-        // const userId = "ethan147852369@gmail.com";
-        const userId = user.email;
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // const userId = "ethan147852369@gmail.com";
+            const userId = user.email;
 
-    // 使用 doc 函數構建該使用者的參考路徑
-        const userRef = doc(db, "users", userId);
+            // 使用 doc 函數構建該使用者的參考路徑
+            const userRef = doc(db, "users", userId);
 
-    // 使用 getDoc 函數取得該使用者的文件快照
-        getDoc(userRef)
-        .then((userDoc) => {
-            if (userDoc.exists()) {
-                // 取得該使用者的資料
-                const userData = userDoc.data();
+            // 使用 getDoc 函數取得該使用者的文件快照
+            getDoc(userRef)
+            .then((userDoc) => {
+                if (userDoc.exists()) {
+                    // 取得該使用者的資料
+                    const userData = userDoc.data();
 
-                // 確認該使用者是否有 cart 資料
-                if (userData && userData.bids) {
-                    bidsData = userData.bids;
-                    console.log("Bids data for user with ID", userId, ":", bidsData);
+                    // 確認該使用者是否有 cart 資料
+                    if (userData && userData.bids) {
+                        bidsData = userData.bids;
+                        console.log("Bids data for user with ID", userId, ":", bidsData);
+                    }
+                    else {
+                        console.log("User with ID", userId, "does not have bids data.");
+                    }
                 }
                 else {
-                    console.log("User with ID", userId, "does not have bids data.");
+                    console.log("User with ID", userId, "does not exist.");
                 }
-            }
-            else {
-                console.log("User with ID", userId, "does not exist.");
-            }
-            start1();
-        })
-        .catch((error) => {
-            console.error("Error getting user document:", error);
-        });
-    }
+                start1();
+            })
+            .catch((error) => {
+                console.error("Error getting user document:", error);
+            });
+        }
+    });
+    // const user = auth.currentUser;
+    // if (user) {
+    //     // const userId = "ethan147852369@gmail.com";
+    //     const userId = user.email;
+
+    //     // 使用 doc 函數構建該使用者的參考路徑
+    //     const userRef = doc(db, "users", userId);
+
+    //     // 使用 getDoc 函數取得該使用者的文件快照
+    //     getDoc(userRef)
+    //     .then((userDoc) => {
+    //         if (userDoc.exists()) {
+    //             // 取得該使用者的資料
+    //             const userData = userDoc.data();
+
+    //             // 確認該使用者是否有 cart 資料
+    //             if (userData && userData.bids) {
+    //                 bidsData = userData.bids;
+    //                 console.log("Bids data for user with ID", userId, ":", bidsData);
+    //             }
+    //             else {
+    //                 console.log("User with ID", userId, "does not have bids data.");
+    //             }
+    //         }
+    //         else {
+    //             console.log("User with ID", userId, "does not exist.");
+    //         }
+    //         start1();
+    //     })
+    //     .catch((error) => {
+    //         console.error("Error getting user document:", error);
+    //     });
+    // }
 };
 
 window.addEventListener("load", start);
