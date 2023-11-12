@@ -89,7 +89,8 @@ const start = () => {
             });
         }
     });
-    // const user = auth.currentUser;
+    const user = auth.currentUser;
+    console.log(user);
     // if (user) {
     //     // const userId = "ethan147852369@gmail.com";
     //     const userId = user.email;
