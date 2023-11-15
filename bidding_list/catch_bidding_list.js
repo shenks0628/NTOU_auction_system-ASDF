@@ -82,19 +82,19 @@ function add(docId) {
 
 async function exit(docId) {
     console.log(docId);
-    // onAuthStateChanged(auth, async (user) => {
-    //     if (user) {
-    //         const userId = user.email;
-    //         await updateDoc(doc(db, "users", userId), {
-    //             ['bids.' + docId]: deleteField()
-    //         });
-    //         start();
-    //     }
-    // });
-    const userId = "ethan147852369@gmail.com";
-    await updateDoc(doc(db, "users", userId), {
-        ['bids.' + docId]: deleteField()
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userId = user.email;
+            await updateDoc(doc(db, "users", userId), {
+                ['bids.' + docId]: deleteField()
+            });
+            start();
+        }
     });
+    // const userId = "ethan147852369@gmail.com";
+    // await updateDoc(doc(db, "users", userId), {
+    //     ['bids.' + docId]: deleteField()
+    // });
     start();
 }
 
@@ -154,79 +154,79 @@ const start1 = () => {
 };
 
 const start = () => {
-    // const login = document.getElementById("login");
-    // const title = document.getElementById("title");
-    // onAuthStateChanged(auth, (user) => {
-    //     if (user) {
-    //         login.innerHTML = "登出";
-    //         title.innerHTML = "競標清單";
-    //         // const userId = "ethan147852369@gmail.com";
-    //         const userId = user.email;
+    const login = document.getElementById("login");
+    const title = document.getElementById("title");
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            login.innerHTML = "登出";
+            title.innerHTML = "競標清單";
+            // const userId = "ethan147852369@gmail.com";
+            const userId = user.email;
 
-    //         // 使用 doc 函數構建該使用者的參考路徑
-    //         const userRef = doc(db, "users", userId);
+            // 使用 doc 函數構建該使用者的參考路徑
+            const userRef = doc(db, "users", userId);
 
-    //         // 使用 getDoc 函數取得該使用者的文件快照
-    //         getDoc(userRef)
-    //         .then((userDoc) => {
-    //             if (userDoc.exists()) {
-    //                 // 取得該使用者的資料
-    //                 const userData = userDoc.data();
+            // 使用 getDoc 函數取得該使用者的文件快照
+            getDoc(userRef)
+            .then((userDoc) => {
+                if (userDoc.exists()) {
+                    // 取得該使用者的資料
+                    const userData = userDoc.data();
 
-    //                 // 確認該使用者是否有 cart 資料
-    //                 if (userData && userData.bids) {
-    //                     bidsData = userData.bids;
-    //                     console.log("Bids data for user with ID", userId, ":", bidsData);
-    //                 }
-    //                 else {
-    //                     console.log("User with ID", userId, "does not have bids data.");
-    //                 }
-    //             }
-    //             else {
-    //                 console.log("User with ID", userId, "does not exist.");
-    //             }
-    //             start1();
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error getting user document:", error);
-    //         });
-    //     }
-    //     else {
-    //         login.innerHTML = "登入";
-    //         title.innerHTML = "請先登入後再來查看";
-    //     }
-    // });
-    // const user = auth.currentUser;
-    // console.log(user);
-    const userId = "ethan147852369@gmail.com";
-
-    // 使用 doc 函數構建該使用者的參考路徑
-    const userRef = doc(db, "users", userId);
-
-    // 使用 getDoc 函數取得該使用者的文件快照
-    getDoc(userRef)
-    .then((userDoc) => {
-        if (userDoc.exists()) {
-            // 取得該使用者的資料
-            const userData = userDoc.data();
-
-            // 確認該使用者是否有 cart 資料
-            if (userData && userData.bids) {
-                bidsData = userData.bids;
-                console.log("Bids data for user with ID", userId, ":", bidsData);
-            }
-            else {
-                console.log("User with ID", userId, "does not have bids data.");
-            }
+                    // 確認該使用者是否有 cart 資料
+                    if (userData && userData.bids) {
+                        bidsData = userData.bids;
+                        console.log("Bids data for user with ID", userId, ":", bidsData);
+                    }
+                    else {
+                        console.log("User with ID", userId, "does not have bids data.");
+                    }
+                }
+                else {
+                    console.log("User with ID", userId, "does not exist.");
+                }
+                start1();
+            })
+            .catch((error) => {
+                console.error("Error getting user document:", error);
+            });
         }
         else {
-            console.log("User with ID", userId, "does not exist.");
+            login.innerHTML = "登入";
+            title.innerHTML = "請先登入後再來查看";
         }
-        start1();
-    })
-    .catch((error) => {
-        console.error("Error getting user document:", error);
     });
+    const user = auth.currentUser;
+    console.log(user);
+    // const userId = "ethan147852369@gmail.com";
+
+    // // 使用 doc 函數構建該使用者的參考路徑
+    // const userRef = doc(db, "users", userId);
+
+    // // 使用 getDoc 函數取得該使用者的文件快照
+    // getDoc(userRef)
+    // .then((userDoc) => {
+    //     if (userDoc.exists()) {
+    //         // 取得該使用者的資料
+    //         const userData = userDoc.data();
+
+    //         // 確認該使用者是否有 cart 資料
+    //         if (userData && userData.bids) {
+    //             bidsData = userData.bids;
+    //             console.log("Bids data for user with ID", userId, ":", bidsData);
+    //         }
+    //         else {
+    //             console.log("User with ID", userId, "does not have bids data.");
+    //         }
+    //     }
+    //     else {
+    //         console.log("User with ID", userId, "does not exist.");
+    //     }
+    //     start1();
+    // })
+    // .catch((error) => {
+    //     console.error("Error getting user document:", error);
+    // });
 };
 
 window.addEventListener("load", start);
