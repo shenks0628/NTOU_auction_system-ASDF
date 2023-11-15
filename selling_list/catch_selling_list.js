@@ -55,56 +55,58 @@ const start = async () => {
     const login = document.getElementById("login");
     const title = document.getElementById("title");
     const add_btn = document.getElementById("add");
-    // onAuthStateChanged(auth, async (user) => {
-    //     if (user) {
-    //         login.innerHTML = "登出";
-    //         title.innerHTML = "賣場清單";
-    //         add_btn.style.display = "block";
-    //         add_btn.removeEventListener("click", add);
-    //         add_btn.addEventListener("click", add);
-    //         const userId = user.email;
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            login.innerHTML = "登出";
+            title.innerHTML = "賣場清單";
+            add_btn.style.display = "block";
+            add_btn.removeEventListener("click", add);
+            add_btn.addEventListener("click", add);
+            const userId = user.email;
 
-    //         const q = query(collection(db, "products"), where("seller", "==", userId));
+            const q = query(collection(db, "products"), where("seller", "==", userId));
 
-    //         let display_list = document.getElementById("display_list");
-    //         display_list.innerHTML = "";
-    //         console.log(display_list.innerHTML);
-    //         const querySnapshot = await getDocs(q);
-    //         console.log(querySnapshot);
-    //         querySnapshot.forEach((doc) => {
-    //             console.log(doc.id, "=>", doc.data());
-    //             const productData = doc.data();
-    //             display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button type="submit" id="del' + doc.id + '">刪除商品</button></p>';
-    //         });
-    //         display_list.removeEventListener("click", handleCheck);
-    //         display_list.addEventListener("click", handleCheck);
-    //     }
-    //     else {
-    //         login.innerHTML = "登入";
-    //         title.innerHTML = "請先登入後再來查看";
-    //         add_btn.style.display = "none";
-    //     }
-    // });
-    // const user = auth.currentUser;
-    // console.log(user);
-    const userId = "01057115@email.ntou.edu.tw";
-
-    const q = query(collection(db, "products"), where("seller", "==", userId));
-
-    const display_list = document.getElementById("display_list");
-    display_list.innerHTML = "";
-    console.log(display_list.innerHTML);
-    const querySnapshot = await getDocs(q);
-    console.log(querySnapshot);
-    querySnapshot.forEach((doc) => {
-        console.log(doc.id, "=>", doc.data());
-        const productData = doc.data();
-        display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+            let display_list = document.getElementById("display_list");
+            display_list.innerHTML = "";
+            console.log(display_list.innerHTML);
+            const querySnapshot = await getDocs(q);
+            console.log(querySnapshot);
+            querySnapshot.forEach((doc) => {
+                console.log(doc.id, "=>", doc.data());
+                const productData = doc.data();
+                display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+            });
+            display_list.removeEventListener("click", handleCheck);
+            display_list.addEventListener("click", handleCheck);
+            add_btn.removeEventListener("click", add);
+            add_btn.addEventListener("click", add);
+        }
+        else {
+            login.innerHTML = "登入";
+            title.innerHTML = "請先登入後再來查看";
+            add_btn.style.display = "none";
+        }
     });
-    display_list.removeEventListener("click", handleCheck);
-    display_list.addEventListener("click", handleCheck);
-    add_btn.removeEventListener("click", add);
-    add_btn.addEventListener("click", add);
+    const user = auth.currentUser;
+    console.log(user);
+    // const userId = "01057115@email.ntou.edu.tw";
+
+    // const q = query(collection(db, "products"), where("seller", "==", userId));
+
+    // const display_list = document.getElementById("display_list");
+    // display_list.innerHTML = "";
+    // console.log(display_list.innerHTML);
+    // const querySnapshot = await getDocs(q);
+    // console.log(querySnapshot);
+    // querySnapshot.forEach((doc) => {
+    //     console.log(doc.id, "=>", doc.data());
+    //     const productData = doc.data();
+    //     display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+    // });
+    // display_list.removeEventListener("click", handleCheck);
+    // display_list.addEventListener("click", handleCheck);
+    // add_btn.removeEventListener("click", add);
+    // add_btn.addEventListener("click", add);
 };
 
 window.addEventListener("load", start);
