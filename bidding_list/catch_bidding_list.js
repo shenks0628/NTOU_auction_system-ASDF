@@ -28,6 +28,7 @@ let bidsData;
 function exit_add(docId) {
     let p = document.getElementById("padd" + docId);
     p.innerHTML = '<button class="btn" type="submit" id="add' + docId + '">加注</button>';
+    start();
 }
 
 function confirm_add(docId) {
