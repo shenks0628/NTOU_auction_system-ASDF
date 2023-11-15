@@ -54,6 +54,27 @@ section {
     cursor: pointer;
 }
 
+#input_text {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* 按鈕樣式 */
+.btn_container {
+    margin-left: 10px;
+}
+
+.btn {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /* 產品樣式 */
 .fp_title {
     padding-left: 20px;
