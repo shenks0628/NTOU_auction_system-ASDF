@@ -26,7 +26,35 @@ const db = getFirestore(app);
 let bidsData;
 
 function exit_add(docId) {
-    start1();
+    let display_list = document.getElementById("display_list");
+    display_list.innerHTML = "";
+    for (let key of Object.keys(bidsData)) {
+        console.log(bidsData[key]);
+        const productId = key; // 替換成實際的產品 ID
+        console.log(productId);
+        // 使用 doc 函數構建該產品的參考路徑
+        const productRef = doc(db, "products", productId);
+
+        // 使用 getDoc 函數取得該產品的文件快照
+        getDoc(productRef)
+        .then((productDoc) => {
+            if (productDoc.exists()) {
+                // 取得該產品的資料
+                const productData = productDoc.data();
+                display_list.innerHTML += '<div class="product" id="' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name + 
+                                            '</h3><p>實時競價：<a class="price">' + productData.price + '</a></p><p id="padd' + productId + '"><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
+                console.log("Product data for product with ID", productId, ":", productData);
+            }
+            else {
+                console.log("Product with ID", productId, "does not exist.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting product document:", error);
+        });
+    }
+    display_list.removeEventListener("click", handleCheck);
+    display_list.addEventListener("click", handleCheck);
 }
 
 function confirm_add(docId) {
