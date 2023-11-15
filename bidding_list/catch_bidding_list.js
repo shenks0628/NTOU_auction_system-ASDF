@@ -26,7 +26,7 @@ const db = getFirestore(app);
 let bidsData;
 
 function exit_add(docId) {
-    start();
+    start1();
 }
 
 function confirm_add(docId) {
