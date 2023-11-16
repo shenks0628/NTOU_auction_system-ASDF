@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結帳頁面</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        h1{
+            font-size: 75px;
+            color: rgb(0, 115, 255);
+            font-weight: bolder;
+            text-align: center;
+        }
+        main {
+            background-color: white;
+            border: 3px solid #f1f1f1;
+            max-width: 768px;
+            margin: auto;
+            padding: 10px;
+        }
+        button {
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #errorSpan {
+            color: red;
+        }
+        #signinBtn, #signupBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            margin: 24px 0 12px 0;
+            position: relative;
+        }
+        .header img {
+            width: 40%;
+            border-radius: 50%;
+        }
+        .container {
+            padding: 16px;
+        }
+        .container button {
+            padding: 14px 20px;
+            margin: 8px 0;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>購物車</h1>
+</header>
+
+<main>
+    <table id="cart">
+    </table>
+    
+    <div class="total">總計: <span id="totalAmount">0</span> 元</div>
+
+    <button type="submit">結帳</button>
+</main>
+
+<script src="cart.js" type="module"></script>
+</body>
+</html>
