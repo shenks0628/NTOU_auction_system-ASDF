@@ -26,65 +26,19 @@ let cartItems = [];//購物車的陣列
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
 
-function removeItem(itemName) {
-    if (itemName === undefined) {
+async function removeItem(itemid) {
+    if (itemid === undefined) {
         // 可以添加一些额外的处理或直接返回
         console.error("Item name is undefined.");
         return;
     }
-
-    console.log(itemName);
-    const productName = itemName;
+    console.log(itemid);
     const userId = "01057115@email.ntou.edu.tw";
     // 使用 where 條件來查詢商品
-    const productQuery = query(collection(db, "products"), where("name", "==", productName));
-    getDocs(productQuery)
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                // 取得該商品的ID
-                const productId = doc.id;
-                console.log("Product ID for product with name", productName, ":", productId);
-                
-                //刪除
-                const caRef = doc(db, "users", userId);
-
-                // 使用 updateDoc 更新文件，將 cart 中的特定商品ID刪除
-                updateDoc(caRef, {
-                cart: deleteField(productId)
-                })
-                .then(() => {
-                    console.log("Product with ID", productId, "deleted from user's cart in Firestore.");
-                })
-                .catch((error) => {
-                    console.error("Error deleting product from user's cart:", error);
-                });
-
-                // 取得使用者文件的參考路徑
-                const userRef = doc(db, "users", userId);
-                // 使用 updateDoc 更新文件，將 cart 中的特定商品ID刪除
-                updateDoc(userRef, {
-                [`cart.${productId}`]: firestore.FieldValue.delete()
-                })
-                    .then(() => {
-                        console.log("Product with ID", productId, "deleted from user's cart in Firestore.");
-                    })
-                    .catch((error) => {
-                        console.error("Error deleting product from user's cart:", error);
-                    });
-
-                //
-                
-            });
-        })
-        .catch((error) => {
-            console.error("Error getting products:", error);
-        });
-    const index = cartItems.findIndex(item => item.name === itemName);
-    if (index !== -1) {
-        cartItems.splice(index, 1);
-        
-        displayCart();
-    }
+    await updateDoc(doc(db, "users", userId), {
+        ['cart.' + itemid]: deleteField()
+    });
+    
 }
 
 
@@ -184,7 +138,7 @@ const start1 = () => {
             // 取得該產品的資料
             const productData = productDoc.data();
             console.log("Product data for product with ID", productId, ":", productData);
-            const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key]};
+            const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key],key: key };
             cartItems.push(newItem);
             console.log(cartItems);
             totalAmount += newItem.price * newItem.quantity;
@@ -195,7 +149,7 @@ const start1 = () => {
                 <td>${newItem.price} 元</td>
                 <td>${newItem.quantity}</td>
                 <td>${newItem.price * newItem.quantity} 元</td>
-                <td><button data-item-name="${newItem.name}">移除</button></td>
+                <td><button data-item-name="${newItem.key}">移除</button></td>
                 
             `;
             cartTable.appendChild(row);
@@ -211,13 +165,14 @@ const start1 = () => {
     cartTable.addEventListener("click", function(event) {
         const clickedElement = event.target;
         if (clickedElement.tagName === "BUTTON") {
-            const itemName = clickedElement.getAttribute("data-item-name");
-            removeItem(itemName);
-            const index = cartItems.findIndex(item => item.name === itemName);
+            const itemid= clickedElement.getAttribute("data-item-name");
+            removeItem(itemid);
+            const index = cartItems.findIndex(item => item.key === itemid);
             if (index !== -1) {
                 cartItems.splice(index, 1);
                 displayCart();
             }
+            
         }
     });
 };
