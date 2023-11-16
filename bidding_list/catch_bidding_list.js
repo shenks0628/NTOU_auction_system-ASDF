@@ -90,7 +90,7 @@ async function exit(docId) {
     // await updateDoc(doc(db, "users", userId), {
     //     ['bids.' + docId]: deleteField()
     // });
-    start();
+    // start();
 }
 
 const handleCheck = (event) => {
