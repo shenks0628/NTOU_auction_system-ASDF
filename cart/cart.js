@@ -64,7 +64,7 @@ function displayCart() {
             <td>${item.price} 元</td>
             <td>${item.quantity}</td>
             <td>${subtotal} 元</td>
-            <td><button data-item-name="${item.name}">移除</button></td>
+            <td><button class="btn" data-item-name="${item.name}">移除</button></td>
         `;
         cartTable.appendChild(row);
     };
@@ -148,7 +148,7 @@ const start1 = () => {
                 <td>${newItem.price} 元</td>
                 <td>${newItem.quantity}</td>
                 <td>${newItem.price * newItem.quantity} 元</td>
-                <td><button data-item-name="${newItem.key}">移除</button></td>
+                <td><button class="btn" data-item-name="${newItem.key}">移除</button></td>
                 
             `;
             cartTable.appendChild(row);
