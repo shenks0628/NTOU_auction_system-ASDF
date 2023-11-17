@@ -54,11 +54,15 @@ const handleCheck = (event) => {
 const start = async () => {
     const login = document.getElementById("login");
     const title = document.getElementById("title");
+    const normal_title = document.getElementById("normal_title");
+    const bids_title = document.getElementById("bids_title");
     const add_btn = document.getElementById("add");
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             login.innerHTML = "登出";
             title.innerHTML = "賣場清單";
+            normal_title.style.display = "block";
+            bids_title.style.display = "block";
             add_btn.style.display = "block";
             add_btn.removeEventListener("click", add);
             add_btn.addEventListener("click", add);
@@ -66,24 +70,36 @@ const start = async () => {
 
             const q = query(collection(db, "products"), where("seller", "==", userId));
 
-            let display_list = document.getElementById("display_list");
-            display_list.innerHTML = "";
-            console.log(display_list.innerHTML);
+            let normal_display_list = document.getElementById("normal_display_list");
+            let bids_display_list = document.getElementById("bids_display_list");
+            normal_display_list.innerHTML = "";
+            bids_display_list.innerHTML = "";
+            console.log(normal_display_list.innerHTML);
+            console.log(bids_display_list.innerHTML);
             const querySnapshot = await getDocs(q);
             console.log(querySnapshot);
             querySnapshot.forEach((doc) => {
                 console.log(doc.id, "=>", doc.data());
                 const productData = doc.data();
-                display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                if (productData.type == "normal") {
+                    display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                }
+                else if (productData.type == "bids") {
+                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                }
             });
-            display_list.removeEventListener("click", handleCheck);
-            display_list.addEventListener("click", handleCheck);
+            normal_display_list.removeEventListener("click", handleCheck);
+            normal_display_list.addEventListener("click", handleCheck);
+            bids_display_list.removeEventListener("click", handleCheck);
+            bids_display_list.addEventListener("click", handleCheck);
             add_btn.removeEventListener("click", add);
             add_btn.addEventListener("click", add);
         }
         else {
             login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
+            normal_title.style.display = "none";
+            bids_title.style.display = "none";
             add_btn.style.display = "none";
         }
     });
