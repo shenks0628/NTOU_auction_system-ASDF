@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc,deleteField } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -22,14 +21,11 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
-
 let cartItems = [];//購物車的陣列
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
-
 async function removeItem(itemid) {
     if (itemid === undefined) {
-        // 可以添加一些额外的处理或直接返回
         console.error("Item name is undefined.");
         return;
     }
@@ -38,6 +34,7 @@ async function removeItem(itemid) {
         if (user) { // 有登入
             const userId = user.email; // 取得當前登入的使用者信箱 (id)
             console.log(userId);
+            //刪除資料庫裡的id
             await updateDoc(doc(db, "users", userId), {
                 ['cart.' + itemid]: deleteField()
             });
@@ -46,15 +43,9 @@ async function removeItem(itemid) {
               console.log("沒拿到userid");
         }
     });
-    
-    
 }
-
-
 function displayCart() {
-    
     // 清空表格內容
-
     cartTable.innerHTML = `
     <tr>
         <th>商品名稱</th>
@@ -67,7 +58,6 @@ function displayCart() {
     for(var item of cartItems){
         const subtotal = item.price * item.quantity;
         totalAmount += subtotal;
-
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${item.name}</td>
@@ -78,12 +68,8 @@ function displayCart() {
         `;
         cartTable.appendChild(row);
     };
-
     totalAmountElement.textContent = totalAmount;
 }
-
-// 移除購物車中的商品
-
 
 let cartData;
 const start = () => {
@@ -120,12 +106,7 @@ const start = () => {
             console.log("沒拿到userid");
         }
     });
-    //const userId = "01057115@email.ntou.edu.tw";
-    // 使用 doc 函數構建該使用者的參考路徑
-    
-    
 };
-
 const start1 = () => {
     cartTable.innerHTML = `
     <tr>
@@ -185,6 +166,5 @@ const start1 = () => {
         }
     });
 };
-
 
 window.addEventListener("load", start);
