@@ -33,7 +33,15 @@ async function removeItem(itemid) {
         return;
     }
     console.log(itemid);
-    const userId = "01057115@email.ntou.edu.tw";
+    onAuthStateChanged(auth, async (user) => {
+        if (user) { // 有登入
+              const userId = user.email; // 取得當前登入的使用者信箱 (id)
+              console.log(userId);
+        }
+        else { // 沒有登入
+              console.log("沒拿到userid");
+        }
+    });
     // 使用 where 條件來查詢商品
     await updateDoc(doc(db, "users", userId), {
         ['cart.' + itemid]: deleteField()
@@ -54,7 +62,6 @@ function displayCart() {
         <th>總價</th>
     <tr/>
     `;
-
     let totalAmount = 0;
     for(var item of cartItems){
         const subtotal = item.price * item.quantity;
@@ -79,16 +86,16 @@ function displayCart() {
 
 let cartData;
 const start = () => {
-    //onAuthStateChanged(auth, async (user) => {
-      //  if (user) { // 有登入
-        //    const userId = user.email; // 取得當前登入的使用者信箱 (id)
-            // ...
-        //}
-        //else { // 沒有登入
-            // ...
-        //}
-    //});
-    const userId = "01057115@email.ntou.edu.tw";
+    onAuthStateChanged(auth, async (user) => {
+        if (user) { // 有登入
+            const userId = user.email; // 取得當前登入的使用者信箱 (id)
+            console.log(userId);
+        }
+        else { // 沒有登入
+            console.log("沒拿到userid");
+        }
+    });
+    //const userId = "01057115@email.ntou.edu.tw";
 // 使用 doc 函數構建該使用者的參考路徑
     const userRef = doc(db, "users", userId);
 // 使用 getDoc 函數取得該使用者的文件快照
