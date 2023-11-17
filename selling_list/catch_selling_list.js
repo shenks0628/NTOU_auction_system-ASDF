@@ -74,7 +74,7 @@ const start = async () => {
             querySnapshot.forEach((doc) => {
                 console.log(doc.id, "=>", doc.data());
                 const productData = doc.data();
-                display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
             });
             display_list.removeEventListener("click", handleCheck);
             display_list.addEventListener("click", handleCheck);
