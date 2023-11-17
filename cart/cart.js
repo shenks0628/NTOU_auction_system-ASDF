@@ -35,17 +35,17 @@ async function removeItem(itemid) {
     console.log(itemid);
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
-              const userId = user.email; // 取得當前登入的使用者信箱 (id)
-              console.log(userId);
+            const userId = user.email; // 取得當前登入的使用者信箱 (id)
+            console.log(userId);
+            await updateDoc(doc(db, "users", userId), {
+                ['cart.' + itemid]: deleteField()
+            });
         }
         else { // 沒有登入
               console.log("沒拿到userid");
         }
     });
-    // 使用 where 條件來查詢商品
-    await updateDoc(doc(db, "users", userId), {
-        ['cart.' + itemid]: deleteField()
-    });
+    
     
 }
 
@@ -90,37 +90,38 @@ const start = () => {
         if (user) { // 有登入
             const userId = user.email; // 取得當前登入的使用者信箱 (id)
             console.log(userId);
+            const userRef = doc(db, "users", userId);
+            // 使用 getDoc 函數取得該使用者的文件快照
+            getDoc(userRef)
+            .then((userDoc) => {
+                if (userDoc.exists()) {
+                // 取得該使用者的資料
+                const userData = userDoc.data();
+                // 確認該使用者是否有 cart 資料
+                    if (userData && userData.cart) {
+                        cartData = userData.cart;
+                        console.log("Cart data for user with ID", userId, ":", cartData);
+                    } else {
+                        console.log("User with ID", userId, "does not have cart data.");
+                    }
+                } else {
+                console.log("User with ID", userId, "does not exist.");
+                }
+                start1();
+                
+            })
+            .catch((error) => {
+                console.error("Error getting user document:", error);
+            });
+            //cartdata存cart的id
         }
         else { // 沒有登入
             console.log("沒拿到userid");
         }
     });
     //const userId = "01057115@email.ntou.edu.tw";
-// 使用 doc 函數構建該使用者的參考路徑
-    const userRef = doc(db, "users", userId);
-// 使用 getDoc 函數取得該使用者的文件快照
-    getDoc(userRef)
-    .then((userDoc) => {
-        if (userDoc.exists()) {
-        // 取得該使用者的資料
-        const userData = userDoc.data();
-        // 確認該使用者是否有 cart 資料
-            if (userData && userData.cart) {
-                cartData = userData.cart;
-                console.log("Cart data for user with ID", userId, ":", cartData);
-            } else {
-                console.log("User with ID", userId, "does not have cart data.");
-            }
-        } else {
-        console.log("User with ID", userId, "does not exist.");
-        }
-        start1();
-        
-    })
-    .catch((error) => {
-        console.error("Error getting user document:", error);
-    });
-    //cartdata存cart的id
+    // 使用 doc 函數構建該使用者的參考路徑
+    
     
 };
 
