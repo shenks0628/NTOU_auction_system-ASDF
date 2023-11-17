@@ -3,7 +3,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase
 import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc,deleteField } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -40,7 +40,7 @@ async function removeItem(itemid) {
             });
         }
         else { // 沒有登入
-              console.log("沒拿到userid");
+            console.log("沒拿到userid");
         }
     });
 }
@@ -73,8 +73,14 @@ function displayCart() {
 
 let cartData;
 const start = () => {
+    const login = document.getElementById("login");
+    const title = document.getElementById("title");
+    const div_cart = document.getElementById("div_cart");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
+            login.innerHTML = "登出";
+            title.innerHTML = "購物車";
+            div_cart.style.display = "block";
             const userId = user.email; // 取得當前登入的使用者信箱 (id)
             console.log(userId);
             const userRef = doc(db, "users", userId);
@@ -104,6 +110,9 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            login.innerHTML = "登入";
+            title.innerHTML = "請先登入後再來查看";
+            div_cart.style.display = "none";
         }
     });
 };
