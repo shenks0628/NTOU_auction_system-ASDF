@@ -94,7 +94,7 @@ const start = () => {
         if (user) { // 有登入
             login.innerHTML = "登出";
             title.innerHTML = "購物車";
-            add_btn.style.display = "block";
+            div_cart.style.display = "block";
             const userId = user.email; // 取得當前登入的使用者信箱 (id)
             console.log(userId);
             const userRef = doc(db, "users", userId);
