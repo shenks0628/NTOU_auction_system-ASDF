@@ -25,54 +25,42 @@ const db = getFirestore(app);
 
 let bidsData;
 
-function confirm_add(docId) {
-    const productRef = doc(db, "products", docId);
-    getDoc(productRef)
-    .then((productDoc) => {
-        if (productDoc.exists()) {
-            const productData = productDoc.data();
-            console.log("Product data for product with ID", docId, ":", productData);
-            let price = document.getElementById("price" + docId);
-            console.log(parseInt(price.value), parseInt(productData.price));
-            if (parseInt(price.value) > parseInt(productData.price)) {
-                updateDoc(doc(db, "products", docId), {
-                    price: parseInt(price.value)
-                });
-                window.alert("加注成功");
-            }
-            else {
-                window.alert("無效加注");
-            }
-        }
-        else {
-            console.log("Product with ID", docId, "does not exist.");
-        }
-        let p = document.getElementById("padd" + docId);
-        p.innerHTML = '<button class="btn" type="submit" id="add' + docId + '">加注</button>';
-        start();
-    })
-    .catch((error) => {
-        console.error("Error getting product document:", error);
-    });
-}
-
 function add(docId) {
     const productRef = doc(db, "products", docId);
-    getDoc(productRef)
-    .then((productDoc) => {
-        if (productDoc.exists()) {
-            const productData = productDoc.data();
-            console.log("Product data for product with ID", docId, ":", productData);
-            let p = document.getElementById("padd" + docId);
-            p.innerHTML = '<input type="text" id="price' + docId + '" class="input_text" name="search" value="' + (parseInt(productData.price) + 50) + '"></input><button class="btn" type="submit" id="confirm_add' + docId + '">確認加注</button>';
+    const price = window.prompt("請輸入您想下注的金額（僅接受數字輸入）：");
+    if (price || price == "") {
+        if (isNaN(parseInt(price))) {
+            window.alert("無效加注！因為您的輸入格式有問題！");
         }
         else {
-            console.log("Product with ID", docId, "does not exist.");
+            getDoc(productRef)
+            .then((productDoc) => {
+                if (productDoc.exists()) {
+                    const productData = productDoc.data();
+                    console.log("Product data for product with ID", docId, ":", productData);
+                    if (parseInt(price) > parseInt(productData.price)) {
+                        updateDoc(doc(db, "products", docId), {
+                            price: parseInt(price)
+                        });
+                        window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                    }
+                    else {
+                        window.alert("無效加注！因為您下注的金額低於目前最高下注者的金額！");
+                    }
+                    start();
+                }
+                else {
+                    console.log("Product with ID", docId, "does not exist.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error getting product document:", error);
+            });
         }
-    })
-    .catch((error) => {
-        console.error("Error getting product document:", error);
-    });
+    }
+    else {
+        window.alert("您已取消加注！");
+    }
 }
 
 async function exit(docId) {
@@ -105,10 +93,6 @@ const handleCheck = (event) => {
         const productId = targetId.slice(4);
         exit(productId);
     }
-    else if (targetId.startsWith("confirm_add")) {
-        const productId = targetId.slice(11);
-        confirm_add(productId);
-    }
 }
 
 const start1 = () => {
@@ -129,7 +113,7 @@ const start1 = () => {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 display_list.innerHTML += '<div class="product" id="' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name + 
-                                            '</h3><p>實時競價：<a class="price">' + productData.price + '</a></p><p id="padd' + productId + '"><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
+                                            '</h3><p>實時競價：<a class="price">' + productData.price + '</a></p><p><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
                 console.log("Product data for product with ID", productId, ":", productData);
             }
             else {
