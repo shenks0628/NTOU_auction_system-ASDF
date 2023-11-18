@@ -40,7 +40,7 @@ function add(docId) {
                     console.log("Product data for product with ID", docId, ":", productData);
                     if (parseInt(price) > parseInt(productData.bids_info.price1)) {
                         updateDoc(doc(db, "products", docId), {
-                            price: parseInt(productData.bids_info.price1) + 50,
+                            price: Math.min(parseInt(productData.bids_info.price1) + 50, parseInt(price)),
                             ['bids_info.who2']: productData.bids_info.who1,
                             ['bids_info.who1']: userId,
                             ['bids_info.price2']: parseInt(productData.bids_info.price1),
@@ -51,7 +51,21 @@ function add(docId) {
                         });
                         window.alert("加注成功！恭喜您已成為目前的最高下注者！");
                     }
+                    else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
+                        updateDoc(doc(db, "products", docId), {
+                            price: Math.min(parseInt(price) + 50, parseInt(productData.bids_info.price1)),
+                            ['bids_info.who2']: userId,
+                            ['bids_info.price2']: parseInt(price),
+                        });
+                        updateDoc(doc(db, "users", userId), {
+                            ['bids.' + docId]: parseInt(price)
+                        });
+                        window.alert("加注成功！但您下注的金額低於目前最高下注者的金額！");
+                    }
                     else {
+                        updateDoc(doc(db, "users", userId), {
+                            ['bids.' + docId]: parseInt(price)
+                        });
                         window.alert("加注成功！但您下注的金額低於目前最高下注者的金額！");
                     }
                     start();
