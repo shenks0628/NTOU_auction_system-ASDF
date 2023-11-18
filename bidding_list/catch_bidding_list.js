@@ -38,7 +38,10 @@ function add(docId) {
                 if (productDoc.exists()) {
                     const productData = productDoc.data();
                     console.log("Product data for product with ID", docId, ":", productData);
-                    if (parseInt(price) > parseInt(productData.bids_info.price1)) {
+                    if (parseInt(price) < parseInt(bidsData[docId])) {
+                        window.alert("無效加注！因為您的注金比您原先的注金低！");
+                    }
+                    else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
                         updateDoc(doc(db, "products", docId), {
                             price: Math.min(parseInt(productData.bids_info.price1) + 50, parseInt(price)),
                             ['bids_info.who2']: productData.bids_info.who1,
