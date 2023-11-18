@@ -60,13 +60,13 @@ function add(docId) {
                         updateDoc(doc(db, "users", userId), {
                             ['bids.' + docId]: parseInt(price)
                         });
-                        window.alert("加注成功！但您下注的金額低於目前最高下注者的金額！");
+                        window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
                     }
                     else {
                         updateDoc(doc(db, "users", userId), {
                             ['bids.' + docId]: parseInt(price)
                         });
-                        window.alert("加注成功！但您下注的金額低於目前最高下注者的金額！");
+                        window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！");
                     }
                     start();
                 }
