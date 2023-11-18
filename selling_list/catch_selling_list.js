@@ -37,6 +37,32 @@ async function del(docId) {
     start();
 }
 
+function shn() {
+    let normal_display_list = document.getElementById("normal_display_list");
+    if (normal_display_list.style.display == "block") {
+        normal_display_list.style.display = "none";
+    }
+    else if (normal_display_list.style.display == "none") {
+        normal_display_list.style.display = "block";
+    }
+    else {
+        normal_display_list.style.display = "none";
+    }
+}
+
+function shb() {
+    let bids_display_list = document.getElementById("bids_display_list");
+    if (bids_display_list.style.display == "block") {
+        bids_display_list.style.display = "none";
+    }
+    else if (bids_display_list.style.display == "none") {
+        bids_display_list.style.display = "block";
+    }
+    else {
+        bids_display_list.style.display = "none";
+    }
+}
+
 const handleCheck = (event) => {
     const targetId = event.target.id;
     console.log(targetId);
@@ -54,59 +80,65 @@ const handleCheck = (event) => {
 const start = async () => {
     const login = document.getElementById("login");
     const title = document.getElementById("title");
+    const normal_title = document.getElementById("normal_title");
+    const bids_title = document.getElementById("bids_title");
+    const show_hide_normal = document.getElementById("show_hide_normal");
+    const show_hide_bids = document.getElementById("show_hide_bids");
     const add_btn = document.getElementById("add");
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             login.innerHTML = "登出";
             title.innerHTML = "賣場清單";
+            normal_title.style.display = "block";
+            bids_title.style.display = "block";
+            show_hide_normal.style.display = "block";
+            show_hide_bids.style.display = "block";
             add_btn.style.display = "block";
-            add_btn.removeEventListener("click", add);
-            add_btn.addEventListener("click", add);
             const userId = user.email;
 
             const q = query(collection(db, "products"), where("seller", "==", userId));
 
-            let display_list = document.getElementById("display_list");
-            display_list.innerHTML = "";
-            console.log(display_list.innerHTML);
+            let normal_display_list = document.getElementById("normal_display_list");
+            let bids_display_list = document.getElementById("bids_display_list");
+            normal_display_list.innerHTML = "";
+            bids_display_list.innerHTML = "";
+            console.log(normal_display_list.innerHTML);
+            console.log(bids_display_list.innerHTML);
             const querySnapshot = await getDocs(q);
             console.log(querySnapshot);
             querySnapshot.forEach((doc) => {
                 console.log(doc.id, "=>", doc.data());
                 const productData = doc.data();
-                display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                if (productData.type == "normal") {
+                    normal_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                }
+                else if (productData.type == "bids") {
+                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                }
             });
-            display_list.removeEventListener("click", handleCheck);
-            display_list.addEventListener("click", handleCheck);
+            normal_display_list.removeEventListener("click", handleCheck);
+            normal_display_list.addEventListener("click", handleCheck);
+            bids_display_list.removeEventListener("click", handleCheck);
+            bids_display_list.addEventListener("click", handleCheck);
+            show_hide_normal.removeEventListener("click", shn);
+            show_hide_normal.addEventListener("click", shn);
+            show_hide_bids.removeEventListener("click", shb);
+            show_hide_bids.addEventListener("click", shb);
             add_btn.removeEventListener("click", add);
             add_btn.addEventListener("click", add);
         }
         else {
             login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
+            normal_title.style.display = "none";
+            bids_title.style.display = "none";
+            show_hide_normal.style.display = "none";
+            show_hide_bids.style.display = "none";
             add_btn.style.display = "none";
         }
     });
     const user = auth.currentUser;
     console.log(user);
-    // const userId = "01057115@email.ntou.edu.tw";
-
-    // const q = query(collection(db, "products"), where("seller", "==", userId));
-
-    // const display_list = document.getElementById("display_list");
-    // display_list.innerHTML = "";
-    // console.log(display_list.innerHTML);
-    // const querySnapshot = await getDocs(q);
-    // console.log(querySnapshot);
-    // querySnapshot.forEach((doc) => {
-    //     console.log(doc.id, "=>", doc.data());
-    //     const productData = doc.data();
-    //     display_list.innerHTML += '<div class="product" id="' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
-    // });
-    // display_list.removeEventListener("click", handleCheck);
-    // display_list.addEventListener("click", handleCheck);
-    // add_btn.removeEventListener("click", add);
-    // add_btn.addEventListener("click", add);
 };
 
 window.addEventListener("load", start);

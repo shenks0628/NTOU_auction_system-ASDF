@@ -82,8 +82,8 @@ section {
 
 .featured_products {
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 .product {
@@ -93,6 +93,7 @@ section {
     padding: 10px;
     margin: 10px;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .product img {
