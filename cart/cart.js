@@ -64,7 +64,7 @@ function displayCart() {
             <td>${item.price} 元</td>
             <td>${item.quantity}</td>
             <td>${subtotal} 元</td>
-            <td><button data-item-name="${item.name}">移除</button></td>
+            <td><button data-item-name="${item.key}">移除</button></td>
         `;
         cartTable.appendChild(row);
     };
