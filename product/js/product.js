@@ -43,10 +43,6 @@ function start() {
                 itemInfo.innerHTML = productData.description;
                 srcs = productData.imgs;
                 imgs.setAttribute("src", srcs[0]);
-                // for (var i = 0; i < srcs.length; i++) {
-                //     imgs.innerHTML += "<li><img class='itemImage' src='" + srcs[i] + "' alt='itemImage" + (i + 1) + "'></li>"
-                // }
-                // console.log(productData)
             }
             else {
                 console.log("Product with ID", productId, "does not exist.");
@@ -85,7 +81,7 @@ function changeImage() {
     }
 }
 
-function changeInfo(avabillity) {
+function changeInfo() {
     if (document.getElementById("description").style.display == "none") {
         document.getElementById("ToDiscription").disabled = true;
         document.getElementById("ToComment").disabled = false;
@@ -101,6 +97,5 @@ function changeInfo(avabillity) {
 }
 
 window.addEventListener("load", start, false);
-// document.getElementById("btn").addEventListener("click", changeImage, false);
 
 // 初始化時顯示購物車內容
