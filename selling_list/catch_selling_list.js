@@ -39,21 +39,21 @@ async function del(docId) {
 
 function shn() {
     let normal_display_list = document.getElementById("normal_display_list");
-    if (normal_display_list.display == "block") {
-        normal_display_list.display = "none";
+    if (normal_display_list.style.display == "block") {
+        normal_display_list.style.display = "none";
     }
-    else if (normal_display_list.display == "none") {
-        normal_display_list.display = "block";
+    else if (normal_display_list.style.display == "none") {
+        normal_display_list.style.display = "block";
     }
 }
 
 function shb() {
     let bids_display_list = document.getElementById("bids_display_list");
-    if (bids_display_list.display == "block") {
-        bids_display_list.display = "none";
+    if (bids_display_list.style.display == "block") {
+        bids_display_list.style.display = "none";
     }
-    else if (bids_display_list.display == "none") {
-        bids_display_list.display = "block";
+    else if (bids_display_list.style.display == "none") {
+        bids_display_list.style.display = "block";
     }
 }
 
@@ -85,8 +85,8 @@ const start = async () => {
             title.innerHTML = "賣場清單";
             normal_title.style.display = "block";
             bids_title.style.display = "block";
-            show_hide_normal.display = "block";
-            show_hide_bids.display = "block";
+            show_hide_normal.style.display = "block";
+            show_hide_bids.style.display = "block";
             add_btn.style.display = "block";
             const userId = user.email;
 
@@ -126,8 +126,8 @@ const start = async () => {
             title.innerHTML = "請先登入後再來查看";
             normal_title.style.display = "none";
             bids_title.style.display = "none";
-            show_hide_normal.display = "none";
-            show_hide_bids.display = "none";
+            show_hide_normal.style.display = "none";
+            show_hide_bids.style.display = "none";
             add_btn.style.display = "none";
         }
     });
