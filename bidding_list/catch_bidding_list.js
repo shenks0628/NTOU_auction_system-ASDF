@@ -28,6 +28,9 @@ let bidsData, userId;
 function add(docId) {
     const productRef = doc(db, "products", docId);
     const price = window.prompt("請輸入您想下注的金額（僅接受數字輸入）：");
+    if (userId === undefined) {
+        return ;
+    }
     if (price || price == "") {
         if (isNaN(parseInt(price))) {
             window.alert("無效加注！因為您的輸入格式有問題！");
@@ -87,15 +90,33 @@ function add(docId) {
     }
 }
 
-async function exit(docId) {
+function exit(docId) {
     console.log(docId);
     if (userId === undefined) {
         return ;
     }
-    await updateDoc(doc(db, "users", userId), {
-        ['bids.' + docId]: deleteField()
+    const productRef = doc(db, "products", docId);
+    getDoc(productRef)
+    .then((productDoc) => {
+        if (productDoc.exists()) {
+            const productData = productDoc.data();
+            if (productData.bids_info.who1 == userId) {
+                window.alert("您目前為最高下注者，不得退出競標！");
+            }
+            else {
+                updateDoc(doc(db, "users", userId), {
+                    ['bids.' + docId]: deleteField()
+                });
+            }
+            start();
+        }
+        else {
+            console.log("Product with ID", docId, "does not exist.");
+        }
+    })
+    .catch((error) => {
+        console.error("Error getting product document:", error);
     });
-    start();
 }
 
 const handleCheck = (event) => {
