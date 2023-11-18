@@ -45,6 +45,9 @@ function shn() {
     else if (normal_display_list.style.display == "none") {
         normal_display_list.style.display = "block";
     }
+    else {
+        normal_display_list.style.display = "none";
+    }
 }
 
 function shb() {
@@ -54,6 +57,9 @@ function shb() {
     }
     else if (bids_display_list.style.display == "none") {
         bids_display_list.style.display = "block";
+    }
+    else {
+        bids_display_list.style.display = "none";
     }
 }
 
