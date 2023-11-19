@@ -44,10 +44,6 @@ section {
 
 /* 搜尋欄位樣式 */
 .search_bar {
-    /* display: flex; */
-    /* align-items: center;
-    justify-content: center;
-    margin: 20px; */
     margin: 20px;
     flex-grow: 1;
 }
