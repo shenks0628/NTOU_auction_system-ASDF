@@ -25,7 +25,11 @@ const db = getFirestore(app);
 var srcs;
 var imgs;
 function start() {
+    const urlParams = new URLSearchParams(window.location.search);
     let key = "7Pl4V9WEFdM09Sa7NMEy";
+    if (urlParams.get('id')) {
+        key = urlParams.get('id');
+    }
     const productId = key; // 替換成實際的產品 ID
     // 使用 doc 函數構建該產品的參考路徑
     const productRef = doc(db, "products", productId);
@@ -36,11 +40,16 @@ function start() {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
-
+                var str = productData.name.trim().split("#");
                 var itemName = document.getElementById("itemName");
-                itemName.innerHTML = productData.name;
+                itemName.innerHTML = str[0];
                 var itemInfo = document.getElementById("itemInfo");
                 itemInfo.innerHTML = productData.description;
+                var itemTag = document.getElementById("itemTag");
+                if (str.length == 1) itemTag.innerHTML = "";
+                else itemTag.innerHTML = "標籤：";
+                for (var i = 1; i < str.length; i++) itemTag.innerHTML += (str[i] + " ");
+
                 srcs = productData.imgs;
                 imgs.setAttribute("src", srcs[0]);
             }
@@ -55,6 +64,7 @@ function start() {
     imgs = document.getElementById("itemPicture");
     imgs.addEventListener("click", changeImage, false);
 
+    document.getElementById("searchButton").addEventListener("click", searchProduct, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
@@ -72,6 +82,15 @@ function start() {
     });
 
 };
+
+function searchProduct() {
+    var form = document.getElementById("searchForm");
+    var url = "../search/search.html?keyword=" + form.elements["keyword"].value;
+    console.log(url);
+    window.alert("暫未開放此功能");
+    // window.location.href = url;
+}
+
 function changeImage() {
     for (let i = 0; i < srcs.length; i++) {
         if (srcs[i] == imgs.getAttribute("src")) {
