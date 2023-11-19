@@ -24,18 +24,17 @@ nav li {
   width: 100%;
 }
 
-.slide {
+.infoContainer {
   margin: 5px;
   height: 100%;
   width: 400px;
 }
 
-.half {
+.itemContainer {
   flex: 1;
   margin: 5px;
   box-sizing: border-box;
   /* width: 50%; */
-  /* background-color: aquamarine; */
   height: 100%;
 }
 
@@ -51,7 +50,6 @@ nav li {
   flex: 1;
   /* height: 50px; */
   flex-grow: 0;
-  /* flex-direction: column; */
   width: 100%;
   top: 0;
   background-color: black;
@@ -64,7 +62,7 @@ nav li {
   flex: 8;
   flex-grow: 1;
   overflow: auto;
-  background-color: #578257;
+  background-color: gray;
 }
 
 #footer {

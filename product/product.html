@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>商品：</title>
-  <link rel="stylesheet" href="css/product.css" type="text/css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="./css/product.css" type="text/css" media="screen" charset="utf-8">
 </head>
 
 <body>
@@ -15,16 +15,16 @@
       <div>
         <span style="float: left;">
           <h1 style="display: inline-block;">
-            <div onclick="location.href='../index.html'">
+            <div onclick="location.href='../index.html'" style="cursor: pointer;">
               <img src="../images/logo.png" alt="logo" style="width: 50px; height: 50px;">
               NTOU-ASDF
             </div>
           </h1>
-          <nav style="display: inline-block;">
-            <ul>
-              <li><textarea style="resize:none;"></textarea></li>
-              <li><button>搜尋</button></li>
-            </ul>
+          &nbsp;
+          <form id="searchForm" style="display: inline-block;" method="get">
+            <input type="text" id="keyword" name="keyword" style="resize: none; flex-grow: 1;" required></textarea>
+            <button id="searchButton" type="button" style="cursor: pointer;">搜尋</button>
+          </form>
           </nav>
         </span>
         <span style="float: right;">
@@ -39,12 +39,12 @@
     </header>
     <div class="" id="content">
       <section id="product">
-        <div class="slide">
+        <div class="infoContainer">
           <img class="itemImage" id="itemPicture" src="images/loader.gif">
           <br>
-          標籤：
+          <div id="itemTag">標籤：</div>
         </div>
-        <div class="half">
+        <div class="itemContainer">
           <div style="display: flex;">
             <button style="flex:1;" class="changeInfo" id="ToDiscription" disabled>商品資訊</button>
             <button style="flex:1;" class="changeInfo" id="ToComment">查看評論</button>
@@ -56,14 +56,14 @@
             <h1>商品描述</h1>
             <div id="itemInfo">itemInfo</div>
             <hr>
-            <div style="float: right;"><button>加入購物車</button></div>
+            <div style="float: right;"><button type="submit" style="cursor: pointer;">加入購物車</button></div>
           </div>
           <div id="review" style="display: none;">
             <hr>
-            <div id="messageBoard">
+            <div id="commentBoard">
               <h1>評論區</h1>
-              <div id="message">
-                各種留言
+              <div id="itemComment">
+                此商品暫時沒有評論
               </div>
             </div>
             <hr>
@@ -72,7 +72,7 @@
       </section>
     </div>
     <footer id="footer">
-      <h1>NTOU_ASDF</h1>
+      <h1>© NTOU_ASDF</h1>
     </footer>
   </div>
   <script src="js/product.js" type="module"></script>
