@@ -46,9 +46,14 @@ function start() {
                 var itemInfo = document.getElementById("itemInfo");
                 itemInfo.innerHTML = productData.description;
                 var itemTag = document.getElementById("itemTag");
-                if (str.length == 1) itemTag.innerHTML = "";
-                else itemTag.innerHTML = "標籤：";
-                for (var i = 1; i < str.length; i++) itemTag.innerHTML += (str[i] + " ");
+                if (str.length == 1) itemTag.innerHTML = "無";
+                else {
+                    itemTag.innerHTML = "";
+                    for (var i = 1; i < str.length; i++) {
+                        itemTag.innerHTML += str[i];
+                        if (i != str.length - 1) itemTag.innerHTML += ", "
+                    }
+                }
 
                 srcs = productData.imgs;
                 imgs.setAttribute("src", srcs[0]);
