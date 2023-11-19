@@ -31,20 +31,30 @@ section {
     margin: 20px;
 }
 
+.header_top {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
 #header_pic {
     margin-right: 20px;
+    flex: 0 0 auto;
 }
 
 /* 搜尋欄位樣式 */
 .search_bar {
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center;
     justify-content: center;
+    margin: 20px; */
     margin: 20px;
+    flex-grow: 1;
 }
 
 #product_search {
-    flex: 1;
+    /* flex: 1; */
+    width: 80%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -52,7 +62,7 @@ section {
 
 #search_button {
     padding: 10px 20px;
-    background-color: #333;
+    background-color: #4CAF50;
     color: #fff;
     border: none;
     border-radius: 5px;
