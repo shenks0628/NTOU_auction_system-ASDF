@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品：</title>
+  <link rel="stylesheet" href="./css/editProduct.css" type="text/css" media="screen" charset="utf-8">
+</head>
+
+<body>
+  <div id="site"
+    style="width:100%; height: 100%; display: flex;flex-direction: column; min-height: 100vh; color: white;">
+    <header id="header">
+      <div>
+        <span style="float: left;">
+          <h1 style="display: inline-block;">
+            <div onclick="location.href='../index.html'" style="cursor: pointer;">
+              <img src="../images/logo.png" alt="logo" style="width: 50px; height: 50px;">
+              NTOU-ASDF
+            </div>
+          </h1>
+          &nbsp;
+          <form id="searchForm" style="display: inline-block;" method="get">
+            <input type="text" id="keyword" name="keyword" style="resize: none; flex-grow: 1;" required></textarea>
+            <button id="searchButton" type="button" style="cursor: pointer;">搜尋</button>
+          </form>
+          </nav>
+        </span>
+        <span style="float: right;">
+          <nav style="display: inline-block;">
+            <ul>
+              <li><img src="../images/user.jpg" id="profileImage" style="width: 50px; height: 50px;"></li>
+              <li><button class="link" onclick="location.href='../sign/index.html'" id="login">登入</button></li>
+            </ul>
+          </nav>
+        </span>
+      </div>
+    </header>
+    <div class="" id="content">
+      <section id="product">
+        <div class="infoContainer">
+          <img class="itemImage" id="itemPicture" src="images/loader.gif">
+          <br>
+          <h1>
+            <img src="./images/edit.png" alt="edit" class="edit" id="editTags" width="20px" height="20px">
+            標籤：
+            <div id="itemTag" style="display: inline;"></div>
+          </h1>
+        </div>
+        <div class=" itemContainer">
+          <div style="display: flex;">
+            <button style="flex:1;" class="changeInfo" id="ToDiscription" disabled>商品資訊</button>
+            <button style="flex:1;" class="changeInfo" id="ToComment">查看評論</button>
+          </div>
+          <div id="description">
+            <hr>
+            <h1>商品名稱 <img src="./images/edit.png" alt="edit" class="edit" id="editName" width="20px" height="20px"></h1>
+            <div id="itemName">Name</div>
+            <h1>商品描述 <img src="./images/edit.png" alt="edit" class="edit" id="editInfo" width="20px" height="20px"></h1>
+            <div id="itemInfo">itemInfo</div>
+            <hr>
+          </div>
+          <div id="review" style="display: none;">
+            <hr>
+            <div id="commentBoard">
+              <h1>評論區</h1>
+              <div id="itemComment">
+                此商品暫時沒有評論
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer id="footer">
+      <h1>© NTOU_ASDF</h1>
+    </footer>
+  </div>
+  <script src="js/editProduct.js" type="module"></script>
+</body>
+
+</html>
