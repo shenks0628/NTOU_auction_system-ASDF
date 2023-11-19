@@ -31,6 +31,10 @@ section {
     margin: 20px;
 }
 
+#header_pic {
+    margin-right: 20px;
+}
+
 /* 搜尋欄位樣式 */
 .search_bar {
     display: flex;
