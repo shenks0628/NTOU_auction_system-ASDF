@@ -43,6 +43,8 @@ signupBtn.onclick = function (e) {
                 photoURL: 'img/user.png'
             }).then(async() => {
                 await setDoc(doc(db, "users", user.email), {
+                    bids: {},
+                    cart: {},
                     name: nameInput.value,
                     score: 0.0,
                     imgSrc: 'img/user.png'
@@ -61,6 +63,8 @@ googleBtn.onclick = function (e) {
         const docSnap = await getDoc(doc(db, "users", user.email));
         if (!docSnap.exists()) {
             await setDoc(doc(db, "users", user.email), {
+                bids: {},
+                cart: {},
                 name: user.displayName,
                 score: 0.0,
                 imgSrc: user.photoURL

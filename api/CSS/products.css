@@ -2,46 +2,69 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 4px solid black;
     cursor: pointer;
 }
-
-.product h2 {
-    font-size: 20px;
-    margin-top: 10px;
+.product-detail {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
-.product p {
-    font-size: 16px;
+.product .name {
+    font-size: 24px;
+    font-weight: bold;
+}
+.product .price {
+    font-size: 18px;
     color: #888;
 }
-
 .product button {
-    display: block;
-    background-color: #333;
-    color: #fff;
+    width: 64px;
+    height: 64px;
     border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
+    background-color: transparent;
 }
-
 .product button:hover {
     background-color: #555;
 }
-
-.product-detail {
-    display: flex;
-    justify-content: space-between;
+.product.row {
+    flex-direction: row;
+    align-items: center;
+}
+.product.row img {
+    max-width: 64px;
+    max-height: 64px;
+}
+.product.sticky {
+    position: sticky;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
-@media screen and (max-width: 768px) {
-    .product {
-        padding: 10px;
-    }
-
-    .product h2 {
-        font-size: 18px;
-    }
+.sort-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+    padding: 10px;
+    border-radius: 5px;
+}
+.sort-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 5px;
+}
+.sort-buttons button:hover {
+    background-color: #3e8e41;
+}
+#displayBtn, #displayBtn img {
+    width: 32px;
+    height: 32px;
+    border: none;
+    padding: 0;
 }

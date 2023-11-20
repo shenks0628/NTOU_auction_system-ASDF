@@ -1,0 +1,138 @@
+<html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Main Page</title>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .search{
+                position: absolute;
+                font-size: 40px;
+                left: 560px;
+                top: 40px
+            }
+            #search-input{
+                color: #333333; /* 输入框文本颜色 */
+                background-color: #fff; /* 输入框背景颜色 */
+                padding: 10px; /* 输入框内边距 */
+                border: 2px solid #ccc; /* 输入框边框样式 */
+                border-radius: 5px; /* 输入框边框圆角 */
+                width: 800px; /* 输入框宽度 */
+                height: 40px; /* 输入框高度 */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 输入框阴影效果 */
+            }
+            #display_newlist, #display_normallist, #display_bidlist {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                margin-top: 20px;
+            }
+            .display_pic {
+                width: 350px; /* 设置图像的宽度 */
+                height: 350px; /* 设置图像的高度 */
+                margin-top: 40px;
+                margin-right: 15px;
+                margin-left: 40px;
+            } 
+
+            header {
+                position: fixed;
+                top:0;
+                left: 0;
+                width: 100%;
+                background-color: #333;
+                color: #fff;
+                padding-top: 25px;
+                padding-bottom: 15px;
+                z-index: 999;
+            }
+
+            #header_pic{
+                width:  200px; 
+                height: 100px;
+                margin-left: 50px;
+            }
+
+            nav ul {
+                position: absolute;
+                list-style-type: none;
+                padding: 0;
+                top: 80px;
+                left: 570px;
+            }
+
+            nav li {
+                display: inline;
+                margin-right: 60px;
+            }
+
+            .link {
+                font-size: 20px;
+                text-decoration: none;
+                color: aquamarine;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding-bottom: 3rem;
+            }
+
+            .newlabel, .normallabel, .bidlabel {
+                font-size: 40px;
+                margin-top: 150px;
+                margin-left: 50px;
+            }
+
+            .pageContainer {
+                position: relative;
+                min-height: 100vh;
+            }
+
+        </style>
+        
+    </head>
+<body>
+    <header>
+        <img src="homePage/黑的.png" id="header_pic">
+        <form role="search" class="search">
+            <input type="search" id="search-input">
+        </form>
+        <nav>
+            <ul>
+                <li><a class="link" href="#">首頁</a></li>
+                <li><a class="link" href="#">產品</a></li>
+                <li><a class="link" href="#">購物車</a></li>
+                <li><a class="link" href="bidding_list/bidding_list.html">競標清單</a></li>
+                <li><a class="link" href="selling_list/selling_list.html">賣東西</a></li>
+                <li><a class="link" href="#">聯絡我們</a></li>
+                <li><a class="link" href="sign/index.html" id="login">登入</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="pageContainer">
+        <div class="container">
+            <label class="newlabel">最新商品</label>
+            <div id="display_newlist"></div>
+            <label class="normallabel">精選商品</label>
+            <div id="display_normallist"></div>
+            <label class="bidlabel">競標商品</label>
+            <div id="display_bidlist"></div>
+        </div> 
+    </div>
+   
+<script src="homePage/homePagefunc.js" type="module"></script>
+</body>
+</html>
