@@ -27,15 +27,6 @@ const start = () => {
     document.getElementById("serch").addEventListener("focus",kwserch);
     
 };
-const kwserch = () => {
-  try {
-
-      
-  } catch (err) {
-      console.error("error", err);
-  }
-};
-
 
 const display_img = async() => {
   const displaynewlist = document.getElementById('display_newlist');
