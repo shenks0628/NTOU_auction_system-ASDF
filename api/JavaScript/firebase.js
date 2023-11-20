@@ -221,7 +221,7 @@ async function addCart(id) {
                 }
             } catch (error) { alert('加入失敗'); }
         } else {
-            window.location.href = window.location.href.replace(/api\/.*/, "") + 'sign/';
+            window.location.href = '../sign';
         }
     });
 }
