@@ -25,6 +25,11 @@ const db = getFirestore(app);
 
 let bidsData, userId;
 
+function searchProducts() {
+    const key = document.getElementById("product_search").value;
+    window.location.href = "https://shenks0628.github.io/NTOU_auction_system-ASDF/api/index.html?search=" + key;
+}
+
 function add(docId) {
     const productRef = doc(db, "products", docId);
     const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的金額（僅接受數字輸入）：");
