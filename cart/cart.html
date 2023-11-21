@@ -8,45 +8,49 @@
 </head>
 <body>
 
-<header>
-    <div class="header_top">
-        <img src="../homePage/ASDF.png" id="header_pic">
-        <div class="search_bar">
-            <form role="search">
+    <header>
+        <div class="header_top">
+            <img src="../homePage/ASDF.png" id="header_pic">
+            <div class="search_bar">
                 <input type="text" id="product_search" name="search" placeholder="在商城搜尋">
-                <button type="submit" id="search_button">搜尋</button>
-            </form>
+                <button id="search_button" onclick="searchProducts()">搜尋</button>
+            </div>
         </div>
-    </div>
-    <nav>
-        <ul>
-            <li><a class="link" href="..">首頁</a></li>
-            <li><a class="link" href="#">產品</a></li>
-            <li><a class="link" href="#">購物車</a></li>
-            <li><a class="link" href="../bidding_list/bidding_list.html">競標清單</a></li>
-            <li><a class="link" href="../selling_list/selling_list.html">賣東西</a></li>
-            <li><a class="link" href="#">聯絡我們</a></li>
-            <li><a class="link" href="../sign/index.html" id="login">登入</a></li>
-        </ul>
-    </nav>
-</header>
+        <nav>
+            <ul>
+                <li><a class="link" href="..">首頁</a></li>
+                <li><a class="link" href="#">產品</a></li>
+                <li><a class="link" href="../cart/cart.html">購物車</a></li>
+                <li><a class="link" href="../bidding_list/bidding_list.html">競標清單</a></li>
+                <li><a class="link" href="../selling_list/selling_list.html">賣東西</a></li>
+                <li><a class="link" href="#">聯絡我們</a></li>
+                <li><a class="link" href="../sign/index.html" id="login">登入</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<main>
-    <h2 class="fp_title" id="title">購物車</h2>
-    <div id="div_cart">
-        <table id="cart">
-        </table>
-        
-        <div class="total">總計: <span id="totalAmount">0</span> 元</div>
+    <main>
+        <h2 class="fp_title" id="title">購物車</h2>
+        <div id="div_cart">
+            <table id="cart">
+            </table>
+            
+            <div class="total">總計: <span id="totalAmount">0</span> 元</div>
 
-        <button class="btn" type="submit">結帳</button>
-    </div>
-</main>
+            <button class="btn" type="submit">結帳</button>
+        </div>
+    </main>
 
-<footer>
-    <p>&copy; 2023 NTOU_ASDF. 版權所有。</p>
-</footer>
+    <footer>
+        <p>&copy; 2023 NTOU_ASDF. 版權所有。</p>
+    </footer>
 
-<script src="cart.js" type="module"></script>
+    <script src="cart.js" type="module"></script>
+    <script type="text/javascript">
+        function searchProducts() {
+            const key = document.getElementById("product_search").value;
+            window.location.href = "../api/index.html?search=" + key;
+        }
+    </script>
 </body>
 </html>

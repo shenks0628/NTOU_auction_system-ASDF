@@ -31,7 +31,7 @@ function productSection(id, img, name, price) {
         <img src="${img}" alt="product-image">
         <div class="product-detail">
             <div>
-                <p class="name">${name}</p>
+                <p class="name">${name.split('#')[0]}</p>
                 <p class="price">$${price}</p>
             </div>
             <div>
@@ -108,7 +108,7 @@ async function getProduct(id) {
             </section>
             <section class="product-detail">
                 <div>
-                    <h3>${docSnap.data().name}</h3>
+                    <h3>${docSnap.data().name.split('#')[0]}</h3>
                     <p>$${docSnap.data().price}</p>
                 </div>
                 <div>

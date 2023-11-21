@@ -24,6 +24,7 @@ const db = getFirestore(app);
 let cartItems = [];//購物車的陣列
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
+
 async function removeItem(itemid) {
     if (itemid === undefined) {
         console.error("Item name is undefined.");
