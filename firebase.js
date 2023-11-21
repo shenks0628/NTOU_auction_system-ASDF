@@ -41,7 +41,7 @@ const display = async () => {
     queryBidsSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
-        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
+        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
     });
 }
 
@@ -55,6 +55,9 @@ const start = () => {
             login.innerHTML = "登入";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
 }
 
 window.addEventListener("load", start);

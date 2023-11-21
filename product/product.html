@@ -15,7 +15,7 @@
       <div>
         <span style="float: left;">
           <h1 style="display: inline-block;">
-            <div onclick="location.href='../homePage.html'" style="cursor: pointer;">
+            <div id="Home" style="cursor: pointer;">
               <img src="../images/logo.png" alt="logo" style="width: 50px; height: 50px;">
               NTOU-ASDF
             </div>
@@ -31,7 +31,7 @@
           <nav style="display: inline-block;">
             <ul>
               <li><img src="../images/user.jpg" id="profileImage" style="width: 50px; height: 50px;"></li>
-              <li><button class="link" onclick="location.href='../sign/index.html'" id="login">登入</button></li>
+              <li><button class="link" id="login">登入</button></li>
             </ul>
           </nav>
         </span>
@@ -88,9 +88,9 @@
       <div>描述：<input type="text" id="inputDescription" name="inputDescription"></div>
       <div>價格：<input type="number" id="inputPrice" name="inputPrice"></div>
       <div>數量：<input type="number" id="inputQuantity" name="inputQuantity"></div>
-      <!-- <div>標籤：<input type="text" id="inputTag" name="inputTag"></div> -->
-      <!-- <div>圖片</div> -->
-      <button>送出</button><button>暫時儲存</button>
+      <!-- <div>標籤：<input type="text" id="inputTag" name="inputTag"></div>
+      <div>圖片</div> -->
+      <button id="completeButton">送出</button><button id="saveButton">暫時儲存</button>
     </div>
   </dialog>
   <script src="js/product.js" type="module"></script>

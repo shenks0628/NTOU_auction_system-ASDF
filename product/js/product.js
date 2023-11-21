@@ -25,7 +25,7 @@ const db = getFirestore(app);
 var imgs;
 var userID = "none", productOwnerID = "none";
 let productData;
-let newProductData;
+let oldProductData, newProductData;
 let key = "dd6VioVhhtD3p6P2r49r";
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('id')) {
@@ -42,6 +42,7 @@ function start() {
             if (productDoc.exists()) {
                 // 取得該產品的資料
                 productData = productDoc.data();
+                oldProductData = productData;
                 newProductData = productData;
                 productOwnerID = productData.seller;
                 setting(userID, productOwnerID);
@@ -73,6 +74,7 @@ function start() {
     });
 };
 function eventSetting() {
+    document.getElementById("login").addEventListener("click", loginAndlogout, false);
     imgs = document.getElementById("itemPicture"),
         imgs.addEventListener("click", changeImage, false);
     document.getElementById("searchButton").addEventListener("click", searchProduct, false);
@@ -81,12 +83,26 @@ function eventSetting() {
 
     document.getElementById("edit").addEventListener("click", edit, false);
     document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
+    document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
+    document.getElementById("completeButton").addEventListener("click", updateProduct, false);
+}
+
+function loginAndlogout() {
+    let login = document.getElementById("login");
+    if (login.innerHTML == "登出") {
+        signOut(auth);
+        profileImage.setAttribute("src", "../images/user.jpg");
+    }
+    else {
+        window.location.href = "../sign/index.html";
+    }
 }
 
 function setPage() {
     let str = productData.name.trim().split("#");
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
+    document.title = "商品：" + str[0];
     let itemDescription = document.getElementById("itemDescription");
     itemDescription.innerHTML = productData.description;
     let itemPrice = document.getElementById("itemPrice");
@@ -174,10 +190,38 @@ function edit() {
     document.getElementById("editPage").style.display = "block";
 }
 function closeEditPage() {
-    if (window.confirm("關閉將不會儲存，是否確認？")) {
+    if (window.confirm("關閉將不會儲存本次修改，是否確認？")) {
         document.getElementById("editPage").style.display = "none";
-        newProductData = productData;
+        newProductData = oldProductData;
     }
+}
+function temporaryStore() {
+    document.getElementById("editPage").style.display = "none";
+    oldProductData = newProductData;
+}
+function updateProduct() {
+    window.alert("暫未開放");
+}
+function preview() {
+    let str = newProductData.name.trim().split("#");
+    let itemName = document.getElementById("itemName");
+    itemName.innerHTML = str[0];
+    let itemDescription = document.getElementById("itemDescription");
+    itemDescription.innerHTML = newProductData.description;
+    let itemPrice = document.getElementById("itemPrice");
+    itemPrice.innerHTML = "$" + newProductData.price.toString();
+    let itemTag = document.getElementById("itemTag");
+    if (str.length == 1) itemTag.innerHTML = "無";
+    else {
+        itemTag.innerHTML = "";
+        for (var i = 1; i < str.length; i++) {
+            itemTag.innerHTML += str[i];
+            if (i != str.length - 1) itemTag.innerHTML += ", "
+        }
+    }
+
+    let srcs = newProductData.imgs;
+    imgs.setAttribute("src", srcs[0]);
 }
 
 window.addEventListener("load", start, false);

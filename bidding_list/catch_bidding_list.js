@@ -32,7 +32,7 @@ function add(docId) {
         return ;
     }
     if (price || price == "") {
-        const isNumeric = /^[0-9]+$/.test(userInput);
+        const isNumeric = /^[0-9]+$/.test(price);
         if (!isNumeric) {
             window.alert("無效加注！因為您的輸入格式有問題！");
         }
