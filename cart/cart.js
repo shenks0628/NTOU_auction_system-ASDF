@@ -169,7 +169,7 @@ const start1 = () => {
                     cartTable.appendChild(row);
                 }
                 else{
-                    window.alert("你所選的商品數量不足,請更新商品數量或移除購物車");
+                    window.alert("你所選的商品:"+productData.name+"數量不足,請更新商品數量或移除購物車");
                     const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity};
                     cartItems.push(newItem);
                     console.log(cartItems);
@@ -220,7 +220,7 @@ const start1 = () => {
                         item.check="有貨";
                     }
                     else{
-                        window.alert("你所選的商品數量不足,請更新商品數量或移除購物車");
+                        window.alert("你所選的商品:"+item.name+"數量不足,請更新商品數量或移除購物車");
                         item.check="沒貨";
                     }
                 }
