@@ -24,7 +24,6 @@ const db = getFirestore(app);
 let cartItems = [];//購物車的陣列
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
-
 async function removeItem(itemid) {
     if (itemid === undefined) {
         console.error("Item name is undefined.");
@@ -213,18 +212,27 @@ const start1 = () => {
         if (clickedElement.classList.contains("another-button")) {
             const itemid = clickedElement.getAttribute("data-item-name");
             const userInput = window.prompt("請輸入一個數字：");
-            const userNumber = parseInt(userInput);
-            for(var item of cartItems){
-                if(item.key===itemid){
-                    item.quantity=userNumber;
-                    if(item.quantity<=item.Stockquantity){
-                        item.check="有貨";
-                    }
-                    else{
-                        window.alert("你所選的商品:"+item.name+"數量不足,請更新商品數量或移除購物車");
-                        item.check="沒貨";
+            if (userInput || userInput == "") { // 按 submit
+                if (isNaN(parseInt(userInput))) { // 如果輸入不是全不都數字/輸入空白
+                    window.alert("無效修改！因為您的輸入格式有問題！");
+                }
+                else { // 輸入都是數字（正常）
+                    for(var item of cartItems){
+                        if(item.key===itemid){
+                            item.quantity=userNumber;
+                            if(item.quantity<=item.Stockquantity){
+                                item.check="有貨";
+                            }
+                            else{
+                                window.alert("你所選的商品:"+item.name+"數量不足,請更新商品數量或移除購物車");
+                                item.check="沒貨";
+                            }
+                        }
                     }
                 }
+            }
+            else { // 按 cancel
+                window.alert("您已取消！");
             }
             onAuthStateChanged(auth, async (user) => {
                 if (user) { // 有登入
