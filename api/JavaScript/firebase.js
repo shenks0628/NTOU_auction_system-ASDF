@@ -2,7 +2,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { getFirestore, doc, updateDoc, getDoc, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -159,21 +160,53 @@ async function getProducts(t = '', p = '') {
         if (docSnap.exists()) {
             const newDiv = document.createElement('div');
             newDiv.className = 'profile';
-            newDiv.innerHTML = `
-                <h2>User Profile</h2>
-                <br>
-                <img src="${docSnap.data().imgSrc}" alt="User Avatar">
-                <div class="profile-name">
-                    <span>${docSnap.data().name}</span>
-                    <button id="chatBtn"><img src="img/comment-alt-dots.png"></button>
-                </div>
-                <p>${docSnap.data().score}⭐</p>
-                ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
-            `;
-            mainElement.appendChild(newDiv);
-            chatBtn.onclick = function (e) {
-                alert(email);
-            };
+            if (auth.currentUser && email == auth.currentUser.email) {
+                newDiv.innerHTML = `
+                    <h2>User Profile</h2><br>
+                    <div class="profile-avatar">
+                        <img id="editAvatar" src="${docSnap.data().imgSrc}" alt="User Avatar">
+                        <input id="file" type="file" accept="image/*" style="display: none">
+                        <button onclick="file.click()"><img src="img/pen-circle.png"></button>
+                    </div>
+                    <div class="profile-name">
+                        <span id="editName">${docSnap.data().name}</span>
+                        <button id="editNameBtn"><img src="img/pen-circle.png"></button>
+                    </div>
+                    <p>${docSnap.data().score}⭐</p>
+                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
+                    <br>
+                `;
+                mainElement.appendChild(newDiv);
+                editNameBtn.onclick = function (e) {
+                    const newName = prompt("輸入新的名字:", "");
+                    if (newName !== null && newName.trim() !== "") {
+                        uploadName(email, newName);
+                    } else if (newName.trim() === "") {
+                        alert("名字不能為空，請重新輸入。");
+                    }
+                };
+                file.onchange = (event) => {
+                    uploadAvatar();
+                };
+            } else {
+                newDiv.innerHTML = `
+                    <h2>User Profile</h2><br>
+                    <div class="profile-avatar">
+                        <img src="${docSnap.data().imgSrc}" alt="User Avatar">
+                    </div>
+                    <div class="profile-name">
+                        <span>${docSnap.data().name}</span>
+                        <button id="chatBtn"><img src="img/comment-alt-dots.png"></button>
+                    </div>
+                    <p>${docSnap.data().score}⭐</p>
+                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
+                    <br>
+                `;
+                mainElement.appendChild(newDiv);
+                chatBtn.onclick = function (e) {
+                    alert(email);
+                };
+            }
             if (t == '↑') {
                 addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("time")), t);
             } else if (t == '↓') {
@@ -224,6 +257,28 @@ async function addCart(id) {
             window.location.href = '../sign';
         }
     });
+}
+async function uploadName(email, name) {
+    await updateDoc(doc(db, "users", email), {
+        name: name
+    });
+    editName.innerHTML = name;
+    alert('更新成功');
+}
+async function uploadAvatar() {
+    const fileInput = file.files[0];
+    if (fileInput) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `avatar/${auth.currentUser.email}.png`);
+        const metadata = {contentType: 'image/png'};
+        await uploadBytes(storageRef, fileInput, metadata);
+        getDownloadURL(storageRef).then(async(url) => {
+            await updateProfile(auth.currentUser, {photoURL: url});
+            await updateDoc(doc(db, "users", auth.currentUser.email), {imgSrc: url});
+            editAvatar.src = url;
+            alert('更新成功');
+        });
+    }
 }
 
 if (urlParams.get('id')) {
