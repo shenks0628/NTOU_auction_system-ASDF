@@ -23,6 +23,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
+const storage = getStorage();
 
 const start = () => {
     document.getElementById("insert").addEventListener("click", insert);
@@ -30,60 +31,52 @@ const start = () => {
 
 const insert = async () => {
     try {
-        console.log("abc");
-        let imgs0 = document.getElementById("imgs0").value;
-        let imgs1 = document.getElementById("imgs1").value;
-        let imgs2 = document.getElementById("imgs2").value;
-        let imgs3 = document.getElementById("imgs3").value;
-        let imgs4 = document.getElementById("imgs4").value;
-        let name = document.getElementById("name").value;
-        let description = document.getElementById("description").value;
-        let price = document.getElementById("price").value;
-        let quantity = document.getElementById("quantity").value;
-        let seller_email = document.getElementById("seller_email").value;
-        let seller_imgSrc = document.getElementById("seller_imgSrc").value;
-        let { id } = await addDoc(collection(db, "products"), {
-            imgs: [],
-            name: name,
-            description: description,
-            price: parseInt(price),
-            quantity: parseInt(quantity),
-            seller: seller_email,
-            sellerImg: seller_imgSrc,
-            time: serverTimestamp(),
-            availability: true
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userId = user.email;
+                let imgs = document.getElementById("imgs").files;
+                let name = document.getElementById("name").value;
+                let description = document.getElementById("description").value;
+                let price = document.getElementById("price").value;
+                let quantity = document.getElementById("quantity").value;
+                let seller_imgSrc = document.getElementById("seller_imgSrc").value;
+                let normal = document.getElementById("normal");
+                let bids = document.getElementById("bids");
+                let type;
+                if (normal.checked) {
+                    type = normal.value;
+                }
+                else if (bids.checked) {
+                    type = bids.value;
+                }
+                let url = document.getElementById("url").value;
+                let { id } = await addDoc(collection(db, "products"), {
+                    bids_info: {who1: "", who2: "", price1: parseInt(price), price2: parseInt(0)},
+                    comment: {},
+                    type: type,
+                    imgs: [],
+                    name: name,
+                    description: description,
+                    price: parseInt(price),
+                    quantity: parseInt(quantity),
+                    seller: seller_email,
+                    sellerImg: seller_imgSrc,
+                    time: serverTimestamp(),
+                    url: ""
+                });
+                console.log(id);
+                for (let i = 0; i < imgs.length; i++) {
+                    const storageRef = ref(storage, "images/" + imgs[i].name);
+                    uploadBytes(storageRef, imgs[i]).then((snapshot) => {
+                        console.log("Upload Success");
+                    });
+                    updateDoc(doc(db, "products", id), {
+                        imgs: arrayUnion("images/" + imgs[i].name)
+                    });
+                }
+                window.alert("您已成功新增商品！");
+            }
         });
-        console.log(id);
-        if (imgs0) {
-            console.log("0");
-            updateDoc(doc(db, "products", id), {
-                imgs: arrayUnion(imgs0)
-            });
-        }
-        if (imgs1) {
-            console.log("1");
-            updateDoc(doc(db, "products", id), {
-                imgs: arrayUnion(imgs1)
-            });
-        }
-        if (imgs2) {
-            console.log("2");
-            updateDoc(doc(db, "products", id), {
-                imgs: arrayUnion(imgs2)
-            });
-        }
-        if (imgs3) {
-            console.log("3");
-            updateDoc(doc(db, "products", id), {
-                imgs: arrayUnion(imgs3)
-            });
-        }
-        if (imgs4) {
-            console.log("4");
-            updateDoc(doc(db, "products", id), {
-                imgs: arrayUnion(imgs4)
-            });
-        }
         
     } catch (err) {
         console.error("error", err);
