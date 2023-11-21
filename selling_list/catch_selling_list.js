@@ -23,11 +23,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-function searchProducts() {
-    const key = document.getElementById("product_search").value;
-    window.location.href = "https://shenks0628.github.io/NTOU_auction_system-ASDF/api/index.html?search=" + key;
-}
-
 function add() {
     window.location.href = "insert.html";
 }

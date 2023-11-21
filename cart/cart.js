@@ -25,11 +25,6 @@ let cartItems = [];//購物車的陣列
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
 
-function searchProducts() {
-    const key = document.getElementById("product_search").value;
-    window.location.href = "https://shenks0628.github.io/NTOU_auction_system-ASDF/api/index.html?search=" + key;
-}
-
 async function removeItem(itemid) {
     if (itemid === undefined) {
         console.error("Item name is undefined.");
