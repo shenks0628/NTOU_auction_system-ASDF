@@ -1,22 +1,31 @@
 .profile {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-
-.profile>img {
-    max-width: 150px;
-    border-radius: 50%;
-}
-
-.profile-name {
-    font-size: 20px;
-}
-
 .profile button {
     background-color: transparent;
     border: none;
 }
-
 .profile button>img {
     width: 20px;
     height: 20px;
+}
+.profile-avatar {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+.profile-avatar>img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+.profile-avatar button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.profile-name {
+    font-size: 20px;
 }

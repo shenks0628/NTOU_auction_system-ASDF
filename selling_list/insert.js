@@ -59,7 +59,7 @@ const insert = async () => {
                     description: description,
                     price: parseInt(price),
                     quantity: parseInt(quantity),
-                    seller: seller_email,
+                    seller: userId,
                     sellerImg: seller_imgSrc,
                     time: serverTimestamp(),
                     url: ""
