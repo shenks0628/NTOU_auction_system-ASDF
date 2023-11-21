@@ -49,8 +49,7 @@ button {
   height: 100%;
 }
 
-#cart {
-  float: right;
+#cartButton {
   display: none;
   /*預設隱藏*/
 }
@@ -96,4 +95,19 @@ button {
 .itemImage {
   width: 400px;
   height: 400px;
+}
+
+dialog {
+  position: absolute;
+  width: 700px;
+  height: 450px;
+  left: calc(50% - 700px);
+  top: 120px;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px #ccc;
+  border-radius: 10px;
+  background-color: rgba(64, 64, 64, 0.9);
+  border: 1px solid rgb(0, 0, 0);
+  text-align: justify;
 }
