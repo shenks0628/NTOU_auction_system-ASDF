@@ -55,6 +55,9 @@ const start = () => {
             login.innerHTML = "登入";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
 }
 
 window.addEventListener("load", start);
