@@ -221,7 +221,8 @@ const start1 = () => {
             const itemid = clickedElement.getAttribute("data-item-name");
             const userInput = window.prompt("請輸入一個數字：");
             if (userInput || userInput == "") { // 按 submit
-                if (isNaN(parseInt(userInput))) { // 如果輸入不是全不都數字/輸入空白
+                const isNumeric = /^[0-9]+$/.test(userInput);
+                if (!isNumeric) { // 如果輸入不是全不都數字/輸入空白
                     window.alert("無效修改！因為您的輸入格式有問題！");
                 }
                 else { // 輸入都是數字（正常）
