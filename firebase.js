@@ -36,12 +36,12 @@ const display = async () => {
     queryNormalSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
-        latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="https://youtu.be/JRZQGMzbPes?si=A6IdLTDFrLgRxKXn"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';
+        latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';
     });
     queryBidsSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
-        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="https://youtu.be/JRZQGMzbPes?si=A6IdLTDFrLgRxKXn"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
+        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
     });
 }
 

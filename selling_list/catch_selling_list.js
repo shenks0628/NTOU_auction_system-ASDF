@@ -89,11 +89,11 @@ const start = async () => {
         if (user) {
             login.innerHTML = "登出";
             title.innerHTML = "賣場清單";
-            normal_title.style.display = "block";
-            bids_title.style.display = "block";
-            show_hide_normal.style.display = "block";
-            show_hide_bids.style.display = "block";
-            add_btn.style.display = "block";
+            normal_title.style.display = "";
+            bids_title.style.display = "";
+            show_hide_normal.style.display = "";
+            show_hide_bids.style.display = "";
+            add_btn.style.display = "";
             const userId = user.email;
 
             const q = query(collection(db, "products"), where("seller", "==", userId));

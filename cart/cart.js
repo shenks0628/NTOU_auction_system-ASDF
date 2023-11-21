@@ -94,9 +94,15 @@ function displayCart() {
 
 let cartData;
 const start = () => {
+    const login = document.getElementById("login");
+    const title = document.getElementById("title");
+    const div_cart = document.getElementById("div_cart");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
             const userId = user.email; // 取得當前登入的使用者信箱 (id)
+            login.innerHTML = "登出";
+            title.innerHTML = "購物車";
+            div_cart.style.display = "";
             console.log(userId);
             const userRef = doc(db, "users", userId);
             // 使用 getDoc 函數取得該使用者的文件快照
@@ -125,6 +131,9 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            login.innerHTML = "登入";
+            title.innerHTML = "請先登入後再來查看";
+            div_cart.style.display = "none";
         }
     });
 };
@@ -169,7 +178,7 @@ const start1 = () => {
                     cartTable.appendChild(row);
                 }
                 else{
-                    window.alert("你所選的商品數量不足,請更新商品數量或移除購物車");
+                    window.alert("你所選的商品:"+productData.name+"數量不足,請更新商品數量或移除購物車");
                     const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity};
                     cartItems.push(newItem);
                     console.log(cartItems);
@@ -212,18 +221,27 @@ const start1 = () => {
         if (clickedElement.classList.contains("another-button")) {
             const itemid = clickedElement.getAttribute("data-item-name");
             const userInput = window.prompt("請輸入一個數字：");
-            const userNumber = parseInt(userInput);
-            for(var item of cartItems){
-                if(item.key===itemid){
-                    item.quantity=userNumber;
-                    if(item.quantity<=item.Stockquantity){
-                        item.check="有貨";
-                    }
-                    else{
-                        window.alert("你所選的商品數量不足,請更新商品數量或移除購物車");
-                        item.check="沒貨";
+            if (userInput || userInput == "") { // 按 submit
+                if (isNaN(parseInt(userInput))) { // 如果輸入不是全不都數字/輸入空白
+                    window.alert("無效修改！因為您的輸入格式有問題！");
+                }
+                else { // 輸入都是數字（正常）
+                    for(var item of cartItems){
+                        if(item.key===itemid){
+                            item.quantity=userNumber;
+                            if(item.quantity<=item.Stockquantity){
+                                item.check="有貨";
+                            }
+                            else{
+                                window.alert("你所選的商品:"+item.name+"數量不足,請更新商品數量或移除購物車");
+                                item.check="沒貨";
+                            }
+                        }
                     }
                 }
+            }
+            else { // 按 cancel
+                window.alert("您已取消！");
             }
             onAuthStateChanged(auth, async (user) => {
                 if (user) { // 有登入

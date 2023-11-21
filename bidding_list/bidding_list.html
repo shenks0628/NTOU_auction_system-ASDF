@@ -11,18 +11,17 @@
         <div class="header_top">
             <img src="../homePage/ASDF.png" id="header_pic">
             <div class="search_bar">
-                <form role="search">
-                    <input type="text" id="product_search" name="search" placeholder="在商城搜尋">
-                    <button type="submit" id="search_button">搜尋</button>
-                </form>
+                <input type="text" id="product_search" name="search" placeholder="在商城搜尋">
+                <button id="search_button" onclick="searchProducts()">搜尋</button>
             </div>
         </div>
         <nav>
             <ul>
                 <li><a class="link" href="..">首頁</a></li>
-                <li><a class="link" href="#">產品</a></li>
+                <li><a class="link" href="#">一般商品</a></li>
+                <li><a class="link" href="#">競標商品</a></li>
                 <li><a class="link" href="../cart/cart.html">購物車</a></li>
-                <li><a class="link" href="#">競標清單</a></li>
+                <li><a class="link" href="../bidding_list/bidding_list.html">競標清單</a></li>
                 <li><a class="link" href="../selling_list/selling_list.html">賣東西</a></li>
                 <li><a class="link" href="#">聯絡我們</a></li>
                 <li><a class="link" href="../sign/index.html" id="login">登入</a></li>
@@ -40,7 +39,12 @@
     </footer>
     
     <script src="../jQuery/jquery-3.6.1.min.js" type="text/javascript"></script>
-    <script src="../index.js" type="text/javascript"></script>
     <script src="catch_bidding_list.js" type="module" ></script>
+    <script type="text/javascript">
+        function searchProducts() {
+            const key = document.getElementById("product_search").value;
+            window.location.href = "../api/index.html?search=" + key;
+        }
+    </script>
 </body>
 </html>

@@ -8,14 +8,7 @@
 <body>
     <div>
         <!-- <form action="/" method="get"> -->
-            <label for="search"></label>
-            <input type="text" id="imgSrc" name="imgSrc" placeholder="imgSrc">
-            <br />
-            <input type="text" id="imgs0" name="imgs0" placeholder="imgs0">
-            <input type="text" id="imgs1" name="imgs1" placeholder="imgs1">
-            <input type="text" id="imgs2" name="imgs2" placeholder="imgs2">
-            <input type="text" id="imgs3" name="imgs3" placeholder="imgs3">
-            <input type="text" id="imgs4" name="imgs4" placeholder="imgs4">
+            <input type="file" id="imgs" name="imgs" accept="image/*" multiple>
             <br />
             <input type="text" id="name" name="name" placeholder="name">
             <br />
@@ -25,8 +18,14 @@
             <br />
             <input type="text" id="quantity" name="quantity" placeholder="quantity">
             <br />
-            <input type="text" id="seller_email" name="seller_email" placeholder="seller_email">
             <input type="text" id="seller_imgSrc" name="seller_imgSrc" placeholder="seller_imgSrc">
+            <br />
+            <input type="text" id="url" name="url" placeholder="url">
+            <br />
+            <input type="radio" id="normal" name="type" value="normal">
+            <label for="noraml">normal</label>
+            <input type="radio" id="bids" name="type" value="bids">
+            <label for="bids">bids</label>
             <br />
             <button type="submit" id="insert">insert</button>
         <!-- </form> -->
