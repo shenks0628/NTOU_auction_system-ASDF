@@ -22,17 +22,17 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-var srcs;
 var imgs;
 var userID = "none", productOwnerID = "none";
-var login, profileImage;
+let productData;
+let oldProductData, newProductData;
+let key = "dd6VioVhhtD3p6P2r49r";
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('id')) {
+    key = urlParams.get('id');
+}
 function start() {
     eventSetting();
-    const urlParams = new URLSearchParams(window.location.search);
-    let key = "dd6VioVhhtD3p6P2r49r";
-    if (urlParams.get('id')) {
-        key = urlParams.get('id');
-    }
     const productId = key; // 替換成實際的產品 ID
     // 使用 doc 函數構建該產品的參考路徑
     const productRef = doc(db, "products", productId);
@@ -41,29 +41,13 @@ function start() {
         .then((productDoc) => {
             if (productDoc.exists()) {
                 // 取得該產品的資料
-                const productData = productDoc.data();
+                productData = productDoc.data();
+                oldProductData = productData;
+                newProductData = productData;
                 productOwnerID = productData.seller;
                 setting(userID, productOwnerID);
-                console.log("Product data for product with ID", productId, ":", productData);
-                let str = productData.name.trim().split("#");
-                let itemName = document.getElementById("itemName");
-                itemName.innerHTML = str[0];
-                let itemDescription = document.getElementById("itemDescription");
-                itemDescription.innerHTML = productData.description;
-                let itemPrice = document.getElementById("itemPrice");
-                itemPrice.innerHTML = "$" + productData.price.toString();
-                let itemTag = document.getElementById("itemTag");
-                if (str.length == 1) itemTag.innerHTML = "無";
-                else {
-                    itemTag.innerHTML = "";
-                    for (var i = 1; i < str.length; i++) {
-                        itemTag.innerHTML += str[i];
-                        if (i != str.length - 1) itemTag.innerHTML += ", "
-                    }
-                }
-
-                srcs = productData.imgs;
-                imgs.setAttribute("src", srcs[0]);
+                // console.log("Product data for product with ID", productId, ":", productData);
+                setPage();
             }
             else {
                 console.log("Product with ID", productId, "does not exist.");
@@ -73,10 +57,9 @@ function start() {
             console.error("Error getting product document:", error);
         });
 
-
-    login = document.getElementById("login");
-    profileImage = document.getElementById("profileImage");
     onAuthStateChanged(auth, (user) => {
+        let login = document.getElementById("login");
+        let profileImage = document.getElementById("profileImage");
         console.log(user);
         if (user) {
             userID = user.email;
@@ -97,32 +80,54 @@ function eventSetting() {
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
-    document.getElementById("editName").addEventListener("click", editName, false);
-    document.getElementById("editDescription").addEventListener("click", editDescription, false);
-    document.getElementById("editPrice").addEventListener("click", editPrice, false);
-    // document.getElementById("edit").addEventListener("click", edit, false);
-    document.getElementById("editTag").addEventListener("click", editTag, false);
+    document.getElementById("edit").addEventListener("click", edit, false);
+    document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
+    document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
+    document.getElementById("completeButton").addEventListener("click", updateProduct, false);
+}
+
+function setPage() {
+    let str = productData.name.trim().split("#");
+    let itemName = document.getElementById("itemName");
+    itemName.innerHTML = str[0];
+    document.title = "商品：" + str[0];
+    let itemDescription = document.getElementById("itemDescription");
+    itemDescription.innerHTML = productData.description;
+    let itemPrice = document.getElementById("itemPrice");
+    itemPrice.innerHTML = "$" + productData.price.toString();
+    let itemTag = document.getElementById("itemTag");
+    if (str.length == 1) itemTag.innerHTML = "無";
+    else {
+        itemTag.innerHTML = "";
+        for (var i = 1; i < str.length; i++) {
+            itemTag.innerHTML += str[i];
+            if (i != str.length - 1) itemTag.innerHTML += ", "
+        }
+    }
+
+    let srcs = productData.imgs;
+    imgs.setAttribute("src", srcs[0]);
 }
 
 function setting() {
     // console.log(userID, productOwnerID);
     if (productOwnerID == "none") return;
     if (userID == "none") {
-        document.getElementById("cart").style.display = "none";
+        document.getElementById("cartButton").style.display = "none";
         let edit = document.getElementsByClassName("edit");
         for (var i = 0; i < edit.length; i++) {
             edit[i].style.display = "none";
         }
     }
     else if (userID == productOwnerID && productOwnerID != "none") {
-        document.getElementById("cart").style.display = "none";
+        document.getElementById("cartButton").style.display = "none";
         let edit = document.getElementsByClassName("edit");
         for (var i = 0; i < edit.length; i++) {
             edit[i].style.display = "inline";
         }
     }
     else {
-        document.getElementById("cart").style.display = "block";
+        document.getElementById("cartButton").style.display = "block";
         let edit = document.getElementsByClassName("edit");
         for (var i = 0; i < edit.length; i++) {
             edit[i].style.display = "none";
@@ -139,6 +144,7 @@ function searchProduct() {
 }
 
 function changeImage() {
+    let srcs = productData.imgs;
     for (var i = 0; i < srcs.length; i++) {
         if (srcs[i] == imgs.getAttribute("src")) {
             imgs.setAttribute("src", srcs[(i + 1) % srcs.length]);
@@ -162,24 +168,48 @@ function changeInfo() {
     }
 }
 
-function editName() {
-    console.log("edit name");
+function edit() {
+    console.log("edit");
+    let str = newProductData.name.trim().split("#");
+    document.getElementById("inputName").setAttribute("value", str[0]);
+    document.getElementById("inputDescription").setAttribute("value", newProductData.description);
+    document.getElementById("inputPrice").setAttribute("value", newProductData.price);
+    document.getElementById("inputQuantity").setAttribute("value", newProductData.quantity);
+    document.getElementById("editPage").style.display = "block";
 }
-function editDescription() {
-    console.log("edit description");
-
+function closeEditPage() {
+    if (window.confirm("關閉將不會儲存本次修改，是否確認？")) {
+        document.getElementById("editPage").style.display = "none";
+        newProductData = oldProductData;
+    }
 }
-function editPrice() {
-    console.log("edit price");
-
+function temporaryStore() {
+    document.getElementById("editPage").style.display = "none";
+    oldProductData = newProductData;
 }
-function editImage() {
-    console.log("edit image");
-
+function updateProduct() {
+    window.alert("暫未開放");
 }
-function editTag() {
-    console.log("edit tag");
+function preview() {
+    let str = newProductData.name.trim().split("#");
+    let itemName = document.getElementById("itemName");
+    itemName.innerHTML = str[0];
+    let itemDescription = document.getElementById("itemDescription");
+    itemDescription.innerHTML = newProductData.description;
+    let itemPrice = document.getElementById("itemPrice");
+    itemPrice.innerHTML = "$" + newProductData.price.toString();
+    let itemTag = document.getElementById("itemTag");
+    if (str.length == 1) itemTag.innerHTML = "無";
+    else {
+        itemTag.innerHTML = "";
+        for (var i = 1; i < str.length; i++) {
+            itemTag.innerHTML += str[i];
+            if (i != str.length - 1) itemTag.innerHTML += ", "
+        }
+    }
 
+    let srcs = newProductData.imgs;
+    imgs.setAttribute("src", srcs[0]);
 }
 
 window.addEventListener("load", start, false);
