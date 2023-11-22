@@ -47,7 +47,7 @@ function start() {
                 productOwnerID = productData.seller;
                 setting(userID, productOwnerID);
                 // console.log("Product data for product with ID", productId, ":", productData);
-                setPage();
+                setProduct();
             }
             else {
                 console.log("Product with ID", productId, "does not exist.");
@@ -98,7 +98,7 @@ function loginAndlogout() {
     }
 }
 
-function setPage() {
+function setProduct() {
     let str = productData.name.trim().split("#");
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
@@ -107,6 +107,8 @@ function setPage() {
     itemDescription.innerHTML = productData.description;
     let itemPrice = document.getElementById("itemPrice");
     itemPrice.innerHTML = "$" + productData.price.toString();
+    let itemQuantity = document.getElementById("itemQuantity");
+    itemQuantity.innerHTML = productData.quantity.toString();
     let itemTag = document.getElementById("itemTag");
     if (str.length == 1) itemTag.innerHTML = "無";
     else {
@@ -119,6 +121,40 @@ function setPage() {
 
     let srcs = productData.imgs;
     imgs.setAttribute("src", srcs[0]);
+
+    let itemComment = document.getElementById("itemComment");
+    let commentArray = productData.comment;
+    itemComment.innerHTML = "";
+    if (Object.keys(commentArray).length > 0) {
+        var commentBlock = document.createElement("div");
+        commentBlock.className = "commentBlock";
+        var idx = 0;
+        for (var key of Object.keys(commentArray)) {
+            console.log(key);
+            // 創建評論區塊元素
+            var commentBlock = document.createElement("div");
+            commentBlock.className = "commentBlock";
+
+            // 顯示使用者和部分內容
+            if (commentArray[key].length > 50) {
+                commentBlock.innerHTML = "<div><strong>" + key + ":</strong><br><span id='comment" + idx + "'>" + commentArray[key].slice(0, 50) + "<span class='readMore'>...點擊查看更多</span>" + "</span></div>";
+                commentBlock.onclick = readMore(idx, commentArray[key]);
+            }
+            else {
+                commentBlock.innerHTML = "<p><strong>" + key + ":</strong> " + commentArray[key] + "</p>";
+            }
+            itemComment.appendChild(commentBlock);
+            idx++;
+        }
+    }
+    else {
+        itemComment.innerHTML = "此商品暫時沒有評論";
+    }
+}
+function readMore(idx, comment) {
+    return function () {
+        document.getElementById("comment" + idx).innerHTML = comment;
+    }
 }
 
 function setting() {
