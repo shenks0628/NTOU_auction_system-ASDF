@@ -67,11 +67,13 @@ const insert = async () => {
                 console.log(id);
                 for (let i = 0; i < imgs.length; i++) {
                     const storageRef = ref(storage, "images/" + imgs[i].name);
-                    uploadBytes(storageRef, imgs[i]).then((snapshot) => {
+                    await uploadBytes(storageRef, imgs[i]).then((snapshot) => {
                         console.log("Upload Success");
                     });
-                    updateDoc(doc(db, "products", id), {
-                        imgs: arrayUnion("images/" + imgs[i].name)
+                    getDownloadURL(storageRef).then(async(url) => {
+                        await updateDoc(doc(db, "products", id), {
+                            imgs: arrayUnion(url)
+                        });
                     });
                 }
                 window.alert("您已成功新增商品！");

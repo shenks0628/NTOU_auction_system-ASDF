@@ -91,7 +91,6 @@ function displayCart() {
     };
     totalAmountElement.textContent = totalAmount;
 }
-
 let cartData;
 const start = () => {
     const login = document.getElementById("login");
@@ -229,7 +228,7 @@ const start1 = () => {
                 else { // 輸入都是數字（正常）
                     for(var item of cartItems){
                         if(item.key===itemid){
-                            item.quantity=userNumber;
+                            item.quantity=parseInt(userInput);
                             if(item.quantity<=item.Stockquantity){
                                 item.check="有貨";
                             }
@@ -239,25 +238,26 @@ const start1 = () => {
                             }
                         }
                     }
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) { // 有登入
+                            const userId = user.email; // 取得當前登入的使用者信箱 (id)
+                            console.log(userId);
+                            //更新資料庫裡的數量
+                            updateDoc(doc(db, "users", userId), {
+                                ['cart.' + itemid]: parseInt(userInput)
+                            });
+                        }
+                        else { // 沒有登入
+                              console.log("沒拿到userid");
+                        }
+                    });
+                    displayCart();
                 }
             }
             else { // 按 cancel
                 window.alert("您已取消！");
             }
-            onAuthStateChanged(auth, async (user) => {
-                if (user) { // 有登入
-                    const userId = user.email; // 取得當前登入的使用者信箱 (id)
-                    console.log(userId);
-                    //更新資料庫裡的數量
-                    updateDoc(doc(db, "users", userId), {
-                        ['cart.' + itemid]: userNumber 
-                    });
-                }
-                else { // 沒有登入
-                      console.log("沒拿到userid");
-                }
-            });
-            displayCart();
+            
         }
     });
 };
