@@ -31,8 +31,7 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('id')) {
     key = urlParams.get('id');
 }
-function start() {
-    eventSetting();
+const getProduct = async () => { // 讀資料
     const productId = key; // 替換成實際的產品 ID
     // 使用 doc 函數構建該產品的參考路徑
     const productRef = doc(db, "products", productId);
@@ -57,6 +56,10 @@ function start() {
             console.error("Error getting product document:", error);
         });
 
+}
+function start() {
+    eventSetting();
+    getProduct();
     onAuthStateChanged(auth, (user) => {
         let login = document.getElementById("login");
         let profileImage = document.getElementById("profileImage");
@@ -87,7 +90,7 @@ function eventSetting() {
     document.getElementById("completeButton").addEventListener("click", updateProduct, false);
 }
 
-function loginAndlogout() {
+function loginAndlogout() { // 登入登出
     let login = document.getElementById("login");
     if (login.innerHTML == "登出") {
         signOut(auth);
@@ -98,7 +101,7 @@ function loginAndlogout() {
     }
 }
 
-function setProduct() {
+function setProduct() { // 設定顯示的商品
     let str = productData.name.trim().split("#");
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
@@ -151,13 +154,13 @@ function setProduct() {
         itemComment.innerHTML = "此商品暫時沒有評論";
     }
 }
-function readMore(idx, comment) {
+function readMore(idx, comment) { // 評論的查看更多
     return function () {
         document.getElementById("comment" + idx).innerHTML = comment;
     }
 }
 
-function setting() {
+function setting() { // 判定是否為買 or 賣家
     // console.log(userID, productOwnerID);
     if (productOwnerID == "none") return;
     if (userID == "none") {
@@ -191,7 +194,7 @@ function searchProduct() {
     // window.location.href = url;
 }
 
-function changeImage() {
+function changeImage() { // 切換商品照片
     let srcs = productData.imgs;
     for (var i = 0; i < srcs.length; i++) {
         if (srcs[i] == imgs.getAttribute("src")) {
@@ -201,7 +204,7 @@ function changeImage() {
     }
 }
 
-function changeInfo() {
+function changeInfo() { // 切換商品資訊/評論
     if (document.getElementById("description").style.display == "none") {
         document.getElementById("ToDiscription").disabled = true;
         document.getElementById("ToComment").disabled = false;
@@ -216,7 +219,8 @@ function changeInfo() {
     }
 }
 
-function edit() {
+function edit() { // 修改商品頁面
+    window.alert("目前開放部分修改");
     console.log("edit");
     let str = newProductData.name.trim().split("#");
     document.getElementById("inputName").setAttribute("value", str[0]);
@@ -225,39 +229,62 @@ function edit() {
     document.getElementById("inputQuantity").setAttribute("value", newProductData.quantity);
     document.getElementById("editPage").style.display = "block";
 }
-function closeEditPage() {
+function closeEditPage() { // 關閉修改頁面
     if (window.confirm("關閉將不會儲存本次修改，是否確認？")) {
         document.getElementById("editPage").style.display = "none";
         newProductData = oldProductData;
     }
 }
-function temporaryStore() {
+function temporaryStore() { // 暫存修改紀錄
     document.getElementById("editPage").style.display = "none";
     oldProductData = newProductData;
 }
-function updateProduct() {
-    window.alert("暫未開放");
-}
-function preview() {
-    let str = newProductData.name.trim().split("#");
-    let itemName = document.getElementById("itemName");
-    itemName.innerHTML = str[0];
-    let itemDescription = document.getElementById("itemDescription");
-    itemDescription.innerHTML = newProductData.description;
-    let itemPrice = document.getElementById("itemPrice");
-    itemPrice.innerHTML = "$" + newProductData.price.toString();
-    let itemTag = document.getElementById("itemTag");
-    if (str.length == 1) itemTag.innerHTML = "無";
-    else {
-        itemTag.innerHTML = "";
-        for (var i = 1; i < str.length; i++) {
-            itemTag.innerHTML += str[i];
-            if (i != str.length - 1) itemTag.innerHTML += ", "
-        }
+const updateProduct = async () => { // 修改並更新資料庫
+    try {
+        const productId = key; // 替換成實際的產品 ID
+        // 使用 doc 函數構建該產品的參考路徑
+        const productRef = doc(db, "products", productId);
+
+        await updateDoc(productRef, {
+            // bids_info: {},
+            // comment: {},
+            // type: type,
+            // imgs: [],
+            name: document.getElementById("inputName").value,
+            description: document.getElementById("inputDescription").value,
+            price: document.getElementById("inputPrice").value,
+            quantity: document.getElementById("inputQuantity").value,
+            // time: serverTimestamp(),
+            // url: ""
+        });
+        getProduct();
+        window.alert("修改成功！");
+        document.getElementById("editPage").style.display = "none";
+    } catch (err) {
+        console.error("Error: ", err);
     }
 
-    let srcs = newProductData.imgs;
-    imgs.setAttribute("src", srcs[0]);
+}
+function preview() { // 預覽
+    // let str = newProductData.name.trim().split("#");
+    // let itemName = document.getElementById("itemName");
+    // itemName.innerHTML = str[0];
+    // let itemDescription = document.getElementById("itemDescription");
+    // itemDescription.innerHTML = newProductData.description;
+    // let itemPrice = document.getElementById("itemPrice");
+    // itemPrice.innerHTML = "$" + newProductData.price.toString();
+    // let itemTag = document.getElementById("itemTag");
+    // if (str.length == 1) itemTag.innerHTML = "無";
+    // else {
+    //     itemTag.innerHTML = "";
+    //     for (var i = 1; i < str.length; i++) {
+    //         itemTag.innerHTML += str[i];
+    //         if (i != str.length - 1) itemTag.innerHTML += ", "
+    //     }
+    // }
+
+    // let srcs = newProductData.imgs;
+    // imgs.setAttribute("src", srcs[0]);
 }
 
 window.addEventListener("load", start, false);
