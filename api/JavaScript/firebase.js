@@ -98,13 +98,27 @@ async function addProductsToMain(q, t='', p='') {
 async function getProduct(id) {
     const docSnap = await getDoc(doc(db, "products", id));
     if (docSnap.exists()) {
+        const imgs = docSnap.data().imgs;
+        const comments = docSnap.data().comment;
         let buttonsHTML = '';
-        docSnap.data().imgs.forEach((img) => {
+        imgs.forEach((img) => {
             buttonsHTML += `<button class="product-button"><img src="${img}" alt="product-image"></button>`;
         });
+        let commentsHTML = Object.keys(comments).length == 0 ? '尚無評論' : '';
+        for (let key in comments) {
+            commentsHTML += `
+                <div class="comment">
+                    <a href="?email=${key}"><img src="${await getAvatar(key)}" alt="comment-avatar"></a>
+                    <div class="content">
+                        <div class="score">${'⭐'.repeat(comments[key][0])}</div>
+                        <div class="text">${comments[key].substr(1)}</div>
+                    </div>
+                </div>
+            `;
+        }
         let mainHTML = `
             <section class="product-images">
-                <img id="product-image" src="${docSnap.data().imgs[0]}" alt="product-image">
+                <img id="product-image" src="${imgs[0]}" alt="product-image">
                 <div>${buttonsHTML}</div>
             </section>
             <section class="product-detail">
@@ -112,28 +126,17 @@ async function getProduct(id) {
                     <h3>${docSnap.data().name.split('#')[0]}</h3>
                     <p>$${docSnap.data().price}</p>
                 </div>
-                <div>
-                    <button class="seller-avatar">
-                        <img src="${docSnap.data().sellerImg}" alt="seller-image">
-                    </button>
-                </div>
+                <a href="?email=${docSnap.data().seller}"><img class="seller-avatar" src="${await getAvatar(docSnap.data().seller)}" alt="seller-avatar"></a>
             </section>
             <hr>
             <section class="product-description">
-                <h4>Description</h4>
-                <br>
-                ${docSnap.data().description}
+                <h4>Description</h4><br>${docSnap.data().description}
                 <hr>
-                <h4>Ratings</h4>
-                <br>
-                尚無評論
+                <h4>Comments</h4><br>${commentsHTML}
             </section>
         `;
         mainElement.innerHTML = mainHTML;
         const productBtns = document.querySelectorAll('.product-button');
-        document.querySelector('.seller-avatar').onclick = () => {
-            searchUser(docSnap.data().seller);
-        };
         productBtns[0].classList.add('choose');
         productBtns.forEach(button => {
             button.addEventListener('click', () => {
@@ -279,6 +282,12 @@ async function uploadAvatar() {
             alert('更新成功');
         });
     }
+}
+async function getAvatar(email) {
+    try {
+        const userSnap = await getDoc(doc(db, "users", email));
+        return userSnap.data().imgSrc;
+    } catch (error) { return 'img/sheng.jpg'; }
 }
 
 if (urlParams.get('id')) {
