@@ -137,6 +137,9 @@ const start = async () => {
             add_btn.style.display = "none";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
     const user = auth.currentUser;
     console.log(user);
 };

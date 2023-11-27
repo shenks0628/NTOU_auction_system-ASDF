@@ -211,6 +211,9 @@ const start = () => {
             title.innerHTML = "請先登入後再來查看";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
     const user = auth.currentUser;
     console.log(user);
 };
