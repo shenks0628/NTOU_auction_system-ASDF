@@ -227,6 +227,12 @@ function edit() { // 修改商品頁面
     document.getElementById("inputDescription").setAttribute("value", newProductData.description);
     document.getElementById("inputPrice").setAttribute("value", newProductData.price);
     document.getElementById("inputQuantity").setAttribute("value", newProductData.quantity);
+    if (str[1])
+        document.getElementById("inputTag1").setAttribute("value", str[1]);
+    if (str[2])
+        document.getElementById("inputTag2").setAttribute("value", str[2]);
+    if (str[3])
+        document.getElementById("inputTag3").setAttribute("value", str[3]);
     document.getElementById("editPage").style.display = "block";
 }
 function closeEditPage() { // 關閉修改頁面
@@ -244,16 +250,19 @@ const updateProduct = async () => { // 修改並更新資料庫
         const productId = key; // 替換成實際的產品 ID
         // 使用 doc 函數構建該產品的參考路徑
         const productRef = doc(db, "products", productId);
-
+        let name = document.getElementById("inputName").value;
+        if (document.getElementById("inputTag1").value.length != 0) name += ("#" + document.getElementById("inputTag1").value);
+        if (document.getElementById("inputTag2").value.length != 0) name += ("#" + document.getElementById("inputTag2").value);
+        if (document.getElementById("inputTag3").value.length != 0) name += ("#" + document.getElementById("inputTag3").value);
         await updateDoc(productRef, {
             // bids_info: {},
             // comment: {},
             // type: type,
             // imgs: [],
-            name: document.getElementById("inputName").value,
+            name: name,
             description: document.getElementById("inputDescription").value,
-            price: document.getElementById("inputPrice").value,
-            quantity: document.getElementById("inputQuantity").value,
+            price: parseInt(document.getElementById("inputPrice").value),
+            quantity: parseInt(document.getElementById("inputQuantity").value),
             // time: serverTimestamp(),
             // url: ""
         });
