@@ -213,6 +213,8 @@ const start = () => {
     });
     login.onclick = () => {
         signOut(auth);
+        let display_list = document.getElementById("display_list");
+        display_list.innerHTML = "";
     }
     const user = auth.currentUser;
     console.log(user);
