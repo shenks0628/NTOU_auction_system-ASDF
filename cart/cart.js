@@ -23,6 +23,7 @@ const auth = getAuth();
 const db = getFirestore(app);
 let cartItems = [];//購物車的陣列
 let totalSelectedPrice =0;//總價的變數
+let userId;//使用者id
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
 async function removeItem(itemid) {
@@ -31,25 +32,17 @@ async function removeItem(itemid) {
         return;
     }
     console.log(itemid);
-    onAuthStateChanged(auth, async (user) => {
-        if (user) { // 有登入
-            const userId = user.email; // 取得當前登入的使用者信箱 (id)
-            console.log(userId);
-            //刪除資料庫裡的id
-            await updateDoc(doc(db, "users", userId), {
-                ['cart.' + itemid]: deleteField()
-            });
-        }
-        else { // 沒有登入
-              console.log("沒拿到userid");
-        }
+    await updateDoc(doc(db, "users", userId), {
+        ['cart.' + itemid]: deleteField()
     });
+            
+        
 }
 function displayCart() {
     // 清空表格內容
     cartTable.innerHTML = `
     <tr>
-        <th>商品名稱</th>
+        <th></th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
@@ -104,7 +97,7 @@ const start = () => {
     const div_cart = document.getElementById("div_cart");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
-            const userId = user.email; // 取得當前登入的使用者信箱 (id)
+            userId = user.email; // 取得當前登入的使用者信箱 (id)
             login.innerHTML = "登出";
             title.innerHTML = "購物車";
             div_cart.style.display = "";
@@ -250,18 +243,8 @@ const start1 = () => {
                             }
                         }
                     }
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) { // 有登入
-                            const userId = user.email; // 取得當前登入的使用者信箱 (id)
-                            console.log(userId);
-                            //更新資料庫裡的數量
-                            updateDoc(doc(db, "users", userId), {
-                                ['cart.' + itemid]: parseInt(userInput)
-                            });
-                        }
-                        else { // 沒有登入
-                              console.log("沒拿到userid");
-                        }
+                    updateDoc(doc(db, "users", userId), {
+                        ['cart.' + itemid]: parseInt(userInput)
                     });
                     displayCart();
                 }
