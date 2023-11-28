@@ -22,6 +22,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 let cartItems = [];//購物車的陣列
+let totalSelectedPrice =0;//總價的變數
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
 async function removeItem(itemid) {
@@ -49,6 +50,7 @@ function displayCart() {
     cartTable.innerHTML = `
     <tr>
         <th>商品名稱</th>
+        <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
         <th>總價</th>
@@ -63,6 +65,7 @@ function displayCart() {
             totalAmount += subtotal;
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td><input type="checkbox" class="item-checkbox" data-item-name="${item.key}"></td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -77,6 +80,7 @@ function displayCart() {
             const row = document.createElement('tr');
             const subtotal = item.price * item.quantity;
             row.innerHTML = `
+                <td></td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -89,7 +93,9 @@ function displayCart() {
         }
         
     };
-    totalAmountElement.textContent = totalAmount;
+    totalSelectedPrice = 0;
+    totalAmountElement.textContent = totalSelectedPrice ;
+    
 }
 let cartData;
 const start = () => {
@@ -139,6 +145,7 @@ const start = () => {
 const start1 = () => {
     cartTable.innerHTML = `
     <tr>
+        <th></th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
@@ -163,9 +170,10 @@ const start1 = () => {
                     cartItems.push(newItem);
                     console.log(cartItems);
                     totalAmount += newItem.price * newItem.quantity;
-                    totalAmountElement.textContent = totalAmount;
+                    //totalAmountElement.textContent = 0;
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
@@ -183,6 +191,7 @@ const start1 = () => {
                     console.log(cartItems);
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td></td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
@@ -259,6 +268,19 @@ const start1 = () => {
             }
             
         }
+    });
+    cartTable.addEventListener('change', (event) => {//有勾選的顯示總價
+        if (event.target.classList.contains('item-checkbox')) {
+            const itemName = event.target.getAttribute('data-item-name');
+            const isChecked = event.target.checked;//確認是否勾選
+            const selectedItem = cartItems.find(item => item.key === itemName);//確認購物車裡是否有它
+            if (isChecked && selectedItem) {
+                totalSelectedPrice += selectedItem.price * selectedItem.quantity;
+            } else {
+                totalSelectedPrice -= selectedItem.price * selectedItem.quantity;
+            }
+        }
+        totalAmountElement.textContent =totalSelectedPrice;
     });
 };
 
