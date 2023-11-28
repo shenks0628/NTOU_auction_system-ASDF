@@ -141,6 +141,9 @@ const start = () => {
             div_cart.style.display = "none";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
 };
 const start1 = () => {
     cartTable.innerHTML = `

@@ -111,3 +111,14 @@ dialog {
   border: 1px solid rgb(0, 0, 0);
   text-align: justify;
 }
+
+.commentBlock {
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.readMore {
+  color: darkgray;
+  cursor: pointer;
+}

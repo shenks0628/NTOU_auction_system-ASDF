@@ -10,6 +10,3 @@ function searchProducts() {
 function searchProduct(id) {
     window.location.href = '?id=' + id;
 }
-function searchUser(email) {
-    window.location.href = '?email=' + email;
-}
