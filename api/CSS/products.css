@@ -20,20 +20,23 @@
     font-size: 18px;
     color: #888;
 }
-.product button {
+.product .buttons {
     width: 64px;
     height: 64px;
+    display: flex;
+}
+.product button {
     border: none;
     background-color: transparent;
 }
 .product button:hover {
-    background-color: #555;
+    opacity: 0.8;
 }
 .product.row {
     flex-direction: row;
     align-items: center;
 }
-.product.row img {
+.product.row > img {
     max-width: 64px;
     max-height: 64px;
 }
