@@ -211,6 +211,11 @@ const start = () => {
             title.innerHTML = "請先登入後再來查看";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+        let display_list = document.getElementById("display_list");
+        display_list.innerHTML = "";
+    }
     const user = auth.currentUser;
     console.log(user);
 };

@@ -137,6 +137,13 @@ const start = async () => {
             add_btn.style.display = "none";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+        let normal_display_list = document.getElementById("normal_display_list");
+        let bids_display_list = document.getElementById("bids_display_list");
+        normal_display_list.innerHTML = "";
+        bids_display_list.innerHTML = "";
+    }
     const user = auth.currentUser;
     console.log(user);
 };

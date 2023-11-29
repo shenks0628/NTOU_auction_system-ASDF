@@ -22,6 +22,8 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 let cartItems = [];//購物車的陣列
+let totalSelectedPrice =0;//總價的變數
+let userId;//使用者id
 let cartTable = document.getElementById('cart');
 let totalAmountElement = document.getElementById('totalAmount');
 async function removeItem(itemid) {
@@ -30,24 +32,20 @@ async function removeItem(itemid) {
         return;
     }
     console.log(itemid);
-    onAuthStateChanged(auth, async (user) => {
-        if (user) { // 有登入
-            const userId = user.email; // 取得當前登入的使用者信箱 (id)
-            console.log(userId);
-            //刪除資料庫裡的id
-            await updateDoc(doc(db, "users", userId), {
-                ['cart.' + itemid]: deleteField()
-            });
-        }
-        else { // 沒有登入
-              console.log("沒拿到userid");
-        }
+    if (userId === undefined) {
+        return ;
+    }
+    await updateDoc(doc(db, "users", userId), {
+        ['cart.' + itemid]: deleteField()
     });
+            
+        
 }
 function displayCart() {
     // 清空表格內容
     cartTable.innerHTML = `
     <tr>
+        <th></th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
@@ -63,6 +61,7 @@ function displayCart() {
             totalAmount += subtotal;
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td><input type="checkbox" class="item-checkbox" data-item-name="${item.key}"></td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -77,6 +76,7 @@ function displayCart() {
             const row = document.createElement('tr');
             const subtotal = item.price * item.quantity;
             row.innerHTML = `
+                <td></td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -89,7 +89,9 @@ function displayCart() {
         }
         
     };
-    totalAmountElement.textContent = totalAmount;
+    totalSelectedPrice = 0;
+    totalAmountElement.textContent = totalSelectedPrice ;
+    
 }
 let cartData;
 const start = () => {
@@ -98,7 +100,7 @@ const start = () => {
     const div_cart = document.getElementById("div_cart");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
-            const userId = user.email; // 取得當前登入的使用者信箱 (id)
+            userId = user.email; // 取得當前登入的使用者信箱 (id)
             login.innerHTML = "登出";
             title.innerHTML = "購物車";
             div_cart.style.display = "";
@@ -130,15 +132,20 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            userId = undefined;
             login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
             div_cart.style.display = "none";
         }
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
 };
 const start1 = () => {
     cartTable.innerHTML = `
     <tr>
+        <th></th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
@@ -163,9 +170,10 @@ const start1 = () => {
                     cartItems.push(newItem);
                     console.log(cartItems);
                     totalAmount += newItem.price * newItem.quantity;
-                    totalAmountElement.textContent = totalAmount;
+                    //totalAmountElement.textContent = 0;
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
@@ -183,6 +191,7 @@ const start1 = () => {
                     console.log(cartItems);
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td></td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
@@ -238,18 +247,8 @@ const start1 = () => {
                             }
                         }
                     }
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) { // 有登入
-                            const userId = user.email; // 取得當前登入的使用者信箱 (id)
-                            console.log(userId);
-                            //更新資料庫裡的數量
-                            updateDoc(doc(db, "users", userId), {
-                                ['cart.' + itemid]: parseInt(userInput)
-                            });
-                        }
-                        else { // 沒有登入
-                              console.log("沒拿到userid");
-                        }
+                    updateDoc(doc(db, "users", userId), {
+                        ['cart.' + itemid]: parseInt(userInput)
                     });
                     displayCart();
                 }
@@ -259,6 +258,19 @@ const start1 = () => {
             }
             
         }
+    });
+    cartTable.addEventListener('change', (event) => {//有勾選的顯示總價
+        if (event.target.classList.contains('item-checkbox')) {
+            const itemName = event.target.getAttribute('data-item-name');
+            const isChecked = event.target.checked;//確認是否勾選
+            const selectedItem = cartItems.find(item => item.key === itemName);//確認購物車裡是否有它
+            if (isChecked && selectedItem) {
+                totalSelectedPrice += selectedItem.price * selectedItem.quantity;
+            } else {
+                totalSelectedPrice -= selectedItem.price * selectedItem.quantity;
+            }
+        }
+        totalAmountElement.textContent =totalSelectedPrice;
     });
 };
 
