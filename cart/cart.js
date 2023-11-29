@@ -35,8 +35,6 @@ async function removeItem(itemid) {
     await updateDoc(doc(db, "users", userId), {
         ['cart.' + itemid]: deleteField()
     });
-            
-        
 }
 function displayCart() {
     // 清空表格內容
@@ -134,9 +132,6 @@ const start = () => {
             div_cart.style.display = "none";
         }
     });
-    login.onclick = () => {
-        signOut(auth);
-    }
 };
 const start1 = () => {
     cartTable.innerHTML = `
@@ -268,6 +263,9 @@ const start1 = () => {
         }
         totalAmountElement.textContent =totalSelectedPrice;
     });
+    login.onclick = () => {
+        signOut(auth);
+    }
 };
 
 window.addEventListener("load", start);
