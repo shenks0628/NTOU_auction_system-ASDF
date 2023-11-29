@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, updateDoc, getDoc, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, updateDoc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -25,26 +25,35 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-function productSection(id, img, name, price) {
+function productSection(id, data) {
+    const btn = '<button><img src="img/add-cart.png" alt="add-cart"></button>';
+    const btns = '<button><img src="img/pen.png" alt="edit"></button><button><img src="img/minus.png" alt="remove"></button>';
     const newSection = document.createElement('section');
     newSection.className = 'product';
     newSection.innerHTML = `
-        <img src="${img}" alt="product-image">
+        <img src="${data.imgs[0]}" alt="product-image">
         <div class="product-detail">
             <div>
-                <p class="name">${name.split('#')[0]}</p>
-                <p class="price">$${price}</p>
+                <p class="name">${data.name.split('#')[0]}</p>
+                <p class="price">$${data.price}</p>
             </div>
-            <div>
-                <button><img src="img/add-cart.png" alt="product-image"></button>
-            </div>
+            <div class="buttons">${auth.currentUser && data.seller === auth.currentUser.email ? btns : btn}</div>
         </div>
     `;
-    newSection.onclick = function (e) {
+    newSection.onclick = async function (e) {
         if (!e.target.closest('button')) {
             searchProduct(id);
         } else {
-            addCart(id);
+            if (e.target.alt === 'edit') {
+
+            } else if (e.target.alt === 'remove') {
+                if (confirm('確定要刪除嗎')) {
+                    await deleteDoc(doc(db, "products", id));
+                    location.reload();
+                }
+            } else {
+                addCart(id);
+            }
         }
     }
     return newSection;
@@ -85,7 +94,7 @@ async function addProductsToMain(q, t='', p='') {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
         if (doc.data().name.includes(keywords)) {
-            mainElement.appendChild(productSection(doc.id, doc.data().imgs[0], doc.data().name, doc.data().price));
+            mainElement.appendChild(productSection(doc.id, doc.data()));
         }
     });
     if (localStorage.getItem('ASDF-display') !== 'menu') {
@@ -147,7 +156,7 @@ async function getProduct(id) {
                 button.classList.add('choose');
             });
         });
-        const product = productSection(docSnap.id, docSnap.data().imgs[0], docSnap.data().name, docSnap.data().price);
+        const product = productSection(docSnap.id, docSnap.data());
         product.className = 'product row sticky';
         document.body.appendChild(product);
     } else {
