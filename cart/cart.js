@@ -32,6 +32,9 @@ async function removeItem(itemid) {
         return;
     }
     console.log(itemid);
+    if (userId === undefined) {
+        return ;
+    }
     await updateDoc(doc(db, "users", userId), {
         ['cart.' + itemid]: deleteField()
     });
@@ -129,6 +132,7 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            userId = undefined;
             login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
             div_cart.style.display = "none";
