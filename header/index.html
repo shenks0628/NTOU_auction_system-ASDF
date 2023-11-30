@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTOU-ASDF</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="toggle">
+            <div class="left">
+                <a href="" title="NTOU-ASDF">
+                    <img width="64" height="64" src="img/ASDF.png" alt="ASDF-logo">
+                </a>
+            </div>
+            <span class="title-span">NTOU-ASDF</span>
+            <div class="right">
+                <div class="search-bar">
+                    <input id="searchBarInput" type="text" placeholder="Search">
+                    <button onclick="toUrl('api/?search='+searchBarInput.value)">
+                        <img width="32" height="32" src="img/search.png" alt="search">
+                    </button>
+                </div>
+                <button id="menuBtn">
+                    <img width="36" height="36" src="img/menu-burger.png" alt="menu-burger">
+                </button>
+            </div>
+        </div>
+        
+        <div id="menuSearch">
+            <input id="menuSearchInput" type="text" placeholder="Search">
+            <button onclick="toUrl('api/?search='+menuSearchInput.value)">
+                <img width="32" height="32" src="img/search.png" alt="search">
+            </button>
+        </div>
+
+        <nav>
+            <ul id="menuUl">
+                <li><button>一般商品</button></li>
+                <li><button>競標商品</button></li>
+                <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
+                <li><button onclick="toUrl('bidding_list/bidding_list.html')">競標清單</button></li>
+                <li><button onclick="toUrl('selling_list/selling_list.html')">賣東西</button></li>
+                <li><button>聯絡我們</button></li>
+                <li><button id="googleSignBtn">登入</button></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <iframe id="mainIframe" frameborder="0" scrolling="yes" src="../"></iframe>
+    </main>
+    <!--
+        <footer style="text-align:center;padding:10px;background-color:#333;color:#fff;">
+            <p>&copy; 2023 NTOU_ASDF. 版權所有。</p>
+        </footer>
+    -->
+    <script src="JavaScript/scripts.js"></script>
+    <script type="module" src="JavaScript/firebase.js"></script>
+</body>
+</html>
