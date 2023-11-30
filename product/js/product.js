@@ -63,7 +63,7 @@ function start() {
     getProduct();
     onAuthStateChanged(auth, (user) => {
         // let login = document.getElementById("login");
-        let profileImage = document.getElementById("profileImage");
+        // let profileImage = document.getElementById("profileImage");
         console.log(user);
         if (user) {
             userID = user.email;
@@ -88,17 +88,6 @@ function eventSetting() {
     document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
     document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
     document.getElementById("completeButton").addEventListener("click", updateProduct, false);
-}
-
-function loginAndlogout() { // 登入登出
-    let login = document.getElementById("login");
-    if (login.innerHTML == "登出") {
-        signOut(auth);
-        profileImage.setAttribute("src", "../images/user.jpg");
-    }
-    else {
-        window.location.href = "../sign/index.html";
-    }
 }
 
 function setProduct() { // 設定顯示的商品
