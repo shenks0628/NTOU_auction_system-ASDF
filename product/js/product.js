@@ -62,26 +62,25 @@ function start() {
     eventSetting();
     getProduct();
     onAuthStateChanged(auth, (user) => {
-        let login = document.getElementById("login");
+        // let login = document.getElementById("login");
         let profileImage = document.getElementById("profileImage");
         console.log(user);
         if (user) {
             userID = user.email;
-            login.innerHTML = "登出";
-            profileImage.setAttribute("src", user.photoURL);
+            // login.innerHTML = "登出";
+            // profileImage.setAttribute("src", user.photoURL);
         }
         else {
             userID = "none";
-            login.innerHTML = "登入";
+            // login.innerHTML = "登入";
         }
         setting(userID, productOwnerID);
     });
 };
 function eventSetting() {
-    document.getElementById("login").addEventListener("click", loginAndlogout, false);
+    // document.getElementById("login").addEventListener("click", loginAndlogout, false);
     imgs = document.getElementById("itemPicture"),
         imgs.addEventListener("click", changeImage, false);
-    document.getElementById("searchButton").addEventListener("click", searchProduct, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
@@ -185,14 +184,6 @@ function setting() { // 判定是否為買 or 賣家
             edit[i].style.display = "none";
         }
     }
-}
-
-function searchProduct() {
-    let form = document.getElementById("searchForm");
-    let url = "../search/search.html?keyword=" + form.elements["keyword"].value;
-    console.log(url);
-    window.alert("暫未開放此功能");
-    // window.location.href = url;
 }
 
 function changeImage() { // 切換商品照片
