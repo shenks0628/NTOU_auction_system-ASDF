@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, TwitterAuthProvider, getAdditionalUserInfo } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -68,21 +68,3 @@ googleBtn.onclick = function (e) {
         window.history.back();
     }).catch((error) => {errorSpan.innerHTML = error.message;});
 }
-/*twitterBtn.onclick = function (e) {
-    const provider = new TwitterAuthProvider();
-    signInWithPopup(auth, provider)
-    .then(async (result) => {
-        const user = getAdditionalUserInfo(result).profile;
-        const docSnap = await getDoc(doc(db, "users", user.email));
-        if (!docSnap.exists()) {
-            await setDoc(doc(db, "users", user.email), {
-                bids: {},
-                cart: {},
-                name: user.screen_name,
-                score: 0.0,
-                imgSrc: user.profile_image_url_https
-            });
-        }
-        window.history.back();
-    }).catch((error) => {errorSpan.innerHTML = error.message;});
-}*/
