@@ -78,7 +78,6 @@ const handleCheck = (event) => {
 }
 
 const start = async () => {
-    const login = document.getElementById("login");
     const title = document.getElementById("title");
     const normal_title = document.getElementById("normal_title");
     const bids_title = document.getElementById("bids_title");
@@ -87,7 +86,6 @@ const start = async () => {
     const add_btn = document.getElementById("add");
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            login.innerHTML = "登出";
             title.innerHTML = "賣場清單";
             normal_title.style.display = "";
             bids_title.style.display = "";
@@ -128,7 +126,6 @@ const start = async () => {
             add_btn.addEventListener("click", add);
         }
         else {
-            login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
             normal_title.style.display = "none";
             bids_title.style.display = "none";

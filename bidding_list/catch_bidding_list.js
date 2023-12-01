@@ -168,11 +168,9 @@ const start1 = () => {
 };
 
 const start = () => {
-    const login = document.getElementById("login");
     const title = document.getElementById("title");
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            login.innerHTML = "登出";
             title.innerHTML = "競標清單";
             // const userId = "ethan147852369@gmail.com";
             userId = user.email;
@@ -207,7 +205,6 @@ const start = () => {
         }
         else {
             userId = undefined;
-            login.innerHTML = "登入";
             title.innerHTML = "請先登入後再來查看";
         }
     });
