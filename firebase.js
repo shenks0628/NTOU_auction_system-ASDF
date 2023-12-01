@@ -45,20 +45,4 @@ const display = async () => {
     });
 }
 
-const start = () => {
-    const login = document.getElementById("login");
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            login.innerHTML = "登出";
-        }
-        else {
-            login.innerHTML = "登入";
-        }
-    });
-    login.onclick = () => {
-        signOut(auth);
-    }
-}
-
-window.addEventListener("load", start);
 window.addEventListener("load", display);
