@@ -229,6 +229,9 @@ const start1 = () => {
                 if (!isNumeric) { // 如果輸入不是全不都數字/輸入空白
                     window.alert("無效修改！因為您的輸入格式有問題！");
                 }
+                else if(parseInt(userInput)===0){
+                    window.alert("無效修改！因為您的輸入格式有問題！");
+                }
                 else { // 輸入都是數字（正常）
                     for(var item of cartItems){
                         if(item.key===itemid){
