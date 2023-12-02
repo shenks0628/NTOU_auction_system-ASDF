@@ -26,10 +26,12 @@ const db = getFirestore(app);
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        googleSignBtn.innerHTML = "登出";        
+        avatarBtn.innerHTML = `<img class="avatar" src="${user.photoURL}" alt="avatar">`;
+        googleSignBtn.innerHTML = '登出';        
         googleSignBtn.onclick = function (e) { signOut(auth); }
     } else {
-        googleSignBtn.innerHTML = "登入";
+        avatarBtn.innerHTML = '<img class="avatar" src="img/google.png" alt="google">';
+        googleSignBtn.innerHTML = '登入';
         googleSignBtn.onclick = function (e) {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider)

@@ -60,6 +60,22 @@ iframe {
 .toggle .left {
     width: 100%;
 }
+#avatarBtn {
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+.avatar {
+    width: 52px;
+    height: 52px;
+}
+.notify {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+}
 .toggle .right {
     width: 100%;
     display: flex;
@@ -69,7 +85,6 @@ iframe {
     white-space:nowrap;
     font-size: 2.5em;
     -webkit-text-stroke: 1.5px black;
-    color: white;
 }
 .toggle .search-bar {
     width: 180px;
