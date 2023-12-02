@@ -271,9 +271,8 @@ async function addCart(id) {
     });
 }
 async function uploadName(email, name) {
-    await updateDoc(doc(db, "users", email), {
-        name: name
-    });
+    await updateProfile(auth.currentUser, {displayName: name});
+    await updateDoc(doc(db, "users", email), {name: name});
     editName.innerHTML = name;
     alert('更新成功');
 }
