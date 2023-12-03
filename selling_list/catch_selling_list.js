@@ -107,11 +107,12 @@ const start = async () => {
             querySnapshot.forEach((doc) => {
                 console.log(doc.id, "=>", doc.data());
                 const productData = doc.data();
+                const productName = productData.name.split('#')[0];
                 if (productData.type == "normal") {
-                    normal_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                    normal_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="../api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
                 }
                 else if (productData.type == "bids") {
-                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="../api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
                 }
             });
             normal_display_list.removeEventListener("click", handleCheck);
