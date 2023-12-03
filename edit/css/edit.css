@@ -7,10 +7,73 @@ body {
 footer {
   flex: 1;
   width: 100%;
-  /* height: 100px; */
   flex-grow: 0;
   background-color: #333;
   color: white;
   text-align: center;
   float: inline-end;
+}
+
+input:valid {
+  background-color: white;
+}
+
+input:invalid {
+  background-color: lightpink;
+}
+
+button {
+  cursor: pointer;
+}
+
+#checkPage {
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px #ccc;
+  border-radius: 10px;
+  background-color: rgba(64, 64, 64, 0.9);
+  border: 1px solid rgb(0, 0, 0);
+  text-align: justify;
+}
+
+@media screen and (min-width:768px) {
+  #checkPage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: calc(100%-120px);
+    min-width: 50%;
+    max-width: 80%;
+  }
+
+  #comparePart {
+    flex-direction: row;
+  }
+
+  #new,
+  #old {
+    height: 100%;
+    width: 48%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #checkPage {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80%;
+    max-height: calc(100% - 120px);
+    overflow-y: auto;
+  }
+
+  #comparePart {
+    flex-direction: column;
+  }
+
+  #new,
+  #old {
+    width: 96%;
+  }
 }

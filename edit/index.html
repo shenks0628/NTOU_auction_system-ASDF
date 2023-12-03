@@ -11,19 +11,51 @@
 <body>
   <div id="site"
     style="width:100%; height: 100%; display: flex;flex-direction: column; min-height: 100vh; color: white;">
-    <div id="editBlock"
+    <div id="eidtBlock"
       style="background-color: gray;color: white; width: 100%; height: 100%; overflow-y: auto; flex:1;">
-      <div>名稱：<input type="text" id="inputName" name="inputName"></div>
+      <div>名稱：<input type="text" id="inputName" name="inputName" required></div>
       <div>描述：<input type="text" id="inputDescription" name="inputDescription"></div>
-      <div>價格：<input type="number" id="inputPrice" name="inputPrice" min="0"></div>
-      <div>數量：<input type="number" id="inputQuantity" name="inputQuantity" min="0"></div>
+      <div>價格：<input type="number" id="inputPrice" name="inputPrice" min="0" required></div>
+      <div>數量：<input type="number" id="inputQuantity" name="inputQuantity" min="0" required></div>
       <div>標籤：<input type="text" id="inputTag1" name="inputTag1" maxlength="10"><input type="text" id="inputTag2"
           name="inputTag2" maxlength="10"><input type="text" id="inputTag3" name="inputTag3" maxlength="10"></div>
-      <div>圖片：<span id="oldImage"></span><input type="file" id="inputImage" name="inputImage" accept="image/*" multiple>
+      <div>圖片：
+        <span id="oldImage"></span><input type="file" id="inputImage" name="inputImage" accept="image/*" multiple>
       </div>
-      <button id="completeButton">送出</button><button
+      <div>內嵌影片：<input type="text" id="inputURL" name="inputURL"
+          pattern="^((https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+)?$"
+          oninvalid="this.setCustomValidity('請用youtube影片連結')">(限Youtube影片)
+      </div>
+      <button id="completeButton">完成修改</button><button
         id="resetButton">重置</button><!--<button id="saveButton">暫時儲存</button>-->
     </div>
+    <dialog id="checkPage">
+      <div id="comparePart" style="display: flex;">
+        <div id="old" style="background-color:rgb(64, 0, 0);color:antiquewhite; overflow-y: auto;margin: 1%;">
+          <div style="font-weight: bold;">修改前</div>
+          <hr>
+          <div>名稱：<span id="oldName"></span></div>
+          <div>描述：<span id="oldDescription"></span></div>
+          <div>價格：<span id="oldPrice"></span></div>
+          <div>數量：<span id="oldQuantity"></span></div>
+          <div>標籤：<span id="oldTag"></span></div>
+          <div>圖片：<span id="oldImage"></span></div>
+          <div>內嵌影片：<span id="oldURL"></span></div>
+        </div>
+        <div id="new" style="background-color: rgb(0, 64, 0); color:antiquewhite; overflow-y: auto; margin: 1%;">
+          <div style="font-weight: bold;">修改後</div>
+          <hr>
+          <div>名稱：<span id="newName"></span></div>
+          <div>描述：<span id="newDescription"></span></div>
+          <div>價格：<span id="newPrice"></span></div>
+          <div>數量：<span id="newQuantity"></span></div>
+          <div>標籤：<span id="newTag"></span></div>
+          <div>圖片：<span id="newImage"></span></div>
+          <div>內嵌影片：<span id="newURL"></span></div>
+        </div>
+      </div>
+      <button id="sendButton">送出</button><button id="checkPageCloseButton">繼續修改</button>
+    </dialog>
     <footer id="footer">
       <h1>© NTOU_ASDF</h1>
     </footer>

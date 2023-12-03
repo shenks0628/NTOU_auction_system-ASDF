@@ -76,7 +76,9 @@ function start() {
 function eventSetting() {
   // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
   document.getElementById("resetButton").addEventListener("click", getProduct, false);
-  document.getElementById("completeButton").addEventListener("click", updateProduct, false);
+  document.getElementById("completeButton").addEventListener("click", showCheckPage, false);
+  document.getElementById("checkPageCloseButton").addEventListener("click", closeCheckPage, false);
+  document.getElementById("sendButton").addEventListener("click", sendCheck, false);
 }
 
 function showData() { // 顯示原商品資料
@@ -108,6 +110,7 @@ function showData() { // 顯示原商品資料
     oldImage.appendChild(img);
   }
   document.getElementById("inputImage").value = "";
+  document.getElementById("inputURL").value = productData.url;
   // document.getElementById("editPage").style.display = "block";
 }
 function temporaryDeleteImage(img, src) {
@@ -144,6 +147,19 @@ function preview() { // 預覽 目前不想做
   // imgs.setAttribute("src", srcs[0]);
 }
 
+function showCheckPage() {
+  document.getElementById("checkPage").style.display = "block";
+  window.alert("比較系統暫未開放");
+}
+function closeCheckPage() {
+  document.getElementById("checkPage").style.display = "none";
+}
+
+function sendCheck() {
+  if (window.confirm("是否確認修改？")) {
+    updateProduct();
+  }
+}
 const updateProduct = async () => { // 修改並更新資料庫
   try {
     const productId = id; // 替換成實際的產品 ID
@@ -163,7 +179,7 @@ const updateProduct = async () => { // 修改並更新資料庫
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(document.getElementById("inputQuantity").value),
       // time: serverTimestamp(),
-      // url: ""
+      url: document.getElementById("inputURL").value
     });
     updateImage();
     window.alert("修改成功！");
