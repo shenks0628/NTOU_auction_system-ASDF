@@ -36,12 +36,22 @@ const display = async () => {
     queryNormalSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
-        latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';
+        const productName = productData.name.split('#')[0];
+        latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';
     });
     queryBidsSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
-        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productData.name +  '</h3><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
+        const productName = productData.name.split('#')[0];
+        let endDate = productData.endtime.toDate();
+        if (productData.bids_info.modtime) {
+            const tmpDate = productData.bids_info.modtime.toDate();
+            tmpDate.setHours(tmpDate.getHours() + 8);
+            if (tmpDate < endDate) {
+                endDate = tmpDate;
+            }
+        }
+        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
     });
 }
 
