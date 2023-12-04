@@ -23,7 +23,7 @@ const db = getFirestore(app);
 const storage = getStorage();
 
 
-let id = "dd6VioVhhtD3p6P2r49r";
+let id = "";
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('id')) {
   id = urlParams.get('id');
@@ -55,6 +55,7 @@ const getProduct = async () => { // 讀資料
     });
 }
 function start() {
+  window.alert("目前只開放一般商品");
   eventSetting();
   onAuthStateChanged(auth, (user) => {
     console.log(user);
@@ -71,7 +72,9 @@ function start() {
     }
     // setting(userID, productOwnerID);
   });
-  getProduct();
+  if (id.length > 0) {
+    getProduct();
+  }
 };
 function eventSetting() {
   // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
@@ -148,18 +151,113 @@ function preview() { // 預覽 目前不想做
 }
 
 function showCheckPage() {
-  document.getElementById("checkPage").style.display = "block";
-  window.alert("比較系統暫未開放");
+  if (document.getElementById("oldName").valid == false || document.getElementById("oldPrice").valid == false || document.getElementById("oldQuantity").valid == false) {
+    window.alert("請填寫完整資料");
+  }
+  else if (document.getElementById("oldURL").valid == false) {
+    window.alert("影片格式不正確，請修改");
+  }
+  else {
+    document.getElementById("checkPage").style.display = "block";
+    window.alert("比較系統暫未開放");
+  }
 }
 function closeCheckPage() {
   document.getElementById("checkPage").style.display = "none";
 }
 
 function sendCheck() {
-  if (window.confirm("是否確認修改？")) {
-    updateProduct();
+  if (id.length > 0) {
+    if (window.confirm("是否確認修改？")) {
+      updateProduct();
+    }
+  }
+  else {
+    if (window.confirm("是否確認新增？")) {
+      addProduct();
+    }
   }
 }
+
+const addProduct = async () => {
+  try {
+    const userId = userID;
+    let imgs = document.getElementById("inputImage").files;
+    let name = document.getElementById("inputName").value;
+    let description = document.getElementById("inputDescription").value;
+    let price = document.getElementById("inputPrice").value;
+    let quantity = document.getElementById("inputQuantity").value;
+    // let normal = document.getElementById("normal");
+    // let bids = document.getElementById("bids");
+    let type = "normal";
+    // if (normal.checked) {
+    //   type = normal.value;
+    // }
+    // else if (bids.checked) {
+    //   type = bids.value;
+    // }
+    let url = document.getElementById("inputURL").value;
+    if (type == "normal") {
+      let { productID } = await addDoc(collection(db, "products"), {
+        comment: {},
+        type: type,
+        imgs: [],
+        name: name,
+        description: description,
+        price: parseInt(price),
+        quantity: parseInt(quantity),
+        seller: userId,
+        time: serverTimestamp(),
+        url: url
+      });
+      for (let i = 0; i < imgs.length; i++) {
+        const storageRef = ref(storage, "images/" + imgs[i].name);
+        await uploadBytes(storageRef, imgs[i]).then((snapshot) => {
+          console.log("Upload Success");
+        });
+        getDownloadURL(storageRef).then(async (url) => {
+          await updateDoc(doc(db, "products", id), {
+            imgs: arrayUnion(url)
+          });
+        });
+      }
+      id = productID;
+    }
+    else if (type == "bids") {
+      let { productID } = await addDoc(collection(db, "products"), {
+        bids_info: { who1: "", who2: "", price1: parseInt(price), price2: parseInt(0) },
+        comment: {},
+        type: type,
+        imgs: [],
+        name: name,
+        description: description,
+        price: parseInt(price),
+        quantity: parseInt(quantity),
+        seller: userId,
+        time: serverTimestamp(),
+        url: url
+      });
+      for (let i = 0; i < imgs.length; i++) {
+        const storageRef = ref(storage, "images/" + imgs[i].name);
+        await uploadBytes(storageRef, imgs[i]).then((snapshot) => {
+          console.log("Upload Success");
+        });
+        getDownloadURL(storageRef).then(async (url) => {
+          await updateDoc(doc(db, "products", id), {
+            imgs: arrayUnion(url)
+          });
+        });
+      }
+      id = productID;
+    }
+    window.alert("您已成功新增商品！");
+    window.location.href = "../selling_list/selling_list.html";
+    // window.location.href = "../product?id=" + id;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const updateProduct = async () => { // 修改並更新資料庫
   try {
     const productId = id; // 替換成實際的產品 ID
@@ -183,7 +281,7 @@ const updateProduct = async () => { // 修改並更新資料庫
     });
     updateImage();
     window.alert("修改成功！");
-    window.location.href = "../product/?id=" + id;
+    window.location.href = "../product?id=" + id;
     // document.getElementById("editPage").style.display = "none";
   } catch (err) {
     console.error("Error: ", err);
