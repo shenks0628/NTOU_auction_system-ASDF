@@ -18,7 +18,7 @@ button {
   cursor: pointer;
 }
 
-.edit {
+.editButton {
   cursor: pointer;
   display: none;
   /*預設隱藏*/
@@ -84,7 +84,7 @@ button {
   height: 400px;
 }
 
-dialog {
+/* dialog {
   position: absolute;
   width: 700px;
   height: 450px;
@@ -97,7 +97,7 @@ dialog {
   background-color: rgba(64, 64, 64, 0.9);
   border: 1px solid rgb(0, 0, 0);
   text-align: justify;
-}
+} */
 
 .commentBlock {
   border: 1px solid #ccc;
