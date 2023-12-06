@@ -30,13 +30,14 @@ if (urlParams.get('id')) {
 }
 
 let productData;
+let beDeletedFiles;
 let userID;
 const getProduct = async () => { // 讀資料
   const productId = id; // 替換成實際的產品 ID
   // 使用 doc 函數構建該產品的參考路徑
   const productRef = doc(db, "products", productId);
   // 使用 getDoc 函數取得該產品的文件快照
-  getDoc(productRef)
+  await getDoc(productRef)
     .then((productDoc) => {
       if (productDoc.exists()) {
         // 取得該產品的資料
@@ -65,7 +66,6 @@ function start() {
     }
     else {
       userID = "none";
-      // block page?
       window.alert("請先登入");
       // console.log(document.referrer, document.URL);
       window.location.href = "../";
@@ -114,10 +114,11 @@ function showData() { // 顯示原商品資料
   }
   document.getElementById("inputImage").value = "";
   document.getElementById("inputURL").value = productData.url;
-  // document.getElementById("editPage").style.display = "block";
+  beDeletedFiles = [];
 }
 function temporaryDeleteImage(img, src) {
   return function updateBeDelted() {
+    beDeletedFiles.push(src);
     img.style.display = "none";
     for (let i = 0; i < productData.imgs.length; i++) {
       if (src == productData.imgs[i]) {
@@ -125,7 +126,6 @@ function temporaryDeleteImage(img, src) {
         break;
       }
     }
-    // console.log(newProductData.imgs);
   }
 }
 
@@ -166,29 +166,38 @@ function closeCheckPage() {
   document.getElementById("checkPage").style.display = "none";
 }
 
-function sendCheck() {
+async function sendCheck() {
   if (id.length > 0) {
     if (window.confirm("是否確認修改？")) {
-      updateProduct();
+      let inputData = readInput();
+      let inputImage = await uploadImage(inputData.imgs);
+      inputData.imgs = productData.imgs;
+      for (let i = 0; i < inputImage.length; i++) {
+        inputData.imgs.push(inputImage[i]);
+      }
+      console.log(inputData);
+      await updateProduct(inputData);
+      for (let i = 0; i < beDeletedFiles.length; i++) {
+        await deleteStorageFile(beDeletedFiles[i]);
+      }
+      window.alert("修改成功！");
+      window.location.href = "../product?id=" + inputData.id;
     }
   }
   else {
     if (window.confirm("是否確認新增？")) {
-      addProduct();
+      let inputData = readInput();
+      let inputImage = await uploadImage(inputData.imgs);
+      inputData.imgs = inputImage;
+      id = await addProduct(inputData);
+      window.location.href = "../product?id=" + id;
     }
   }
 }
 
-const addProduct = async () => {
+const addProduct = async (inputData) => {
   try {
     const userId = userID;
-    let imgs = document.getElementById("inputImage").files;
-    let name = document.getElementById("inputName").value;
-    let description = document.getElementById("inputDescription").value;
-    let price = document.getElementById("inputPrice").value;
-    let quantity = document.getElementById("inputQuantity").value;
-    // let normal = document.getElementById("normal");
-    // let bids = document.getElementById("bids");
     let type = "normal";
     // if (normal.checked) {
     //   type = normal.value;
@@ -196,32 +205,21 @@ const addProduct = async () => {
     // else if (bids.checked) {
     //   type = bids.value;
     // }
-    let url = document.getElementById("inputURL").value;
     if (type == "normal") {
       let { productID } = await addDoc(collection(db, "products"), {
         comment: {},
         type: type,
         imgs: [],
-        name: name,
-        description: description,
-        price: parseInt(price),
-        quantity: parseInt(quantity),
+        name: inputData.name,
+        description: inputData.description,
+        price: parseInt(inputData.price),
+        quantity: parseInt(inputData.quantity),
         seller: userId,
         time: serverTimestamp(),
-        url: url
+        url: inputData.url
       });
-      for (let i = 0; i < imgs.length; i++) {
-        const storageRef = ref(storage, "images/" + imgs[i].name);
-        await uploadBytes(storageRef, imgs[i]).then((snapshot) => {
-          console.log("Upload Success");
-        });
-        getDownloadURL(storageRef).then(async (url) => {
-          await updateDoc(doc(db, "products", id), {
-            imgs: arrayUnion(url)
-          });
-        });
-      }
-      id = productID;
+      window.alert("您已成功新增商品！");
+      return productID;
     }
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
@@ -229,81 +227,89 @@ const addProduct = async () => {
         comment: {},
         type: type,
         imgs: [],
-        name: name,
-        description: description,
-        price: parseInt(price),
-        quantity: parseInt(quantity),
+        name: inputData.name,
+        description: inputData.description,
+        price: parseInt(inputData.price),
+        quantity: parseInt(inputData.quantity),
         seller: userId,
         time: serverTimestamp(),
-        url: url
+        url: inputData.url
       });
-      for (let i = 0; i < imgs.length; i++) {
-        const storageRef = ref(storage, "images/" + imgs[i].name);
-        await uploadBytes(storageRef, imgs[i]).then((snapshot) => {
-          console.log("Upload Success");
-        });
-        getDownloadURL(storageRef).then(async (url) => {
-          await updateDoc(doc(db, "products", id), {
-            imgs: arrayUnion(url)
-          });
-        });
-      }
-      id = productID;
+      window.alert("您已成功新增商品！");
+      return productID;
     }
-    window.alert("您已成功新增商品！");
-    window.location.href = "../selling_list/selling_list.html";
-    // window.location.href = "../product?id=" + id;
   } catch (err) {
     console.log(err);
   }
 }
 
-const updateProduct = async () => { // 修改並更新資料庫
+async function uploadImage(inputImage) {
+  console.log(inputImage);
+  let imageURL = [];
+  let dateString = getDateString();
+  for (let i = 0; i < inputImage.length; i++) {
+    const storageRef = ref(storage, "images/" + dateString);
+    await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
+      console.log("Upload Success");
+    });
+    await getDownloadURL(storageRef).then(async (url) => {
+      console.log(url);
+      imageURL.push(url.toString());
+    });
+  }
+  return imageURL;
+}
+async function deleteStorageFile(fileUrl) {
+  console.log(fileUrl);
+  const fileRef = ref(storage, fileUrl);
+  // Delete the file
+  await deleteObject(fileRef).then(() => {
+    console.log("delete complete");
+  }).catch((error) => {
+    console.log(error);
+    // Uh-oh, an error occurred!
+  });
+}
+async function updateProduct(inputData) { // 修改並更新資料庫
   try {
-    const productId = id; // 替換成實際的產品 ID
+    const productId = inputData.id; // 替換成實際的產品 ID
     // 使用 doc 函數構建該產品的參考路徑
     const productRef = doc(db, "products", productId);
-    let name = document.getElementById("inputName").value;
-    if (document.getElementById("inputTag1").value.length != 0) name += ("#" + document.getElementById("inputTag1").value);
-    if (document.getElementById("inputTag2").value.length != 0) name += ("#" + document.getElementById("inputTag2").value);
-    if (document.getElementById("inputTag3").value.length != 0) name += ("#" + document.getElementById("inputTag3").value);
     await updateDoc(productRef, {
       // bids_info: {},
       // comment: {},
       // type: type,
-      imgs: productData.imgs,
-      name: name,
-      description: document.getElementById("inputDescription").value,
-      price: parseInt(document.getElementById("inputPrice").value),
-      quantity: parseInt(document.getElementById("inputQuantity").value),
+      imgs: inputData.imgs,
+      name: inputData.name,
+      description: inputData.description,
+      price: parseInt(inputData.price),
+      quantity: parseInt(inputData.quantity),
       // time: serverTimestamp(),
-      url: document.getElementById("inputURL").value
+      url: inputData.url
     });
-    updateImage();
-    window.alert("修改成功！");
-    window.location.href = "../product?id=" + id;
     // document.getElementById("editPage").style.display = "none";
   } catch (err) {
     console.error("Error: ", err);
   }
 }
-const updateImage = async () => {
-  let inputImage = document.getElementById("inputImage").files;
-  for (let i = 0; i < inputImage.length; i++) {
-    const storageRef = ref(storage, "images/" + inputImage[i].name);
-    await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
-      console.log("Upload Success");
-    });
-    await getDownloadURL(storageRef).then(async (url) => {
-      await updateDoc(doc(db, "products", id), {
-        imgs: arrayUnion(url)
-      });
-    });
-  }
-  for (let i = 0; i < productData.imgs.length; i++) {
-    if (productData.imgs.includes(productData.imgs[i])) continue;
-    deleteStorageFile(productData.imgs[i]);
-  }
-}
 
+function getDateString() {
+  let date = new Date();
+  let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
+  return dateString;
+}
+function readInput() {
+  var inputData = {}
+  inputData.id = id;
+  inputData.name = document.getElementById("inputName").value;
+  if (document.getElementById("inputTag1").value.length != 0) inputData.name += ("#" + document.getElementById("inputTag1").value);
+  if (document.getElementById("inputTag2").value.length != 0) inputData.name += ("#" + document.getElementById("inputTag2").value);
+  if (document.getElementById("inputTag3").value.length != 0) inputData.name += ("#" + document.getElementById("inputTag3").value);
+  inputData.description = document.getElementById("inputDescription").value;
+  inputData.price = parseInt(document.getElementById("inputPrice").value);
+  inputData.quantity = parseInt(document.getElementById("inputQuantity").value);
+  inputData.imgs = document.getElementById("inputImage").files;
+  inputData.url = document.getElementById("inputURL").value;
+  return inputData;
+}
 window.addEventListener("load", start, false);
