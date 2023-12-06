@@ -22,30 +22,68 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-
+var userInfo;
+var avarta;
+var userName = "none";
 
 
 const start = () => {
-    document.getElementById("submit_button").addEventListener("click", add1);
+    const title = document.getElementById("title");
+    const comment = document.querySelector("main");
+    const stars = document.querySelectorAll(".star");
+    stars.forEach(star => {
+        star.addEventListener("click", handleRating);
+    });
+    onAuthStateChanged(auth, async (user) =>{
+        if (user) {
+            userInfo = user;
+            userName = user.name;
+            avarta = user.Imgsrc;
+            console.log("userName", userName);
+            console.log("avarta", avarta);
+            document.getElementById("submitBtn").addEventListener("click", add1);
+
+        }else { // 沒有登入
+            console.log("沒拿到userid");
+            userInfo = undefined;
+            title.innerHTML = "請先登入後再來查看";
+            comment.style.display = "none";
+        }
+    })
+    
 };
-const add1 = () => {
-    try {
-        let in_name = document.getElementById("commentator").value;
-        let in_rate = document.getElementsByClassName("star active").length;
-        let in_content = document.getElementById("comment_space").value;
-        
-        console.log("in_name:", in_name);  // 在這裡添加這一行
-        console.log("in_content:", in_content);  // 在這裡添加這一行
-        console.log("in_rate:",in_rate);
+const addcomment = () => {
 
-        setDoc(doc(db, "comment_test", "comment"), {
-            name: in_name,
-            rate: in_rate,
-            content: in_content,
+};
 
-        });
-    } catch (err) {
-        console.error("error", err);
+function handleRating(event) {
+    if (event.target.classList.contains('star')) {
+        const value = event.target.getAttribute('data-value');
+        resetRating();
+        highlightStars(value);
     }
+}
+function resetRating() {
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => star.classList.remove('active'));
+}
+function highlightStars(value) {
+    const stars = document.querySelectorAll('.star');
+    stars.forEach((star, index) => {
+        if (index < value) {
+        star.classList.add('active');
+        }
+    });
+}
+
+function submitRating() {
+    const comment = document.getElementById('commentInput').value;
+    alert(`You rated it ${selectedRating} stars. Comment: ${comment}`);
+    // 这里你可以将评分和评论发送到服务器，保存在数据库中，或者执行其他操作
+}
+
+
+getCurrentTime = function () {
+    return new Date().toLocaleString();
 };
 window.addEventListener("load", start);
