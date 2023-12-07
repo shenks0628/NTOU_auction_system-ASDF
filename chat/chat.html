@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="CSS/chat.css">
+</head>
+<body>
+    <header>
+        <span id="headerText">offline</span>
+    </header>
+    <main>
+        <div class="chat-item item-right">
+            <span class="uname">me</span>
+            <span class="message">123</span>
+        </div>
+        <div class="chat-item item-left">
+            <span class="uname">a4f27b13-fe4e-4e02-bc7d-3d2149ed27f2</span>
+            <span class="message">123</span>
+        </div>
+    </main>
+    <footer>
+        <input type="text" id="textInput" placeholder="Type a message">
+        <div class="sendBtns">
+            <button aria-label="stikBtn" onclick="dialogSticker.showModal();">
+                <img alt="stickers" src="img/cool.png">
+            </button>
+            <label for="fileInput">
+                <img alt="add file" src="img/plus.png">
+            </label><input type="file" id="fileInput" onchange="fileChange()">
+            <button aria-label="sendBtn" onclick="sendMsg();">
+                <img alt="send msg" src="img/send.png">
+            </button>
+        </div>
+    </footer>
+    <script type="module" src="JavaScript/chat.js"></script>
+</body>
+</html>
