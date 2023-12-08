@@ -174,6 +174,57 @@ function setting() { // 判定是否為買 or 賣家
             editButton[i].style.display = "none";
         }
     }
+    if (userID != "none") {
+        const userRef = doc(db, "users", userID);
+        getDoc(userRef)
+        .then((userDoc) => {
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData) {
+                    let viewarr = userData.view;
+                    let flag = false;
+                    for (let i = 0; i < viewarr.length; i++) {
+                        if (viewarr[i] == id) {
+                            for (let j = i; j > 0; j--) {
+                                let tmp = viewarr[j];
+                                viewarr[j] = viewarr[j - 1];
+                                viewarr[j - 1] = tmp;
+                            }
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
+                        if (viewarr.length < 10) {
+                            updateDoc(doc(db, "users", userID), {
+                                view: arrayUnion(id)
+                            });
+                        }
+                        else {
+                            for (let i = 9; i >= 1; i--) {
+                                viewarr[i] = viewarr[i - 1];
+                            }
+                            viewarr[0] = id;
+                            updateDoc(doc(db, "users", userID), {
+                                view: viewarr
+                            });
+                        }
+                    }
+                    else {
+                        updateDoc(doc(db, "users", userID), {
+                            view: viewarr
+                        });
+                    }
+                }
+            }
+            else {
+                console.log("User with ID", userID, "does not exist.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting user document:", error);
+        });
+    }
 }
 
 function changeImage() { // 切換商品照片
