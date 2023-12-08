@@ -195,26 +195,14 @@ function setting() { // 判定是否為買 or 賣家
                         }
                     }
                     if (!flag) {
-                        if (viewarr.length < 10) {
-                            updateDoc(doc(db, "users", userID), {
-                                view: arrayUnion(id)
-                            });
+                        for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
+                            viewarr[i] = viewarr[i - 1];
                         }
-                        else {
-                            for (let i = 9; i >= 1; i--) {
-                                viewarr[i] = viewarr[i - 1];
-                            }
-                            viewarr[0] = id;
-                            updateDoc(doc(db, "users", userID), {
-                                view: viewarr
-                            });
-                        }
+                        viewarr[0] = id;
                     }
-                    else {
-                        updateDoc(doc(db, "users", userID), {
-                            view: viewarr
-                        });
-                    }
+                    updateDoc(doc(db, "users", userID), {
+                        view: viewarr
+                    });
                 }
             }
             else {
