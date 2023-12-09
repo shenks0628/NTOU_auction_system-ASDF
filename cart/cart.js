@@ -26,6 +26,7 @@ let cartItems = [];//購物車的陣列
 let totalSelectedPrice =0;//總價的變數
 let userId;//使用者id
 let cartTable = document.getElementById('cart');
+let billcheckBtn = document.getElementById('billcheck');//下訂單
 let totalAmountElement = document.getElementById('totalAmount');
 async function removeItem(itemid) {
     if (itemid === undefined) {
@@ -267,6 +268,54 @@ const start1 = () => {
             }
         }
         totalAmountElement.textContent =totalSelectedPrice;
+    });
+    billcheckBtn.addEventListener('click', function() {
+        const selectedItems = document.querySelectorAll('.item-checkbox:checked');
+        // 迭代被勾選的商品，並將其資訊刪除加刪數量
+        selectedItems.forEach(item => {
+            const itemName = item.getAttribute('data-item-name'); // 取得商品名稱或唯一ID等等
+            const productRef = doc(db, "products", itemName);
+            // 使用 getDoc 函數取得該產品的文件快照
+            getDoc(productRef)
+            .then((productDoc) => {
+                if (productDoc.exists()) {
+                    const productData = productDoc.data();
+                    console.log("Product data for product with ID", itemName, ":", productData);
+                    const keyToRemove = itemName;
+                    const indexToRemove = cartItems.findIndex(item => item.key === keyToRemove);
+                    if (indexToRemove !== -1) {
+                        const removedItem = cartItems[indexToRemove]; // 找到對應索引的物件
+                        const a=productData.quantity;
+                        const b = removedItem.quantity;
+                        const x = a-b;
+                        if(x >=0){
+                            removeItem(itemName);
+                            console.log(x);
+                            const productRef = doc(db, "products", itemName);
+                            updateDoc(productRef, {
+                                quantity: x
+                            })
+                                .then(() => {
+                                    console.log('數量更新成功！');
+                                })
+                                .catch((error) => {
+                                    console.error('更新數量時出現錯誤：', error);
+                                });
+            
+                            cartItems.splice(indexToRemove, 1);
+                            console.log("777");
+                            displayCart();
+                        }
+                        else{
+                            window.alert(removedItem.name+"庫存有更新,商品數量不足");
+                            removedItem.Stockquantity=a;
+                            removedItem.check="沒貨";
+                            displayCart();
+                        }
+                    }
+                } 
+            })
+        });
     });
     login.onclick = () => {
         signOut(auth);
