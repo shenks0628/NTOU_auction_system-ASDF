@@ -40,6 +40,7 @@ main {
     justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
+    overflow: hidden;
 }
 .chat .details h2 {
     font-size: 18px;
@@ -51,6 +52,7 @@ main {
     font-size: 14px;
     color: #999;
     margin: 0;
+    white-space: nowrap;
 }
 .chat .unread {
     background-color: #ffcc00;

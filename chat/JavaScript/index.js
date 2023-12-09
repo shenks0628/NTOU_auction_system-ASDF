@@ -1,9 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, setDoc, updateDoc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+import { getFirestore, doc, setDoc, updateDoc, getDoc, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,14 +28,17 @@ async function getMyMessage() {
     const users = await getDoc(doc(db, "users", auth.currentUser.email));
     if (users.exists()) {
         Object.entries(users.data().message).forEach(async([key, value]) => {
-            await setDoc(doc(db, "messages", key), { 
-                [auth.currentUser.email]: [{
-                    content: value.toString(),
-                    sendEmail: true,
-                    time: Date.now(),
-                    user: auth.currentUser.email
-                }]
-            }, { merge: true });
+            const docSnap = await getDoc(doc(db, "products", key));
+            if (docSnap.exists()) {
+                await setDoc(doc(db, "messages", key), { 
+                    [auth.currentUser.email]: [{
+                        content: `${docSnap.data().name}#${docSnap.data().price}#${value}`,
+                        sendEmail: true,
+                        time: Date.now(),
+                        user: auth.currentUser.email
+                    }]
+                }, { merge: true });
+            }
         });
         await updateDoc(doc(db, "users", auth.currentUser.email), {message: {}});
         getMessages();
@@ -46,38 +48,42 @@ async function getMessages() {
     const mainElement = document.querySelector('main');
     mainElement.innerHTML = '';
     const querySnapshot = await getDocs(query(collection(db, "messages")));
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(async(doc) => {
         if (doc.data()[auth.currentUser.email]) {
-            const msg = doc.data()[auth.currentUser.email];
             const newA = document.createElement('a');
             newA.href = `chat.html?id=${doc.id}&email=${auth.currentUser.email}`;
             newA.className = 'chat';
-            newA.innerHTML = `
-                <img src="https://pbs.twimg.com/profile_images/1604390688275464192/A5BL2Vtc_400x400.jpg" alt="User 1">
-                <div class="details">
-                    <h2>User 1</h2>
-                    <p>最近一則訊息:你好嗎?</p>
-                </div>
-                <div class="unread">1</div>
-            `;
+            newA.innerHTML = await getProductHTML(doc.id) + getMsgHTML(doc.data()[auth.currentUser.email]);
             mainElement.appendChild(newA);
-            if (msg.length === 1) {
-                if (msg[0].user == auth.currentUser.email) {
-                    console.log('感謝您在我們的網站上下單。以下是您的訂單詳情:')
-                } else {
-                    console.log('您有一個新的訂單需要處理。以下是訂單的詳細訊息:')
-                }
-            } else {
-                console.log(msg.pop().content)
-            }
         }
     });
+}
+
+async function getProductHTML(id) {
+    const products = await getDoc(doc(db, "products", id));
+    return `<img src="${products.data().imgs[0]}"><div class="details"><h2>${products.data().name.split('#')[0]}</h2>`;
+}
+function getMsgHTML(msg) {
+    let cnt = 0;
+    let html = '';
+    if (msg.length === 1) {
+        if (msg[0].user == auth.currentUser.email)
+            html = `<p>感謝您在我們的網站上下單。</p></div>`;
+        else
+            html = `<p>您有一個新的訂單需要處理。</p></div>`;
+    } else html = `<p>${msg[msg.length-1].content}</p></div>`;
+    for (let i = msg.length-1; i >= 0; i--) {
+        if (msg[i].user == auth.currentUser.email)
+            break;
+        cnt++;
+    }
+    if (cnt > 0)
+        html += `<div class="unread">${cnt}</div>`;
+    return html;
 }
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
         getMyMessage();
-    } else {
-        console.log("87")
     }
 });

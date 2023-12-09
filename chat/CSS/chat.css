@@ -11,7 +11,7 @@ html, body {
     width: 100%;
     height: 100%;
 }
-button, label {
+button, label, a {
     cursor: pointer;
 }
 
@@ -54,18 +54,11 @@ main {
 }
 .chat-item {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     position: relative;
-}
-.uname {
-    top: 0;
-    color: gray;
-    font-size: 12px;
-    position: absolute;
 }
 .message {
     padding: 15px;
-    margin-top: 20px;
     max-width: 50%;
     word-wrap: break-word;
     user-select: text;
@@ -75,9 +68,14 @@ main {
 }
 .message img {
     width: 100px;
-    height: 100px;
 }
-.item-left .uname {
+.time {
+    bottom: -15px;
+    color: gray;
+    font-size: 12px;
+    position: absolute;
+}
+.item-left .time {
     left: 0px;
 }
 .item-left .message {
@@ -86,7 +84,7 @@ main {
     background: #1D3557;
     border-radius: 0px 15px 15px 15px;
 }
-.item-right .uname {
+.item-right .time {
     right: 0px;
 }
 .item-right .message {
