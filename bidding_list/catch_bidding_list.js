@@ -38,7 +38,7 @@ function add(docId) {
         }
         else {
             getDoc(productRef)
-            .then((productDoc) => {
+            .then(async (productDoc) => {
                 if (productDoc.exists()) {
                     const productData = productDoc.data();
                     console.log("Product data for product with ID", docId, ":", productData);
@@ -46,31 +46,33 @@ function add(docId) {
                         window.alert("無效加注！因為您的注金比您原先的注金低！");
                     }
                     else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
-                        updateDoc(doc(db, "products", docId), {
+                        await updateDoc(doc(db, "products", docId), {
                             price: Math.min(parseInt(productData.bids_info.price1) + 50, parseInt(price)),
                             ['bids_info.who2']: productData.bids_info.who1,
                             ['bids_info.who1']: userId,
                             ['bids_info.price2']: parseInt(productData.bids_info.price1),
-                            ['bids_info.price1']: parseInt(price)
+                            ['bids_info.price1']: parseInt(price),
+                            ['bids_info.modtime']: serverTimestamp()
                         });
-                        updateDoc(doc(db, "users", userId), {
+                        await updateDoc(doc(db, "users", userId), {
                             ['bids.' + docId]: parseInt(price)
                         });
                         window.alert("加注成功！恭喜您已成為目前的最高下注者！");
                     }
                     else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
-                        updateDoc(doc(db, "products", docId), {
+                        await updateDoc(doc(db, "products", docId), {
                             price: Math.min(parseInt(price) + 50, parseInt(productData.bids_info.price1)),
                             ['bids_info.who2']: userId,
                             ['bids_info.price2']: parseInt(price),
+                            ['bids_info.modtime']: serverTimestamp()
                         });
-                        updateDoc(doc(db, "users", userId), {
+                        await updateDoc(doc(db, "users", userId), {
                             ['bids.' + docId]: parseInt(price)
                         });
                         window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
                     }
                     else {
-                        updateDoc(doc(db, "users", userId), {
+                        await updateDoc(doc(db, "users", userId), {
                             ['bids.' + docId]: parseInt(price)
                         });
                         window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！");
@@ -98,14 +100,14 @@ function exit(docId) {
     }
     const productRef = doc(db, "products", docId);
     getDoc(productRef)
-    .then((productDoc) => {
+    .then(async (productDoc) => {
         if (productDoc.exists()) {
             const productData = productDoc.data();
             if (productData.bids_info.who1 == userId) {
                 window.alert("您目前為最高下注者，不得退出競標！");
             }
             else {
-                updateDoc(doc(db, "users", userId), {
+                await updateDoc(doc(db, "users", userId), {
                     ['bids.' + docId]: deleteField()
                 });
             }
@@ -151,8 +153,17 @@ const start1 = () => {
             if (productDoc.exists()) {
                 // 取得該產品的資料
                 const productData = productDoc.data();
-                display_list.innerHTML += '<div class="product" id="' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"><h3>' + productData.name + 
-                                            '</h3><p>目前競價：<a class="price">' + productData.price + '</a></p><p>您的注金：<a class="price">' + bidsData[key] + '</a></p><p><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
+                const productName = productData.name.split('#')[0];
+                let endDate = productData.endtime.toDate();
+                if (productData.bids_info.modtime) {
+                    const tmpDate = productData.bids_info.modtime.toDate();
+                    tmpDate.setHours(tmpDate.getHours() + 8);
+                    if (tmpDate < endDate) {
+                        endDate = tmpDate;
+                    }
+                }
+                display_list.innerHTML += '<div class="product" id="' + productId + '"><a href="../api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName + 
+                                            '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：<a class="price">' + productData.price + '</a></p><p>您的注金：<a class="price">' + bidsData[key] + '</a></p><p><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
                 console.log("Product data for product with ID", productId, ":", productData);
             }
             else {
@@ -208,11 +219,6 @@ const start = () => {
             title.innerHTML = "請先登入後再來查看";
         }
     });
-    login.onclick = () => {
-        signOut(auth);
-        let display_list = document.getElementById("display_list");
-        display_list.innerHTML = "";
-    }
     const user = auth.currentUser;
     console.log(user);
 };

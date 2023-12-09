@@ -84,10 +84,11 @@ function eventSetting() {
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
-    document.getElementById("edit").addEventListener("click", edit, false);
-    document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
-    document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
-    document.getElementById("completeButton").addEventListener("click", updateProduct, false);
+    document.getElementById("editButton").addEventListener("click", toEditPage, false);
+    // document.getElementById("edit").addEventListener("click", edit, false);
+    // document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
+    // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
+    // document.getElementById("completeButton").addEventListener("click", updateProduct, false);
 }
 
 function setProduct() { // 設定顯示的商品
@@ -154,24 +155,65 @@ function setting() { // 判定是否為買 or 賣家
     if (productOwnerID == "none") return;
     if (userID == "none") {
         document.getElementById("cartButton").style.display = "none";
-        let edit = document.getElementsByClassName("edit");
-        for (var i = 0; i < edit.length; i++) {
-            edit[i].style.display = "none";
+        let editButton = document.getElementsByClassName("editButton");
+        for (var i = 0; i < editButton.length; i++) {
+            editButton[i].style.display = "none";
         }
     }
     else if (userID == productOwnerID && productOwnerID != "none") {
         document.getElementById("cartButton").style.display = "none";
-        let edit = document.getElementsByClassName("edit");
-        for (var i = 0; i < edit.length; i++) {
-            edit[i].style.display = "inline";
+        let editButton = document.getElementsByClassName("editButton");
+        for (var i = 0; i < editButton.length; i++) {
+            editButton[i].style.display = "inline";
         }
     }
     else {
         document.getElementById("cartButton").style.display = "block";
-        let edit = document.getElementsByClassName("edit");
-        for (var i = 0; i < edit.length; i++) {
-            edit[i].style.display = "none";
+        let editButton = document.getElementsByClassName("editButton");
+        for (var i = 0; i < editButton.length; i++) {
+            editButton[i].style.display = "none";
         }
+    }
+    if (userID != "none") {
+        const userRef = doc(db, "users", userID);
+        getDoc(userRef)
+        .then((userDoc) => {
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData) {
+                    let viewarr = userData.view;
+                    let flag = false;
+                    for (let i = 0; i < viewarr.length; i++) {
+                        if (viewarr[i] == id) {
+                            for (let j = i; j >= 1; j--) {
+                                viewarr[j] = viewarr[j - 1];
+                            }
+                            viewarr[0] = id;
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
+                        if (viewarr.length < 10) {
+                            viewarr.push(id);
+                        }
+                        for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
+                            viewarr[i] = viewarr[i - 1];
+                        }
+                        viewarr[0] = id;
+                    }
+                    updateDoc(doc(db, "users", userID), {
+                        view: viewarr
+                    });
+                }
+            }
+            else {
+                console.log("User with ID", userID, "does not exist.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting user document:", error);
+        });
     }
 }
 
@@ -199,38 +241,41 @@ function changeInfo() { // 切換商品資訊/評論
         document.getElementById("review").style.display = "block";
     }
 }
-
+function toEditPage() {
+    window.location.href = "../edit?id=" + id;
+}
+/*
 function edit() { // 修改商品頁面
     // window.alert("目前開放部分修改");
-
-    console.log(newProductData);
-    let str = newProductData.name.trim().split("#");
-    document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = newProductData.description;
-    document.getElementById("inputPrice").value = newProductData.price;
-    document.getElementById("inputQuantity").value = newProductData.quantity;
-    if (str[1])
-        document.getElementById("inputTag1").value = str[1];
-    if (str[2])
-        document.getElementById("inputTag2").value = str[2];
-    if (str[3])
-        document.getElementById("inputTag3").value = str[3];
-    let updateImage = newProductData.imgs;
-    let oldImage = document.getElementById("oldImage");
-    oldImage.innerHTML = "";
-    for (let i = 0; i < updateImage.length; i++) {
-        var img = document.createElement("img");
-        img.setAttribute("src", updateImage[i]);
-        img.setAttribute("alt", updateImage[i]);
-        img.setAttribute("height", "50px");
-        img.setAttribute("width", "50px");
-        img.setAttribute("title", "點擊以刪除圖片");
-        img.style.cursor = "pointer";
-        img.onclick = temporaryDeleteImage(img, updateImage[i]);
-        oldImage.appendChild(img);
-    }
-    document.getElementById("editPage").style.display = "block";
+    // console.log(newProductData);
+    // let str = newProductData.name.trim().split("#");
+    // document.getElementById("inputName").value = str[0];
+    // document.getElementById("inputDescription").value = newProductData.description;
+    // document.getElementById("inputPrice").value = newProductData.price;
+    // document.getElementById("inputQuantity").value = newProductData.quantity;
+    // if (str[1])
+    //     document.getElementById("inputTag1").value = str[1];
+    // if (str[2])
+    //     document.getElementById("inputTag2").value = str[2];
+    // if (str[3])
+    //     document.getElementById("inputTag3").value = str[3];
+    // let updateImage = newProductData.imgs;
+    // let oldImage = document.getElementById("oldImage");
+    // oldImage.innerHTML = "";
+    // for (let i = 0; i < updateImage.length; i++) {
+    //     var img = document.createElement("img");
+    //     img.setAttribute("src", updateImage[i]);
+    //     img.setAttribute("alt", updateImage[i]);
+    //     img.setAttribute("height", "50px");
+    //     img.setAttribute("width", "50px");
+    //     img.setAttribute("title", "點擊以刪除圖片");
+    //     img.style.cursor = "pointer";
+    //     img.onclick = temporaryDeleteImage(img, updateImage[i]);
+    //     oldImage.appendChild(img);
+    // }
+    // document.getElementById("editPage").style.display = "block";
 }
+
 function temporaryDeleteImage(img, src) {
     return function updateBeDelted() {
         img.style.display = "none";
@@ -336,6 +381,7 @@ function deleteStorageFile(fileUrl) {
         // Uh-oh, an error occurred!
     });
 }
+*/
 window.addEventListener("load", start, false);
 
 // 初始化時顯示購物車內容
