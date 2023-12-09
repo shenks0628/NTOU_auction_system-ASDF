@@ -159,6 +159,36 @@ async function getProduct(id) {
         const product = productSection(docSnap.id, docSnap.data());
         product.className = 'product row sticky';
         document.body.appendChild(product);
+        const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            if (userData) {
+                let viewarr = userData.view;
+                let flag = false;
+                for (let i = 0; i < viewarr.length; i++) {
+                    if (viewarr[i] == id) {
+                        for (let j = i; j >= 1; j--) {
+                            viewarr[j] = viewarr[j - 1];
+                        }
+                        viewarr[0] = id;
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    if (viewarr.length < 10) {
+                        viewarr.push(id);
+                    }
+                    for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
+                        viewarr[i] = viewarr[i - 1];
+                    }
+                    viewarr[0] = id;
+                }
+                updateDoc(doc(db, "users", auth.currentUser.email), {
+                    view: viewarr
+                });
+            }
+        }
     } else {
         mainElement.innerHTML = "No such document!";
     }
