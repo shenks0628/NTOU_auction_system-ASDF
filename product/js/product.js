@@ -65,20 +65,17 @@ function start() {
         // let login = document.getElementById("login");
         // let profileImage = document.getElementById("profileImage");
         console.log(user);
-        if (user) {
+        if (user) { // 登入狀態
             userID = user.email;
-            // login.innerHTML = "登出";
             // profileImage.setAttribute("src", user.photoURL);
         }
         else {
             userID = "none";
-            // login.innerHTML = "登入";
         }
         setting(userID, productOwnerID);
     });
 };
 function eventSetting() {
-    // document.getElementById("login").addEventListener("click", loginAndlogout, false);
     imgs = document.getElementById("itemPicture"),
         imgs.addEventListener("click", changeImage, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);

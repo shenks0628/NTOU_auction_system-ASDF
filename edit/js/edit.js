@@ -29,10 +29,10 @@ if (urlParams.get('id')) {
   id = urlParams.get('id');
 }
 
-let productData;
+let productData = null;
 let beDeletedFiles;
 let userID;
-const getProduct = async () => { // 讀資料
+async function getProduct() { // 讀資料
   const productId = id; // 替換成實際的產品 ID
   // 使用 doc 函數構建該產品的參考路徑
   const productRef = doc(db, "products", productId);
@@ -41,11 +41,10 @@ const getProduct = async () => { // 讀資料
     .then((productDoc) => {
       if (productDoc.exists()) {
         // 取得該產品的資料
-        productData = productDoc.data();
+        let productData = productDoc.data();
         // productOwnerID = productData.seller;
         console.log("Product data for product with ID", productId, ":", productData);
-        // setProduct();
-        showData();
+        return productData;
       }
       else {
         console.log("Product with ID", productId, "does not exist.");
@@ -55,10 +54,10 @@ const getProduct = async () => { // 讀資料
       console.error("Error getting product document:", error);
     });
 }
-function start() {
+async function start() {
   window.alert("目前只開放一般商品");
   eventSetting();
-  onAuthStateChanged(auth, (user) => {
+  await onAuthStateChanged(auth, (user) => {
     console.log(user);
     if (user) {
       userID = user.email;
@@ -73,48 +72,94 @@ function start() {
     // setting(userID, productOwnerID);
   });
   if (id.length > 0) {
-    getProduct();
+    productData = await getProduct();
+    showData(productData);
   }
 };
 function eventSetting() {
   // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
-  document.getElementById("resetButton").addEventListener("click", getProduct, false);
+  document.getElementById("resetButton").addEventListener("click", reset, false);
   document.getElementById("completeButton").addEventListener("click", showCheckPage, false);
   document.getElementById("checkPageCloseButton").addEventListener("click", closeCheckPage, false);
   document.getElementById("sendButton").addEventListener("click", sendCheck, false);
+  document.getElementById("inputKind").addEventListener("change", changeKind, false);
 }
-
-function showData() { // 顯示原商品資料
-  // window.alert("目前開放部分修改");
-  console.log(productData);
-  let str = productData.name.trim().split("#");
-  document.getElementById("inputName").value = str[0];
-  document.getElementById("inputDescription").value = productData.description;
-  document.getElementById("inputPrice").value = productData.price;
-  document.getElementById("inputQuantity").value = productData.quantity;
-  if (str[1])
-    document.getElementById("inputTag1").value = str[1];
-  if (str[2])
-    document.getElementById("inputTag2").value = str[2];
-  if (str[3])
-    document.getElementById("inputTag3").value = str[3];
-  let updateImage = productData.imgs;
-  let oldImage = document.getElementById("oldImage");
-  oldImage.innerHTML = "";
-  for (let i = 0; i < updateImage.length; i++) {
-    var img = document.createElement("img");
-    img.setAttribute("src", updateImage[i]);
-    img.setAttribute("alt", updateImage[i]);
-    img.setAttribute("height", "50px");
-    img.setAttribute("width", "50px");
-    img.setAttribute("title", "點擊以刪除圖片");
-    img.style.cursor = "pointer";
-    img.onclick = temporaryDeleteImage(img, updateImage[i]);
-    oldImage.appendChild(img);
+async function reset() {  // 重置input欄位
+  if (id.length > 0) {
+    let productData = await getProduct();
+    showData(productData);
   }
-  document.getElementById("inputImage").value = "";
-  document.getElementById("inputURL").value = productData.url;
+  else {
+
+  }
+}
+function changeKind() {
+  inputKindSet();
+}
+function inputKindSet() { }
+
+function showData(productData) { // 顯示原商品資料
+  console.log(productData);
   beDeletedFiles = [];
+  document.getElementById("inputKind").setAttribute("disabled", true);
+  if (productData.type == "normal") {
+    let str = productData.name.trim().split("#");
+    document.getElementById("inputName").value = str[0];
+    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputPrice").value = productData.price;
+    document.getElementById("inputQuantity").value = productData.quantity;
+    if (str[1])
+      document.getElementById("inputTag1").value = str[1];
+    if (str[2])
+      document.getElementById("inputTag2").value = str[2];
+    if (str[3])
+      document.getElementById("inputTag3").value = str[3];
+    let uploadImage = productData.imgs;
+    let oldImage = document.getElementById("oldImage");
+    oldImage.innerHTML = "";
+    for (let i = 0; i < uploadImage.length; i++) {
+      var img = document.createElement("img");
+      img.setAttribute("src", uploadImage[i]);
+      img.setAttribute("alt", uploadImage[i]);
+      img.setAttribute("height", "50px");
+      img.setAttribute("width", "50px");
+      img.setAttribute("title", "點擊以刪除圖片");
+      img.style.cursor = "pointer";
+      img.onclick = temporaryDeleteImage(img, uploadImage[i]);
+      oldImage.appendChild(img);
+    }
+    document.getElementById("inputImage").value = "";
+    document.getElementById("inputURL").value = productData.url;
+  }
+  else if (productData.type == "bids") {
+    let str = productData.name.trim().split("#");
+    document.getElementById("inputName").value = str[0];
+    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputPrice").value = productData.price;
+    document.getElementById("inputQuantity").value = productData.quantity;
+    if (str[1])
+      document.getElementById("inputTag1").value = str[1];
+    if (str[2])
+      document.getElementById("inputTag2").value = str[2];
+    if (str[3])
+      document.getElementById("inputTag3").value = str[3];
+    let uploadImage = productData.imgs;
+    let oldImage = document.getElementById("oldImage");
+    oldImage.innerHTML = "";
+    for (let i = 0; i < uploadImage.length; i++) {
+      var img = document.createElement("img");
+      img.setAttribute("src", uploadImage[i]);
+      img.setAttribute("alt", uploadImage[i]);
+      img.setAttribute("height", "50px");
+      img.setAttribute("width", "50px");
+      img.setAttribute("title", "點擊以刪除圖片");
+      img.style.cursor = "pointer";
+      img.onclick = temporaryDeleteImage(img, uploadImage[i]);
+      oldImage.appendChild(img);
+    }
+    document.getElementById("inputImage").value = "";
+    document.getElementById("inputURL").value = productData.url;
+  }
 }
 function temporaryDeleteImage(img, src) {
   return function updateBeDelted() {
@@ -130,24 +175,7 @@ function temporaryDeleteImage(img, src) {
 }
 
 function preview() { // 預覽 目前不想做
-  // let str = newProductData.name.trim().split("#");
-  // let itemName = document.getElementById("itemName");
-  // itemName.innerHTML = str[0];
-  // let itemDescription = document.getElementById("itemDescription");
-  // itemDescription.innerHTML = newProductData.description;
-  // let itemPrice = document.getElementById("itemPrice");
-  // itemPrice.innerHTML = "$" + newProductData.price.toString();
-  // let itemTag = document.getElementById("itemTag");
-  // if (str.length == 1) itemTag.innerHTML = "無";
-  // else {
-  //     itemTag.innerHTML = "";
-  //     for (var i = 1; i < str.length; i++) {
-  //         itemTag.innerHTML += str[i];
-  //         if (i != str.length - 1) itemTag.innerHTML += ", "
-  //     }
-  // }
-  // let srcs = newProductData.imgs;
-  // imgs.setAttribute("src", srcs[0]);
+  // 想法：開一個新table，預覽完之後刪除
 }
 
 function showCheckPage() {
@@ -169,7 +197,7 @@ function closeCheckPage() {
 async function sendCheck() {
   if (id.length > 0) {
     if (window.confirm("是否確認修改？")) {
-      let inputData = readInput();
+      let inputData = getInputData();
       let inputImage = await uploadImage(inputData.imgs);
       inputData.imgs = productData.imgs;
       for (let i = 0; i < inputImage.length; i++) {
@@ -186,7 +214,7 @@ async function sendCheck() {
   }
   else {
     if (window.confirm("是否確認新增？")) {
-      let inputData = readInput();
+      let inputData = getInputData();
       let inputImage = await uploadImage(inputData.imgs);
       inputData.imgs = inputImage;
       id = await addProduct(inputData);
@@ -195,7 +223,7 @@ async function sendCheck() {
   }
 }
 
-const addProduct = async (inputData) => {
+async function addProduct(inputData) {
   try {
     const userId = userID;
     let type = "normal";
@@ -209,7 +237,7 @@ const addProduct = async (inputData) => {
       let { productID } = await addDoc(collection(db, "products"), {
         comment: {},
         type: type,
-        imgs: [],
+        imgs: inputData.imgs,
         name: inputData.name,
         description: inputData.description,
         price: parseInt(inputData.price),
@@ -223,10 +251,10 @@ const addProduct = async (inputData) => {
     }
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
-        bids_info: { who1: "", who2: "", price1: parseInt(price), price2: parseInt(0) },
+        bids_info: { who1: "", who2: "", price1: parseInt(price), price2: parseInt(0), modtime: serverTimestamp() },
         comment: {},
         type: type,
-        imgs: [],
+        imgs: inputData.imgs,
         name: inputData.name,
         description: inputData.description,
         price: parseInt(inputData.price),
@@ -244,7 +272,6 @@ const addProduct = async (inputData) => {
 }
 
 async function uploadImage(inputImage) {
-  console.log(inputImage);
   let imageURL = [];
   let dateString = getDateString();
   for (let i = 0; i < inputImage.length; i++) {
@@ -298,9 +325,10 @@ function getDateString() {
   let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
   return dateString;
 }
-function readInput() {
+function getInputData() {
   var inputData = {}
   inputData.id = id;
+  inputData.type = document.getElementById("inputKind").options[document.getElementById("inputKind").selectedIndex].value;
   inputData.name = document.getElementById("inputName").value;
   if (document.getElementById("inputTag1").value.length != 0) inputData.name += ("#" + document.getElementById("inputTag1").value);
   if (document.getElementById("inputTag2").value.length != 0) inputData.name += ("#" + document.getElementById("inputTag2").value);
