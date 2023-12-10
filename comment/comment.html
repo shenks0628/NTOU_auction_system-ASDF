@@ -17,6 +17,7 @@
         .rating-container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
         .rating-label {
@@ -42,7 +43,7 @@
             width: 820px; height: 50px; resize: none
         }
         #commentContainer{
-            transform: scale(1.27);
+            transform: scale(1.2);
             background: white;
             vertical-align: top;
             margin-top: 30px;
@@ -58,22 +59,36 @@
             height: 25%;
         }
 
+        #avartar {
+            margin-left:auto;
+        }
+
+        #avartar img {
+            border-radius: 50%;
+            float: right;
+            margin-right: 10px;
+            width: 70px;
+            height: 70px;
+        }
+
     </style>
 </head>
 <body>
 <div id="productImg">
-    <img id="productImg" src="sample.jpg">
+    <img id="productImg">
 </div>
 <div id="commentContainer">
+
     <div class="rating-container">
         <span class="rating-label">滿意度:</span>
         <div class="rating" onclick="handleRating(event)">
-            <span class="star" data-value="5">&#9733;</span>
-            <span class="star" data-value="4">&#9733;</span>
-            <span class="star" data-value="3">&#9733;</span>
-            <span class="star" data-value="2">&#9733;</span>
             <span class="star" data-value="1">&#9733;</span>
+            <span class="star" data-value="2">&#9733;</span>
+            <span class="star" data-value="3">&#9733;</span>
+            <span class="star" data-value="4">&#9733;</span>
+            <span class="star" data-value="5">&#9733;</span>
         </div>
+        <div id="avartar"></div>
     </div>
     <div id="userName"></div>
     <textarea id="commentInput" placeholder="請輸入你的評論"></textarea>
@@ -82,6 +97,32 @@
 </div>
 </div>
 <script src="commentJs.js" type="module"></script>
+<script>
+function resetRating() {
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => star.classList.remove('active'));
+}
 
+function handleRating(event) {
+    if (event.target.classList.contains('star')) {
+        const value = event.target.getAttribute('data-value');
+        console.log(value);
+        resetRating();
+        highlightStars(value);
+
+    }
+}
+function highlightStars(value) {
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => {
+        const starValue = star.getAttribute('data-value');
+        if (starValue <= value) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+}
+</script>
 </body>
 </html>
