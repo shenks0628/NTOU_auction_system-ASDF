@@ -97,14 +97,17 @@ main {
 footer {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px 0;
+    padding: 10px;
     position: fixed;
     bottom: 0;
     background: rgba(255,255,255,.8);
     display: flex;
 }
+#fileInput {
+    display: none;
+}
 #textInput {
-    width: 100%; 
+    flex-grow: 1;
     margin: 0 10px;
     padding: 0 15px;
     border-radius: 35px;
@@ -112,19 +115,11 @@ footer {
     outline: none;
     box-shadow: 0px 0px 12px #d5d6e5;
 }
-.sendBtns {
-    width: 144px;
-    height: 48px;
-    display: flex;
-}
-.sendBtns input {
-    display: none;
-}
-.sendBtns img {
+footer img {
     width: 16px;
     height: 16px;
 }
-.sendBtns button, .sendBtns label {
+footer button, footer label {
     width: 44px;
     height: 44px;
     margin: 2px;

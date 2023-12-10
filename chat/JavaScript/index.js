@@ -24,6 +24,10 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
+function encodeEmail(email = auth.currentUser.email) {
+    return email.replace(/\./g, '_');
+}
+
 async function getMyMessage() {
     const users = await getDoc(doc(db, "users", auth.currentUser.email));
     if (users.exists()) {
@@ -31,8 +35,8 @@ async function getMyMessage() {
             const docSnap = await getDoc(doc(db, "products", key));
             if (docSnap.exists()) {
                 await setDoc(doc(db, "messages", key), { 
-                    [auth.currentUser.email]: [{
-                        content: `${docSnap.data().name}#${docSnap.data().price}#${value}`,
+                    [encodeEmail()]: [{
+                        content: `${docSnap.data().name.split('#')[0]}#${docSnap.data().price}#${value}`,
                         sendEmail: true,
                         time: Date.now(),
                         user: auth.currentUser.email
@@ -46,14 +50,14 @@ async function getMyMessage() {
 }
 async function getMessages() {
     const mainElement = document.querySelector('main');
-    mainElement.innerHTML = '';
     const querySnapshot = await getDocs(query(collection(db, "messages")));
+    mainElement.innerHTML = querySnapshot.empty ? '<h2>暫無任何通知<h2>' : ''; 
     querySnapshot.forEach(async(doc) => {
-        if (doc.data()[auth.currentUser.email]) {
+        if (doc.data()[encodeEmail()]) {
             const newA = document.createElement('a');
             newA.href = `chat.html?id=${doc.id}&email=${auth.currentUser.email}`;
             newA.className = 'chat';
-            newA.innerHTML = await getProductHTML(doc.id) + getMsgHTML(doc.data()[auth.currentUser.email]);
+            newA.innerHTML = await getProductHTML(doc.id) + getMsgHTML(doc.data()[encodeEmail()]);
             mainElement.appendChild(newA);
         }
     });

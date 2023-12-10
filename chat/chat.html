@@ -8,31 +8,17 @@
 </head>
 <body>
     <header>
-        <span id="headerText">offline</span>
+        <span id="headerText">查無此對話</span>
     </header>
-    <main>
-        <div class="chat-item item-right">
-            <span class="message">123</span>
-            <span class="time">1/9 21:56</span>
-        </div>
-        <div class="chat-item item-left">
-            <span class="message">123</span>
-            <span class="time">今天22:00</span>
-        </div>
-    </main>
+    <main></main>
     <footer>
+        <label for="fileInput">
+            <img alt="add file" src="img/plus.png">
+        </label><input type="file" id="fileInput">
         <input type="text" id="textInput" placeholder="Type a message">
-        <div class="sendBtns">
-            <button aria-label="stikBtn" onclick="dialogSticker.showModal();">
-                <img alt="stickers" src="img/cool.png">
-            </button>
-            <label for="fileInput">
-                <img alt="add file" src="img/plus.png">
-            </label><input type="file" id="fileInput" onchange="fileChange()">
-            <button aria-label="sendBtn" onclick="sendMsg();">
-                <img alt="send msg" src="img/send.png">
-            </button>
-        </div>
+        <button id="sendBtn" aria-label="sendBtn">
+            <img alt="send msg" src="img/send.png">
+        </button>
     </footer>
     <script type="module" src="JavaScript/chat.js"></script>
 </body>
