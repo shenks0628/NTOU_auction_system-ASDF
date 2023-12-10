@@ -27,10 +27,11 @@ header {
     justify-content: center;
     align-items: center;
 }
-header span {
+header a {
     font-size: 15px;
     font-weight: 600;
     color: #494949;
+    text-decoration: none;
 }
 header img {
     width: 16px;
@@ -68,6 +69,9 @@ main {
 }
 .message img {
     width: 100px;
+}
+.message button {
+    width: 100%;
 }
 .time {
     bottom: -15px;
