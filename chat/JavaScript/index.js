@@ -37,6 +37,7 @@ async function getMyMessage() {
                 await setDoc(doc(db, "messages", key), { 
                     [encodeEmail()]: [{
                         content: `${docSnap.data().name.split('#')[0]}#${docSnap.data().price}#${value}`,
+                        isRecord: false,
                         sendEmail: true,
                         time: Date.now(),
                         user: auth.currentUser.email

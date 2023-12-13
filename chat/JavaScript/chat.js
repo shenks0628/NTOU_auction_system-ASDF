@@ -1,8 +1,3 @@
-const urlParams = new URLSearchParams(window.location.search);
-const productID = urlParams.get('id');
-const buyer = urlParams.get('email');
-
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
@@ -29,7 +24,17 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
+
+const urlParams = new URLSearchParams(window.location.search);
+const productID = urlParams.get('id');
+const buyer = urlParams.get('email');
 const messagesRef = doc(db, "messages", productID);
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        verifyIdentity(user.email);
+    }
+});
 
 function encodeEmail(email = auth.currentUser.email) {
     return email.replace(/\./g, '_');
@@ -85,7 +90,7 @@ async function verifyIdentity(email) {
                                 購買數量: ${quantity}<br>
                                 訂單總額: ${price*quantity}<br>
                                 下單日期: ${formatDateTime(msg.time)}<br><br>
-                                <button>取消訂單</button>
+                                <button id="cancelOrderBtn" ${msg.isRecord ? 'disabled>訂單已成立' : '>取消訂單'}</button>
                             `;
                         } else {
                             msg.content = `
@@ -95,8 +100,30 @@ async function verifyIdentity(email) {
                                 購買數量: ${quantity}<br>
                                 訂單總額: ${price*quantity}<br>
                                 下單日期: ${formatDateTime(msg.time)}<br><br>
-                                <button>確認訂單</button>
+                                <button id="confirmOrderBtn" ${msg.isRecord ? 'disabled>訂單已成立' : '>確認訂單'}</button>
                             `;
+                        }
+                        if (!msg.isRecord) {
+                            mainElement.appendChild(getMsgDiv(msg, email));
+                            document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
+                                if (!isWithinDays(1, msg.time)) {
+                                    alert('已超過取消時間，無法取消訂單!');
+                                } else {
+                                    if (confirm('確定要取消訂單嗎?')) {
+                                        console.log('訂單已取消');
+                                    }
+                                }
+                            });
+                            document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
+                                if (isWithinDays(1, msg.time)) {
+                                    alert('賣家需要等待一天後才能確認訂單!');
+                                } else {
+                                    if (confirm('確定要確認訂單嗎?')) {
+                                        console.log('訂單已確認');
+                                    }
+                                }
+                            });
+                            continue;
                         }
                     }
                     mainElement.appendChild(getMsgDiv(msg, email));
@@ -105,7 +132,10 @@ async function verifyIdentity(email) {
         });
     }
 }
-
+async function cancelOrder() {
+}
+async function confirmOrder() {
+}
 async function uploadMessage() {
     await updateDoc(messagesRef, {
         [encodeEmail()]: arrayUnion({
@@ -118,16 +148,15 @@ async function uploadMessage() {
     textInput.value = '';
 }
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        verifyIdentity(user.email);
-    }
-});
-
 sendBtn.onclick = function (e) {
     uploadMessage();
 }
 fileInput.onchange = function (e) {
 
 }
+
+function Keydown(e) {
+    if(e.keyCode == 13) uploadMessage();
+}
+document.addEventListener('keydown', Keydown, false);
 //自動下拉、上傳檔案、一天內確認/取消
