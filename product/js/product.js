@@ -100,14 +100,16 @@ function setProduct() { // 設定顯示的商品
     let itemQuantity = document.getElementById("itemQuantity");
     itemQuantity.innerHTML = productData.quantity.toString();
     let itemTag = document.getElementById("itemTag");
-    if (str.length == 1) itemTag.innerHTML = "無";
-    else {
-        itemTag.innerHTML = "";
-        for (var i = 1; i < str.length; i++) {
+    let f = false;
+    itemTag.innerHTML = "";
+    for (var i = 1; i < str.length; i++) {
+        if (str[i].length > 0) {
+            if (f) itemTag.innerHTML += ", "
             itemTag.innerHTML += str[i];
-            if (i != str.length - 1) itemTag.innerHTML += ", "
+            f = true;
         }
     }
+    if (f == false) itemTag.innerHTML = "無";
 
     let srcs = productData.imgs;
     imgs.setAttribute("src", srcs[0]);
