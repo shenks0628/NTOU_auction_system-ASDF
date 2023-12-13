@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購買紀錄</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        h1{
+            font-size: 75px;
+            color: rgb(0, 115, 255);
+            font-weight: bolder;
+            text-align: center;
+        }
+        main {
+            background-color: white;
+            border: 3px solid #f1f1f1;
+            max-width: 768px;
+            margin: auto;
+            padding: 10px;
+        }
+        button {
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #errorSpan {
+            color: red;
+        }
+        #signinBtn, #signupBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            margin: 24px 0 12px 0;
+            position: relative;
+        }
+        .header img {
+            width: 40%;
+            border-radius: 50%;
+        }
+        .container {
+            padding: 16px;
+        }
+        .container button {
+            padding: 14px 20px;
+            margin: 8px 0;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #f1f1f1;
+        }
+        .record-row {
+            border-bottom: 1px solid #000; /* 設定底部邊框樣式 */
+            padding-bottom: 5px; /* 增加下方內距，讓分隔線和文字之間有間距 */
+        }
+        .record-table {
+            border-collapse: collapse; /* 合併邊框 */
+            width: 100%; /* 設定表格寬度 */
+        }
+
+        .record-table th, .record-table td {
+            border: 1px solid #000; /* 設定所有單元格的邊框 */
+            padding: 8px; /* 設定內距 */
+            text-align: center; /* 設定文字置中 */
+        }
+
+        .record-table tr:first-child th {
+            background-color: #f2f2f2; /* 設定表頭背景色 */
+        }
+        /*hr {*/
+            /*border: none;  移除預設的邊框 */
+            /*height: 1px; /* 設定分隔線的高度 */
+            /*background-color: #000; /* 設定分隔線的顏色 */
+            /*margin: 5px 0; /* 設定分隔線與上下元素的間距 */
+            /*width: 100%; /* 設定分隔線的寬度為整行寬度 */
+        /*}*/
+    </style>
+</head>
+<body>
+<header>
+    <h1>購買紀錄</h1>
+</header>
+
+<main>
+    <table id="record" class="record-table">
+    </table>
+</main>
+
+<script src="01.js" type="module"></script>
+
+</body>
+</html>
