@@ -48,7 +48,6 @@ const start = () => {
                 console.log("User with ID", userId, "does not exist.");
                 }
                 start1();
-                
             })
             .catch((error) => {
                 console.error("Error getting user document:", error);
