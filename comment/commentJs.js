@@ -23,31 +23,24 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 
-var user = await getDoc(doc(db, "users","liyuesa0616@gmail.com"));
-var userInfo = user.data();
-var avarta = document.getElementById("avartar");
-var imgAvarta = document.createElement("img");
-imgAvarta.src = userInfo.imgSrc;
-avarta.appendChild(imgAvarta);
 const start = () => {
     const title = document.getElementById("title");
     const comment = document.querySelector("main");
-    //onAuthStateChanged(auth, async (user) =>{
-        //if (user) {
-
-            var userName = userInfo.name;
+    onAuthStateChanged(auth, async (user) =>{
+        if (user) {
+            var userName = user.name;
             console.log("user",userInfo);
             console.log('userName',userName);
             console.log('userAvarta',avarta);
             document.getElementById("submitBtn").addEventListener("click", add1);
 
-        //}else { // 沒有登入
-            //console.log("沒拿到userid");
-            //userInfo = undefined;
-           // title.innerHTML = "請先登入後再來查看";
-            //comment.style.display = "none";
-       // }
-    //})
+        }else { // 沒有登入
+            console.log("沒拿到userid");
+            userInfo = undefined;
+           title.innerHTML = "請先登入後再來查看";
+            comment.style.display = "none";
+       }
+    })
     
 };
 const addcomment = () => {
