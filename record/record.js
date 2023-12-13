@@ -116,8 +116,19 @@ const start1 = () => {
                         <td><button class="remove-button" data-item-name="${newItem.key}">評價</button></td>
                     `;
                     recordTable.appendChild(row);
+                    row.addEventListener('click', function(event) {
+                        // 檢查點擊的元素是否是按鈕
+                        if (event.target.matches('.remove-button')) {
+                          // 獲取按鈕的 data-item-name 屬性的值
+                            const itemName = event.target.dataset.itemName;
+                      
+                          // 執行相應的操作
+                            console.log(itemName);
+                            const commentUrl = "../comment/comment.html?itemName=" + encodeURIComponent(itemName);
+                            window.location.href = commentUrl;
+                        }
+                    });
                 }
-                
                 // 在每行結尾插入一個橫跨整行的單元格，並在其中放置一條分隔線
                 //const separatorRow = document.createElement('tr');
                 //const separatorCell = document.createElement('td');

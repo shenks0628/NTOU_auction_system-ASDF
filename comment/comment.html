@@ -54,9 +54,11 @@
             width: 900px;
         }
 
-        #productImg img {
-            width: 25%;
-            height: 25%;
+        #productImg{
+            width: 500px;
+            height: 500px;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         #avartar {
@@ -83,11 +85,40 @@
         #submitBtn:hover {
             background-color: #45a049;
         }
+
+        button {
+            padding: 5px 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        /* 左邊按鈕的樣式 */
+        #prevBtn {
+            margin-right: 10px;
+        }
+
+        /* 右邊按鈕的樣式 */
+        #nextBtn {
+            margin-left: 10px;
+        }
+
+        #imgCtrl {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
     </style>
 </head>
 <body>
-<div id="productImg">
-    <img id="productImg" src="sample.jpg">
+<div id="imgCtrl">
+    <button id="prevBtn"><</button>
+    <img id="productImg">
+    <button id="nextBtn">></button>
 </div>
 <div id="commentContainer">
 

@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -22,17 +23,31 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
+const images =[];
+
 
 const start = () => {
+
     const title = document.getElementById("title");
     const comment = document.querySelector("main");
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
-            var userName = user.name;
-            console.log("user",userInfo);
-            console.log('userName',userName);
-            console.log('userAvarta',avarta);
-            document.getElementById("submitBtn").addEventListener("click", add1);
+            const userEmail = user.email;
+            const userRef = await getDoc(doc(db, "users", userEmail));
+            const userInfo = userRef.data();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const itemName = urlParams.get('itemName');
+            console.log(itemName);
+
+            var avarta = document.getElementById("avartar");
+            var imgAvarta = document.createElement("img");
+            imgAvarta.src = userInfo.imgSrc;
+            avarta.appendChild(imgAvarta);
+
+            addItemImg(itemName);
+
+            document.getElementById("submitBtn").addEventListener("click", addcomment);
 
         }else { // 沒有登入
             console.log("沒拿到userid");
@@ -43,8 +58,60 @@ const start = () => {
     })
     
 };
+
+async function addItemImg(id) {
+    const product = await getDoc(doc(db, "products", id));
+    const productData = product.data();
+    console.log(productData);
+    const imgs = productData.imgs;
+    console.log(imgs);
+    imgs.forEach((element,index) => {
+        images[index] = element;
+        console.log(index, images[index]); 
+    });
+}
+
+
 const addcomment = () => {
 
 };
 
+const display_pic = async() => {
+    
+var currentIndex = 0;
+var productImg = document.getElementById("productImg");
+console.log(productImg);
+var prevBtn = document.getElementById("prevBtn");
+var nextBtn = document.getElementById("nextBtn");
+
+function showImage(index) {
+  productImg.src = images[index];
+}
+
+function showPrevImage() {
+  if (currentIndex === 0) {
+    currentIndex = images.length - 1;
+  } else {
+    currentIndex--;
+  }
+  showImage(currentIndex);
+}
+
+function showNextImage() {
+  if (currentIndex === images.length - 1) {
+    currentIndex = 0;
+  } else {
+    currentIndex++;
+  }
+  showImage(currentIndex);
+}
+
+prevBtn.addEventListener("click", showPrevImage);
+nextBtn.addEventListener("click", showNextImage);
+
+// 一開始顯示第一張圖片
+showImage(currentIndex);
+
+};
+window.addEventListener("load", display_pic);
 window.addEventListener("load", start);
