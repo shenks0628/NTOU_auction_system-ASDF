@@ -25,6 +25,7 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 const display = async () => {
+    const prev_view_title = document.getElementById("prev_view_title");
     const latest_normal = document.getElementById("latest_normal");
     const latest_bids = document.getElementById("latest_bids");
     const prev_view = document.getElementById("prev_view");
@@ -57,12 +58,15 @@ const display = async () => {
     });
     onAuthStateChanged(auth, async(user) => {
         if (user) {
+            prev_view_title.innerHTML = "您最近瀏覽的商品";
             const userId = user.email;
             const docSnap = await getDoc(doc(db, "users", userId));
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
                 views.forEach(async (productId) => {
-                    const productData = await getDoc(doc(db, "products", productId));
+                    console.log(productId);
+                    const productDoc = await getDoc(doc(db, "products", productId));
+                    const productData = productDoc.data();
                     const productName = productData.name.split('#')[0];
                     const productType = productData.type;
                     if (productType == "normal") {
@@ -83,7 +87,7 @@ const display = async () => {
             }
         }
         else {
-
+            prev_view_title.innerHTML = "";
         }
     });
 }
