@@ -1,0 +1,173 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Heebo', sans-serif;
+    user-select: none;
+    -webkit-user-select: none; /* 兼容 WebKit 浏览器 */
+    -moz-user-select: none; /* 兼容 Firefox 浏览器 */
+    -ms-user-select: none; /* 兼容 IE/Edge 浏览器 */
+}
+html, body {
+    width: 100%;
+    height: 100%;
+}
+button, label, a {
+    cursor: pointer;
+}
+
+header {
+    width: 100%;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    text-align: center;
+    background-color: white;
+    box-shadow: 0px -7px 15px #c3c4dd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header a {
+    font-size: 15px;
+    font-weight: 600;
+    color: #494949;
+    text-decoration: none;
+}
+header img {
+    width: 16px;
+    height: 16px;
+    display: none;
+    margin-left: 5px;
+    cursor: pointer;
+}        
+
+main {
+    width: 100%;
+	position: fixed;
+	top: 47px;
+	bottom: 68px;
+	overflow-y: scroll;
+	padding: 10px;
+	box-sizing: border-box;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+}
+.chat-item {
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+}
+.message {
+    padding: 15px;
+    max-width: 50%;
+    word-wrap: break-word;
+    user-select: text;
+    -webkit-user-select: text; /* 兼容 WebKit 浏览器 */
+    -moz-user-select: text; /* 兼容 Firefox 浏览器 */
+    -ms-user-select: text; /* 兼容 IE/Edge 浏览器 */
+}
+.message img {
+    width: 100px;
+}
+.message button {
+    width: 100%;
+}
+.time {
+    bottom: -15px;
+    color: gray;
+    font-size: 12px;
+    position: absolute;
+}
+.item-left .time {
+    left: 0px;
+}
+.item-left .message {
+    float: left;
+    color: white;
+    background: #1D3557;
+    border-radius: 0px 15px 15px 15px;
+}
+.item-right .time {
+    right: 0px;
+}
+.item-right .message {
+    float: right;
+    color: #1D3557;
+    background: white;
+    border-radius: 15px 0px 15px 15px;
+}
+
+footer {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    background: rgba(255,255,255,.8);
+    display: flex;
+}
+#fileInput {
+    display: none;
+}
+#textInput {
+    flex-grow: 1;
+    margin: 0 10px;
+    padding: 0 15px;
+    border-radius: 35px;
+    border: none;
+    outline: none;
+    box-shadow: 0px 0px 12px #d5d6e5;
+}
+footer img {
+    width: 16px;
+    height: 16px;
+}
+footer button, footer label {
+    width: 44px;
+    height: 44px;
+    margin: 2px;
+    background: #1D3557;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+dialog[open] {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	margin-top: 47px;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: 0 2px 6px #ccc;
+    box-sizing: border-box;
+}
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+dialog textarea {
+    width: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+}
+.button-container {
+    width: 100%;
+    display: flex;
+}
+.stickers {
+    width: 74px;
+    height: 74px;
+    cursor: pointer;
+}
+#qrcode {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+#qrcode img {width: 256px; height: 256px;}
+#multiSendBtn {background-color: #4caf50;}
+#multiExitBtn {background-color: #f44336;}
+#multiSendBtn:hover {background-color: #45a049;}
+#multiExitBtn:hover {background-color: #d32f2f;}
+#multiSendBtn, #multiExitBtn {width: 50%; color: white; border: none; padding: 10px 15px; font-size: 14px; transition: background-color 0.3s;}

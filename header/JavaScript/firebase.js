@@ -42,9 +42,14 @@ onAuthStateChanged(auth, (user) => {
                     await setDoc(doc(db, "users", user.email), {
                         bids: {},
                         cart: {},
-                        name: user.displayName,
+                        message: {},
+                        record: {},
+                        search: [],
+                        view: [],
+                        number: 0,
                         score: 0.0,
-                        imgSrc: user.photoURL
+                        imgSrc: user.photoURL,
+                        name: user.displayName
                     });
                 }
                 mainIframe.src = mainIframe.src;

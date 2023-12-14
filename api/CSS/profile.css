@@ -28,4 +28,8 @@
 }
 .profile-name {
     font-size: 20px;
+    display: flex;
+}
+#editNameBtn {
+    margin-left: 10px;
 }
