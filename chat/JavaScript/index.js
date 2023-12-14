@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, setDoc, updateDoc, getDoc, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, updateDoc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -49,42 +49,53 @@ async function getMyMessage() {
         getMessages();
     }
 }
+
 async function getMessages() {
     const mainElement = document.querySelector('main');
-    const querySnapshot = await getDocs(query(collection(db, "messages")));
-    mainElement.innerHTML = querySnapshot.empty ? '<h2>暫無任何通知<h2>' : ''; 
-    querySnapshot.forEach(async(doc) => {
-        if (doc.data()[encodeEmail()]) {
-            const newA = document.createElement('a');
-            newA.href = `chat.html?id=${doc.id}&email=${auth.currentUser.email}`;
-            newA.className = 'chat';
-            newA.innerHTML = await getProductHTML(doc.id) + getMsgHTML(doc.data()[encodeEmail()]);
-            mainElement.appendChild(newA);
-        }
-    });
-}
+    mainElement.innerHTML = ''; 
+    await getItemsIBought();
+    await getMyProducts();
+    if (mainElement.innerHTML === '') mainElement.innerHTML = '<h2>暫無任何通知<h2>';
 
-async function getProductHTML(id) {
-    const products = await getDoc(doc(db, "products", id));
-    return `<img src="${products.data().imgs[0]}"><div class="details"><h2>${products.data().name.split('#')[0]}</h2>`;
-}
-function getMsgHTML(msg) {
-    let cnt = 0;
-    let html = '';
-    if (msg.length === 1) {
-        if (msg[0].user == auth.currentUser.email)
-            html = `<p>感謝您在我們的網站上下單。</p></div>`;
-        else
-            html = `<p>您有一個新的訂單需要處理。</p></div>`;
-    } else html = `<p>${msg[msg.length-1].content}</p></div>`;
-    for (let i = msg.length-1; i >= 0; i--) {
-        if (msg[i].user == auth.currentUser.email)
-            break;
-        cnt++;
+    async function getItemsIBought() {
+        const querySnapshot = await getDocs(query(collection(db, "messages")));
+        querySnapshot.forEach(async(docSnap) => {
+            if (docSnap.data()[encodeEmail()]) {
+                const product = await getDoc(doc(db, "products", docSnap.id));
+                createMsgToMain(product, auth.currentUser.email, docSnap.data()[encodeEmail()]);
+            }
+        });
     }
-    if (cnt > 0)
-        html += `<div class="unread">${cnt}</div>`;
-    return html;
+    async function getMyProducts() {
+        const querySnapshot = await getDocs(query(collection(db, "products"), where("seller", "==", auth.currentUser.email)));
+        querySnapshot.forEach(async(docSnap) => {
+            const messagesDoc = await getDoc(doc(db, "messages", docSnap.id));
+            if (messagesDoc.exists()) {
+                Object.entries(messagesDoc.data()).forEach(async([key, value]) => {
+                    createMsgToMain(docSnap, key, value);
+                });
+            }
+        });
+    }
+    function createMsgToMain(product, email, msg) {
+        const id = product.id, data = product.data();
+        const newA = document.createElement('a');
+        let cnt = 0
+        let html = `<img src="${data.imgs[0]}"><div class="details"><h2>${data.name.split('#')[0]}</h2>`;
+        if (msg.length === 1) {
+            if (msg[0].user == auth.currentUser.email) html += `<p>感謝您在我們的網站上下單。</p></div>`;
+            else html += `<p>您有一個新的訂單需要處理。</p></div>`;
+        } else html += `<p>${msg[msg.length-1].content}</p></div>`;
+        for (let i = msg.length-1; i >= 0; i--) {
+            if (msg[i].user == auth.currentUser.email) break;
+            cnt++;
+        }
+        if (cnt > 0) html += `<div class="unread">${cnt}</div>`;
+        newA.href = `chat.html?id=${id}&email=${email}`;
+        newA.className = 'chat';
+        newA.innerHTML = html;
+        mainElement.appendChild(newA);
+    }
 }
 
 onAuthStateChanged(auth, (user) => {

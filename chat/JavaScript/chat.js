@@ -30,6 +30,7 @@ const buyer = urlParams.get('email');
 const productID = urlParams.get('id');
 const buyerRef = doc(db, "users", buyer);
 const messagesRef = doc(db, "messages", productID);
+const encodeBuyer = encodeEmail(buyer);
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -37,7 +38,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-function encodeEmail(email = auth.currentUser.email) {
+function encodeEmail(email) {
     return email.replace(/\./g, '_');
 }
 function formatDateTime(time) {
@@ -73,8 +74,8 @@ async function verifyIdentity(email) {
         mainElement.innerHTML = '';
         let msgCnt = 0;
         const unsub = onSnapshot(messagesRef, (doc) => {
-            if (doc.data()[encodeEmail(buyer)]) {
-                const messages = doc.data()[encodeEmail(buyer)];
+            if (doc.data()[encodeBuyer]) {
+                const messages = doc.data()[encodeBuyer];
                 for (; msgCnt < messages.length; msgCnt++) {
                     const msg = messages[msgCnt];
                     if (msgCnt == 0) {
@@ -145,21 +146,21 @@ async function confirmOrder(quantity) {
             [`record.${productID}`]: {isRate: false, quantity: quantity}
         });
     }
-    messagesDoc.data()[encodeEmail()][0].isRecord = true;
-    messagesDoc.data()[encodeEmail()].append({
+    messagesDoc.data()[encodeBuyer][0].isRecord = true;
+    messagesDoc.data()[encodeBuyer].append({
         content: 'test',
         sendEmail: true,
         time: Date.now(),
         user: auth.currentUser.email
     });
     await updateDoc(messagesRef, {
-        [encodeEmail(buyer)]: messagesDoc.data()[encodeEmail()]
+        [encodeBuyer]: messagesDoc.data()[encodeBuyer]
     });
     window.location.href = window.location.href;
 }
 async function uploadMessage() {
     await updateDoc(messagesRef, {
-        [encodeEmail()]: arrayUnion({
+        [encodeBuyer]: arrayUnion({
             content: textInput.value,
             sendEmail: false,
             time: Date.now(),
