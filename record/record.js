@@ -82,22 +82,43 @@ const start1 = () => {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
-                const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: recordData[key],key: key,img:productData.imgs[0]};
-                recordItems.push(newItem)
-                console.log(recordItems);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
-                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                        </a>
-                    </td>
-                    <td>${newItem.name}</td>
-                    <td>${newItem.price} 元</td>
-                    <td>${newItem.quantity}</td>
-                    <td><button class="remove-button" data-item-name="${newItem.key}">評價</button></td>
-                `;
-                recordTable.appendChild(row);
+                const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: recordData[key][0],key: key,img:productData.imgs[0]};
+                console.log(recordData[key][1]);
+                if(recordData[key][1]){
+                    recordItems.push(newItem)
+                    console.log(recordItems);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                            </a>
+                        </td>
+                        <td>${newItem.name}</td>
+                        <td>${newItem.price} 元</td>
+                        <td>${newItem.quantity}</td>
+                        <td></td>
+                    `;
+                    recordTable.appendChild(row);
+                }
+                else{
+                    recordItems.push(newItem)
+                    console.log(recordItems);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                            </a>
+                        </td>
+                        <td>${newItem.name}</td>
+                        <td>${newItem.price} 元</td>
+                        <td>${newItem.quantity}</td>
+                        <td><button class="remove-button" data-item-name="${newItem.key}">評價</button></td>
+                    `;
+                    recordTable.appendChild(row);
+                }
+                
                 // 在每行結尾插入一個橫跨整行的單元格，並在其中放置一條分隔線
                 //const separatorRow = document.createElement('tr');
                 //const separatorCell = document.createElement('td');

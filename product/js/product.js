@@ -65,20 +65,17 @@ function start() {
         // let login = document.getElementById("login");
         // let profileImage = document.getElementById("profileImage");
         console.log(user);
-        if (user) {
+        if (user) { // 登入狀態
             userID = user.email;
-            // login.innerHTML = "登出";
             // profileImage.setAttribute("src", user.photoURL);
         }
         else {
             userID = "none";
-            // login.innerHTML = "登入";
         }
         setting(userID, productOwnerID);
     });
 };
 function eventSetting() {
-    // document.getElementById("login").addEventListener("click", loginAndlogout, false);
     imgs = document.getElementById("itemPicture"),
         imgs.addEventListener("click", changeImage, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
@@ -103,14 +100,16 @@ function setProduct() { // 設定顯示的商品
     let itemQuantity = document.getElementById("itemQuantity");
     itemQuantity.innerHTML = productData.quantity.toString();
     let itemTag = document.getElementById("itemTag");
-    if (str.length == 1) itemTag.innerHTML = "無";
-    else {
-        itemTag.innerHTML = "";
-        for (var i = 1; i < str.length; i++) {
+    let f = false;
+    itemTag.innerHTML = "";
+    for (var i = 1; i < str.length; i++) {
+        if (str[i].length > 0) {
+            if (f) itemTag.innerHTML += ", "
             itemTag.innerHTML += str[i];
-            if (i != str.length - 1) itemTag.innerHTML += ", "
+            f = true;
         }
     }
+    if (f == false) itemTag.innerHTML = "無";
 
     let srcs = productData.imgs;
     imgs.setAttribute("src", srcs[0]);
