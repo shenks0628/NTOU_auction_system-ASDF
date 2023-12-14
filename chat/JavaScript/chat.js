@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, updateDoc, increment, arrayUnion, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -26,8 +26,9 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 const urlParams = new URLSearchParams(window.location.search);
-const productID = urlParams.get('id');
 const buyer = urlParams.get('email');
+const productID = urlParams.get('id');
+const buyerRef = doc(db, "users", buyer);
 const messagesRef = doc(db, "messages", productID);
 
 onAuthStateChanged(auth, (user) => {
@@ -109,18 +110,14 @@ async function verifyIdentity(email) {
                                 if (!isWithinDays(1, msg.time)) {
                                     alert('已超過取消時間，無法取消訂單!');
                                 } else {
-                                    if (confirm('確定要取消訂單嗎?')) {
-                                        console.log('訂單已取消');
-                                    }
+                                    if (confirm('確定要取消訂單嗎?')) cancelOrder();
                                 }
                             });
                             document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
                                 if (isWithinDays(1, msg.time)) {
                                     alert('賣家需要等待一天後才能確認訂單!');
                                 } else {
-                                    if (confirm('確定要確認訂單嗎?')) {
-                                        console.log('訂單已確認');
-                                    }
+                                    if (confirm('確定要確認訂單嗎?')) confirmOrder(quantity);
                                 }
                             });
                             continue;
@@ -133,8 +130,32 @@ async function verifyIdentity(email) {
     }
 }
 async function cancelOrder() {
+    await deleteDoc(messagesRef);
+    window.location.href = 'index.html';
 }
-async function confirmOrder() {
+async function confirmOrder(quantity) {
+    const buyerDoc = await getDoc(buyerRef);
+    const messagesDoc = await getDoc(messagesRef);
+    if (buyerDoc.exists() && buyerDoc.data().record[productID]) {
+        await updateDoc(buyerRef, {
+            [`record.${productID}.quantity`]: increment(quantity)
+        });
+    } else {
+        await updateDoc(buyerRef, {
+            [`record.${productID}`]: {isRate: false, quantity: quantity}
+        });
+    }
+    messagesDoc.data()[encodeEmail()][0].isRecord = true;
+    messagesDoc.data()[encodeEmail()].append({
+        content: 'test',
+        sendEmail: true,
+        time: Date.now(),
+        user: auth.currentUser.email
+    });
+    await updateDoc(messagesRef, {
+        [encodeEmail(buyer)]: messagesDoc.data()[encodeEmail()]
+    });
+    window.location.href = window.location.href;
 }
 async function uploadMessage() {
     await updateDoc(messagesRef, {
@@ -159,4 +180,4 @@ function Keydown(e) {
     if(e.keyCode == 13) uploadMessage();
 }
 document.addEventListener('keydown', Keydown, false);
-//自動下拉、上傳檔案、一天內確認/取消
+//自動下拉、上傳檔案
