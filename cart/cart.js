@@ -296,7 +296,7 @@ const start1 = () => {
                         const b = removedItem.quantity;
                         const x = a-b;
                         if(x >=0){
-                            //removeItem(itemName);
+                            removeItem(itemName);
                             console.log(x);
                             const productRef = doc(db, "products", itemName);
                             (async () => {
