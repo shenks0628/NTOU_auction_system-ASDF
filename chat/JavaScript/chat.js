@@ -58,76 +58,76 @@ function formatTime(date) {
 function isWithinDays(days, time) {
     return Date.now()-time < 86400000*days;
 }
-function getMsgDiv(msg, email) {
-    const newDiv = document.createElement('div');
-    newDiv.className = `chat-item item-${msg.user == email ? 'right' : 'left'}`;
-    newDiv.innerHTML = `
-        <span class="message">${msg.content}</span>
-        <span class="time">${formatDateTime(msg.time)}</span>
-    `;
-    return newDiv;
-}
 async function verifyIdentity(email) {
+    const mainElement = document.querySelector('main');
     const docSnap = await getDoc(doc(db, "products", productID));
     if (docSnap.exists() && (email == buyer || email == docSnap.data().seller)) {
-        const mainElement = document.querySelector('main');
         mainElement.innerHTML = '';
         let msgCnt = 0;
         const unsub = onSnapshot(messagesRef, (doc) => {
-            if (doc.data()[encodeBuyer]) {
-                const messages = doc.data()[encodeBuyer];
-                for (; msgCnt < messages.length; msgCnt++) {
-                    const msg = messages[msgCnt];
-                    if (msgCnt == 0) {
-                        const name = msg.content.split('#')[0];
-                        const price = parseInt(msg.content.split('#')[1]);
-                        const quantity = parseInt(msg.content.split('#')[2]);
-                        headerText.innerHTML = name;
-                        headerText.href = `../api/?id=${productID}`;
-                        if (email == buyer) {
-                            msg.content = `
-                                感謝您在我們的網站上下單。<br><br>
-                                商品編號: ${productID}<br>
-                                商品名稱: ${name}<br>
-                                購買數量: ${quantity}<br>
-                                訂單總額: ${price*quantity}<br>
-                                下單日期: ${formatDateTime(msg.time)}<br><br>
-                                <button id="cancelOrderBtn" ${msg.isRecord ? 'disabled>訂單已成立' : '>取消訂單'}</button>
-                            `;
-                        } else {
-                            msg.content = `
-                                您有一個新的訂單需要處理。<br><br>
-                                商品編號: ${productID}<br>
-                                商品名稱: ${name}<br>
-                                購買數量: ${quantity}<br>
-                                訂單總額: ${price*quantity}<br>
-                                下單日期: ${formatDateTime(msg.time)}<br><br>
-                                <button id="confirmOrderBtn" ${msg.isRecord ? 'disabled>訂單已成立' : '>確認訂單'}</button>
-                            `;
-                        }
-                        if (!msg.isRecord) {
-                            mainElement.appendChild(getMsgDiv(msg, email));
-                            document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
-                                if (!isWithinDays(1, msg.time)) {
-                                    alert('已超過取消時間，無法取消訂單!');
-                                } else {
-                                    if (confirm('確定要取消訂單嗎?')) cancelOrder();
-                                }
-                            });
-                            document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
-                                if (isWithinDays(1, msg.time)) {
-                                    alert('賣家需要等待一天後才能確認訂單!');
-                                } else {
-                                    if (confirm('確定要確認訂單嗎?')) confirmOrder(quantity);
-                                }
-                            });
-                            continue;
-                        }
-                    }
-                    mainElement.appendChild(getMsgDiv(msg, email));
-                }
-            }
+            if (doc.data()[encodeBuyer])
+                for (; msgCnt < doc.data()[encodeBuyer].length; msgCnt++)
+                    createMsgToMain(doc.data()[encodeBuyer][msgCnt], email);
         });
+    }
+
+    function createMsgToMain(msg, email) {
+        if (msg.user === 'system') {
+            if (msg.content.split('#').length === 3) {
+                const name = msg.content.split('#')[0];
+                const price = parseInt(msg.content.split('#')[1]);
+                const quantity = parseInt(msg.content.split('#')[2]);
+                headerText.innerHTML = name;
+                headerText.href = `../api/?id=${productID}`;
+                msg.content = `
+                    商品編號: ${productID}<br>
+                    商品名稱: ${name}<br>
+                    購買數量: ${quantity}<br>
+                    訂單總額: ${price*quantity}<br>
+                    下單日期: ${formatDateTime(msg.time)}<br><br>
+                `;
+                if (!msg.isRecord) {
+                    msg.content += email == buyer ? '<button id="cancelOrderBtn">取消訂單</button>' : '<button id="confirmOrderBtn">確認訂單</button>';
+                    const newDiv = document.createElement('div');
+                    newDiv.className = 'chat-item system';
+                    newDiv.innerHTML = `<span class="message">${msg.content}</span>`;
+                    mainElement.appendChild(newDiv);
+                    document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
+                        if (!isWithinDays(1, msg.time))
+                            alert('已超過取消時間，無法取消訂單!');
+                        else if (confirm('確定要取消訂單嗎?'))
+                            cancelOrder();
+                    });
+                    document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
+                        if (isWithinDays(1, msg.time))
+                            alert('賣家需要等待一天後才能確認訂單!');
+                        else if (confirm('確定要確認訂單嗎?'))
+                            confirmOrder(quantity);
+                    });
+                } else {
+                    msg.content += '<button disabled>訂單已成立</button>'
+                    const newDiv = document.createElement('div');
+                    newDiv.className = 'chat-item system';
+                    newDiv.innerHTML = `<span class="message">${msg.content}</span>`;
+                    mainElement.appendChild(newDiv);
+                }
+            } else {
+                headerText.innerHTML += ' (已成立)';
+                msg.content = '賣家成立訂單'
+                const newDiv = document.createElement('div');
+                newDiv.className = 'chat-item system-small';
+                newDiv.innerHTML = `<span class="message">${msg.content}</span>`;
+                mainElement.appendChild(newDiv);
+            }
+        } else {
+            const newDiv = document.createElement('div');
+            newDiv.className = `chat-item ${msg.user == email ? 'right' : 'left'}`;
+            newDiv.innerHTML = `
+                <span class="message">${msg.content}</span>
+                <span class="time">${formatDateTime(msg.time)}</span>
+            `;
+            mainElement.appendChild(newDiv);
+        }
     }
 }
 async function cancelOrder() {
@@ -137,37 +137,33 @@ async function cancelOrder() {
 async function confirmOrder(quantity) {
     const buyerDoc = await getDoc(buyerRef);
     const messagesDoc = await getDoc(messagesRef);
-    if (buyerDoc.exists() && buyerDoc.data().record[productID]) {
-        await updateDoc(buyerRef, {
-            [`record.${productID}.quantity`]: increment(quantity)
-        });
-    } else {
-        await updateDoc(buyerRef, {
-            [`record.${productID}`]: {isRate: false, quantity: quantity}
-        });
-    }
-    messagesDoc.data()[encodeBuyer][0].isRecord = true;
-    messagesDoc.data()[encodeBuyer].append({
-        content: 'test',
+    const messages = messagesDoc.data()[encodeBuyer];
+    messages[0].isRecord = true;
+    messages.push({
+        content: '訂單已確認',
         sendEmail: true,
         time: Date.now(),
-        user: auth.currentUser.email
+        user: 'system'
     });
-    await updateDoc(messagesRef, {
-        [encodeBuyer]: messagesDoc.data()[encodeBuyer]
-    });
+    if (buyerDoc.exists() && buyerDoc.data().record[productID])
+        await updateDoc(buyerRef, { [`record.${productID}.quantity`]: increment(quantity) });
+    else
+        await updateDoc(buyerRef, { [`record.${productID}`]: {isRate: false, quantity: quantity} });
+    await updateDoc(messagesRef, { [encodeBuyer]: messages });
     window.location.href = window.location.href;
 }
 async function uploadMessage() {
-    await updateDoc(messagesRef, {
-        [encodeBuyer]: arrayUnion({
-            content: textInput.value,
-            sendEmail: false,
-            time: Date.now(),
-            user: auth.currentUser.email
-        })
-    });
-    textInput.value = '';
+    try {
+        await updateDoc(messagesRef, {
+            [encodeBuyer]: arrayUnion({
+                content: textInput.value,
+                sendEmail: false,
+                time: Date.now(),
+                user: auth.currentUser.email
+            })
+        });
+        textInput.value = '';
+    } catch (e) { window.location.href = window.location.href; }
 }
 
 sendBtn.onclick = function (e) {

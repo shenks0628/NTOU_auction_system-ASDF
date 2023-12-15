@@ -60,7 +60,7 @@ main {
 }
 .message {
     padding: 15px;
-    max-width: 50%;
+    max-width: 55%;
     word-wrap: break-word;
     user-select: text;
     -webkit-user-select: text; /* 兼容 WebKit 浏览器 */
@@ -82,20 +82,38 @@ main {
 .item-left .time {
     left: 0px;
 }
-.item-left .message {
+.chat-item.left .message {
     float: left;
     color: white;
     background: #1D3557;
     border-radius: 0px 15px 15px 15px;
 }
-.item-right .time {
+.chat-item.right .time {
     right: 0px;
 }
-.item-right .message {
+.chat-item.right .message {
     float: right;
     color: #1D3557;
     background: white;
     border-radius: 15px 0px 15px 15px;
+}
+.chat-item.system {
+    text-align: center;
+    color: #1D3557;
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.chat-item.system-small {
+    text-align: center;
+}
+.chat-item.system-small .message {
+    color: #1D3557;
+    background: white;
+    border-radius: 15px;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 footer {

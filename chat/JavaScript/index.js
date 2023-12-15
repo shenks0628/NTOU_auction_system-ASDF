@@ -27,6 +27,9 @@ const db = getFirestore(app);
 function encodeEmail(email = auth.currentUser.email) {
     return email.replace(/\./g, '_');
 }
+function decodeEmail(email) {
+    return email.replace(/_/g, '.');
+}
 
 async function getMyMessage() {
     const users = await getDoc(doc(db, "users", auth.currentUser.email));
@@ -40,7 +43,7 @@ async function getMyMessage() {
                         isRecord: false,
                         sendEmail: true,
                         time: Date.now(),
-                        user: auth.currentUser.email
+                        user: 'system'
                     }]
                 }, { merge: true });
             }
@@ -72,7 +75,7 @@ async function getMessages() {
             const messagesDoc = await getDoc(doc(db, "messages", docSnap.id));
             if (messagesDoc.exists()) {
                 Object.entries(messagesDoc.data()).forEach(async([key, value]) => {
-                    createMsgToMain(docSnap, key, value);
+                    createMsgToMain(docSnap, decodeEmail(key), value);
                 });
             }
         });
