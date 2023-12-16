@@ -85,10 +85,10 @@ async function getMessages() {
         const newA = document.createElement('a');
         let cnt = 0
         let html = `<img src="${data.imgs[0]}"><div class="details"><h2>${data.name.split('#')[0]}</h2>`;
-        if (msg.length === 1) {
-            if (msg[0].user == auth.currentUser.email) html += `<p>感謝您在我們的網站上下單。</p></div>`;
-            else html += `<p>您有一個新的訂單需要處理。</p></div>`;
-        } else html += `<p>${msg[msg.length-1].content}</p></div>`;
+        if (msg.length === 1)
+            html += `<p>商品編號: ${id}</p></div>`;
+        else
+            html += `<p>${msg[msg.length-1].content}</p></div>`;
         for (let i = msg.length-1; i >= 0; i--) {
             if (msg[i].user == auth.currentUser.email) break;
             cnt++;

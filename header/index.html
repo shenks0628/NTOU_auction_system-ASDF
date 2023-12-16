@@ -10,12 +10,14 @@
     <header>
         <div class="toggle">
             <div class="left">
-                <button id="avatarBtn" onclick="toUrl('chat')">
-                    <img class="avatar" src="img/google.png" alt="google login">
-                    <img class="notify" src="img/warning.png" alt="notification">
-                </button>
+                <button id="avatarBtn"><img class="avatar" src="img/google.png" alt="avatar"></button>
+                <div id="dropdown" class="dropdown-content">
+                    <button id="profileBtn">個人頁面</button>
+                    <button id="chatBtn">聊天室</button>
+                    <button id="logoutBtn">登出</button>
+                </div>
             </div>
-            <a href="" class="title-span"><font color="#007355">A</font><font color="#F65353">S</font><font color="#F59A23">D</font><font color="#82218B">F</font></a>
+            <a href="?" class="title-span"><font color="#007355">A</font><font color="#F65353">S</font><font color="#F59A23">D</font><font color="#82218B">F</font></a>
             <div class="right">
                 <div class="search-bar">
                     <input id="searchBarInput" type="text" placeholder="Search">
@@ -38,14 +40,12 @@
 
         <nav>
             <ul id="menuUl">
-                <li><button onclick="toUrl('')">首頁</button></li>
                 <li><button>一般商品</button></li>
                 <li><button>競標商品</button></li>
                 <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
                 <li><button onclick="toUrl('selling_list/selling_list.html')">賣東西</button></li>
                 <li><button onclick="toUrl('bidding_list/bidding_list.html')">競標清單</button></li>
                 <li><button>聯絡我們</button></li>
-                <li><button id="googleSignBtn">登入</button></li>
             </ul>
         </nav>
     </header>

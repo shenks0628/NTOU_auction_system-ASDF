@@ -4,6 +4,7 @@ if (urlParams.get('path')) {
     toUrl(urlParams.get('path'));
 }
 menuBtn.onclick = function () {
+    dropdown.style.display = "none";
     if (menuBtn.classList.contains('click')) {
         menuBtn.classList.remove('click');
         menuUl.classList.remove('straight');
@@ -16,4 +17,7 @@ menuBtn.onclick = function () {
 }
 function toUrl(url) {
     mainIframe.src = '../' + url;
+}
+function toggleDropdown() {
+    dropdown.style.display = dropdown.style.display !== "block" ? "block" : "none";
 }
