@@ -64,7 +64,6 @@ async function start() {
         id: user.email,
         imgSrc: user.photoURL
       };
-      // profileImage.setAttribute("src", user.photoURL);
     }
     else {
       userData = "none";
@@ -198,7 +197,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
-    if (id.length > 0) {
+    if (id.length > 0 && productData.bids_info.who1.length > 0) {
       document.getElementById("inputPrice").setAttribute("disabled", true);
       document.getElementById("inputDate").setAttribute("disabled", true);
       document.getElementById("inputTime").setAttribute("disabled", true);
