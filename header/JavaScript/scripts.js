@@ -4,6 +4,7 @@ if (urlParams.get('path')) {
     toUrl(urlParams.get('path'));
 }
 menuBtn.onclick = function () {
+    dropdown.style.display = "none";
     if (menuBtn.classList.contains('click')) {
         menuBtn.classList.remove('click');
         menuUl.classList.remove('straight');
@@ -18,10 +19,5 @@ function toUrl(url) {
     mainIframe.src = '../' + url;
 }
 function toggleDropdown() {
-    var dropdown = document.getElementById("dropdown");
-    if (dropdown.style.display !== "block") {
-        dropdown.style.display = "block";
-    } else {
-        dropdown.style.display = "none";
-    }
+    dropdown.style.display = dropdown.style.display !== "block" ? "block" : "none";
 }
