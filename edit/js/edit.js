@@ -55,7 +55,7 @@ async function getProduct() { // 讀資料
   return productData;
 }
 async function start() {
-  window.alert("尚未完成判定競標商品不能編輯部分");
+  window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
     console.log(user);
