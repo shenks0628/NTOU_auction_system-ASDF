@@ -211,7 +211,8 @@ const start1 = () => {
             const productData = productDoc.data();
             console.log("Product data for product with ID", productId, ":", productData);
                 if(cartData[key]<=productData.quantity){
-                    const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity};
+                    const pName = productData.name.split('#')[0];
+                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity};
                     cartItems.push(newItem);
                     console.log(cartItems);
                     totalAmount += newItem.price * newItem.quantity;
@@ -230,8 +231,9 @@ const start1 = () => {
                     cartTable.appendChild(row);
                 }
                 else{
-                    window.alert("你所選的商品:"+productData.name+"數量不足,請更新商品數量或移除購物車");
-                    const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity};
+                    const prName = productData.name.split('#')[0];
+                    window.alert("你所選的商品:"+prName+"數量不足,請更新商品數量或移除購物車");
+                    const newItem = { name: prName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity};
                     cartItems.push(newItem);
                     console.log(cartItems);
                     const row = document.createElement('tr');
