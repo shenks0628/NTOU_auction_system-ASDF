@@ -30,7 +30,7 @@ onAuthStateChanged(auth, (user) => {
         avatarBtn.onclick = function (e) { toggleDropdown(); }
         profileBtn.onclick = function (e) { toggleDropdown(); toUrl('api?email='+user.email); }
         chatBtn.onclick = function (e) { toggleDropdown(); toUrl('chat'); }
-        logoutBtn.onclick = function (e) { toggleDropdown(); signOut(auth); }
+        logoutBtn.onclick = function (e) { toggleDropdown(); signOut(auth); mainIframe.src = mainIframe.src; }
     } else {
         avatarBtn.innerHTML = '<img class="avatar" src="img/google.png" alt="google">';
         avatarBtn.onclick = function (e) {
