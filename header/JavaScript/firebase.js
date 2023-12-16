@@ -26,13 +26,14 @@ const db = getFirestore(app);
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        avatarBtn.innerHTML = `<img class="avatar" src="${user.photoURL}" alt="avatar">`;
-        googleSignBtn.innerHTML = '登出';        
-        googleSignBtn.onclick = function (e) { signOut(auth); }
+        avatarBtn.innerHTML = `<img class="avatar" src="${user.photoURL}" alt="avatar">`;    
+        avatarBtn.onclick = function (e) { toggleDropdown(); }
+        profileBtn.onclick = function (e) { toggleDropdown(); toUrl('api?email='+user.email); }
+        chatBtn.onclick = function (e) { toggleDropdown(); toUrl('chat'); }
+        logoutBtn.onclick = function (e) { toggleDropdown(); signOut(auth); }
     } else {
         avatarBtn.innerHTML = '<img class="avatar" src="img/google.png" alt="google">';
-        googleSignBtn.innerHTML = '登入';
-        googleSignBtn.onclick = function (e) {
+        avatarBtn.onclick = function (e) {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider)
             .then(async (result) => {

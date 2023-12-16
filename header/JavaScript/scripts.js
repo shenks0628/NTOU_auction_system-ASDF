@@ -17,3 +17,11 @@ menuBtn.onclick = function () {
 function toUrl(url) {
     mainIframe.src = '../' + url;
 }
+function toggleDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    if (dropdown.style.display !== "block") {
+        dropdown.style.display = "block";
+    } else {
+        dropdown.style.display = "none";
+    }
+}
