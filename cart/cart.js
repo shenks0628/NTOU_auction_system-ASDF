@@ -41,6 +41,57 @@ async function removeItem(itemid) {
         ['cart.' + itemid]: deleteField()
     });
 }
+
+function encodeEmail(email) {
+    return email.replace(/\./g, '_');
+}
+async function addmessage(itemid,value1) {
+    try {
+        const docRef = doc(db, 'messages', itemid); // 假設要檢查的文件位於 'messages' 集合中
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+            // 取得要更新的文檔的參考
+            const docRef = doc(db, 'messages', itemid);
+            // 定義要更新的字段和值
+            const mapData = new Map();
+            mapData.set('content', value1);
+            mapData.set('isRecord', false);
+            mapData.set('sendEmail', true);
+            mapData.set('time', Date.now());
+            mapData.set('user', 'system');
+            const userIdArray = [Object.fromEntries(mapData)]; // 將 mapData 放入一個陣列中
+            const newid=encodeEmail(userId);
+            const newData = {
+                [newid]: userIdArray
+            };
+            // 使用 updateDoc 函數進行更新
+            await updateDoc(docRef, newData);
+            console.log('文檔更新。');
+            console.log('文件存在');
+        } 
+        else {
+            const docRe = doc(db, 'messages', itemid);// 新增一個文檔到集合中
+            const mapData = new Map();
+            mapData.set('content', value1);
+            mapData.set('isRecord', false);
+            mapData.set('sendEmail', true);
+            mapData.set('time', Date.now());
+            mapData.set('user', 'system');
+            const userIdArray = [Object.fromEntries(mapData)]; // 將 mapData 放入一個陣列中
+            const newid=encodeEmail(userId);
+            const newData = {
+                [newid]: userIdArray
+            };
+            // 使用 updateDoc 函數進行更新
+            await setDoc(docRe, newData);
+            console.log('文檔已成功設定或替換。');
+            console.log('文件不存在');
+        }
+    } catch (error) {
+        console.error('獲取文檔時出錯：', error);
+    }
+}
+
 function displayCart() {
     // 清空表格內容
     cartTable.innerHTML = `
@@ -244,9 +295,16 @@ const start1 = () => {
                             }
                         }
                     }
-                    updateDoc(doc(db, "users", userId), {
-                        ['cart.' + itemid]: parseInt(userInput)
-                    });
+                    (async () => {
+                        try {
+                            await updateDoc(doc(db, "users", userId), {
+                                ['cart.' + itemid]: parseInt(userInput)
+                            });
+                            console.log('資料更新成功！');
+                        } catch (error) {
+                            console.error('更新資料時出現錯誤：', error);
+                        }
+                    })();
                     displayCart();
                 }
             }
@@ -277,7 +335,7 @@ const start1 = () => {
             const productRef = doc(db, "products", itemName);
             // 使用 getDoc 函數取得該產品的文件快照
             getDoc(productRef)
-            .then((productDoc) => {
+            .then((productDoc) => { //這邊有async
                 if (productDoc.exists()) {
                     const productData = productDoc.data();
                     console.log("Product data for product with ID", itemName, ":", productData);
@@ -292,23 +350,48 @@ const start1 = () => {
                             removeItem(itemName);
                             console.log(x);
                             const productRef = doc(db, "products", itemName);
-                            updateDoc(productRef, {
-                                quantity: x
-                            })
-                                .then(() => {
-                                    console.log('數量更新成功！');
-                                })
-                                .catch((error) => {
-                                    console.error('更新數量時出現錯誤：', error);
-                                });
-            
+                            (async () => {
+                                try {
+                                    await updateDoc(productRef, {
+                                        quantity: x
+                                    })
+                                        .then(() => {
+                                            console.log('庫存更新成功！');
+                                        })
+                                        .catch((error) => {
+                                            console.error('庫存更新數量時出現錯誤：', error);
+                                        });
+                                    console.log('資料更新成功！');
+                                } catch (error) {
+                                    console.error('更新資料時出現錯誤：', error);
+                                }
+                            })();
+                            (async () => {
+                                try {
+                                    //在 Firestore 中獲取使用者資料的參考路徑
+                                    await updateDoc(doc(db, 'users', userId), {
+                                        [`message.${itemName}`]: removedItem.quantity
+                                    })
+                                        .then(() => {
+                                            console.log('成功新增商品到message中');
+                                        })
+                                        .catch((error) => {
+                                            console.error('新增商品到message時發生錯誤', error);
+                                        });
+                                    console.log('資料更新成功！');
+                                } catch (error) {
+                                    console.error('更新資料時出現錯誤：', error);
+                                }
+                            })();
+                            const value1=`${removedItem.name}#${removedItem.price}#${removedItem.quantity}`;
+                            console.log(value1);
+                            addmessage(itemName,value1);
                             cartItems.splice(indexToRemove, 1);
-                            console.log("777");
                             displayCart();
                         }
                         else{
                             window.alert(removedItem.name+"庫存有更新,商品數量不足");
-                            removedItem.Stockquantity=a;
+                            removedItem.Stockquantity=productData.quantity;
                             removedItem.check="沒貨";
                             displayCart();
                         }
@@ -317,9 +400,6 @@ const start1 = () => {
             })
         });
     });
-    login.onclick = () => {
-        signOut(auth);
-    }
 };
 
 window.addEventListener("load", start);
