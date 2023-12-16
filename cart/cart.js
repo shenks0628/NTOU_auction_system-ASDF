@@ -41,6 +41,57 @@ async function removeItem(itemid) {
         ['cart.' + itemid]: deleteField()
     });
 }
+
+function encodeEmail(email) {
+    return email.replace(/\./g, '_');
+}
+async function addmessage(itemid,value1) {
+    try {
+        const docRef = doc(db, 'messages', itemid); // 假設要檢查的文件位於 'messages' 集合中
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+            // 取得要更新的文檔的參考
+            const docRef = doc(db, 'messages', itemid);
+            // 定義要更新的字段和值
+            const mapData = new Map();
+            mapData.set('content', value1);
+            mapData.set('isRecord', false);
+            mapData.set('sendEmail', true);
+            mapData.set('time', Date.now());
+            mapData.set('user', 'system');
+            const userIdArray = [Object.fromEntries(mapData)]; // 將 mapData 放入一個陣列中
+            const newid=encodeEmail(userId);
+            const newData = {
+                [newid]: userIdArray
+            };
+            // 使用 updateDoc 函數進行更新
+            await updateDoc(docRef, newData);
+            console.log('文檔更新。');
+            console.log('文件存在');
+        } 
+        else {
+            const docRe = doc(db, 'messages', itemid);// 新增一個文檔到集合中
+            const mapData = new Map();
+            mapData.set('content', value1);
+            mapData.set('isRecord', false);
+            mapData.set('sendEmail', true);
+            mapData.set('time', Date.now());
+            mapData.set('user', 'system');
+            const userIdArray = [Object.fromEntries(mapData)]; // 將 mapData 放入一個陣列中
+            const newid=encodeEmail(userId);
+            const newData = {
+                [newid]: userIdArray
+            };
+            // 使用 updateDoc 函數進行更新
+            await setDoc(docRe, newData);
+            console.log('文檔已成功設定或替換。');
+            console.log('文件不存在');
+        }
+    } catch (error) {
+        console.error('獲取文檔時出錯：', error);
+    }
+}
+
 function displayCart() {
     // 清空表格內容
     cartTable.innerHTML = `
@@ -332,7 +383,9 @@ const start1 = () => {
                                     console.error('更新資料時出現錯誤：', error);
                                 }
                             })();
-                            //addmessage(itemName);
+                            const value1=`${removedItem.name}#${removedItem.price}#${removedItem.quantity}`;
+                            console.log(value1);
+                            addmessage(itemName,value1);
                             cartItems.splice(indexToRemove, 1);
                             displayCart();
                         }
