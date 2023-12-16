@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+}
+h1 {
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+}
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+.chat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: 400px;
+}
+.chat img {
+    border-radius: 50%;
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+}
+.chat .details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    overflow: hidden;
+}
+.chat .details h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    margin-bottom: 5px;
+}
+.chat .details p {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+    white-space: nowrap;
+}
+.chat .unread {
+    background-color: #ffcc00;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    margin-left: auto;
+}
