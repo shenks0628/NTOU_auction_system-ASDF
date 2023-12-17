@@ -64,50 +64,61 @@ const display = async () => {
             prev_view_title.innerHTML = "您最近瀏覽的商品";
             userId = user.email;
             const docSnap = await getDoc(doc(db, "users", userId));
+            let arr = [];
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
                 views.forEach(async (productId) => {
                     console.log(productId);
                     const productDoc = await getDoc(doc(db, "products", productId));
-                    const productData = productDoc.data();
-                    const productName = productData.name.split('#')[0];
-                    const productType = productData.type;
-                    const seller = productData.seller;
-                    if (userId == seller) {
-                        if (productType == "normal") {
-                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
-                        }
-                        else if (productType == "bids") {
-                            let endDate = productData.endtime.toDate();
-                            if (productData.bids_info.modtime) {
-                                const tmpDate = productData.bids_info.modtime.toDate();
-                                tmpDate.setHours(tmpDate.getHours() + 8);
-                                if (tmpDate < endDate) {
-                                    endDate = tmpDate;
-                                }
+                    if (productDoc.exists()) {
+                        const productData = productDoc.data();
+                        const productName = productData.name.split('#')[0];
+                        const productType = productData.type;
+                        const seller = productData.seller;
+                        if (userId == seller) {
+                            if (productType == "normal") {
+                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
                             }
-                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
+                            else if (productType == "bids") {
+                                let endDate = productData.endtime.toDate();
+                                if (productData.bids_info.modtime) {
+                                    const tmpDate = productData.bids_info.modtime.toDate();
+                                    tmpDate.setHours(tmpDate.getHours() + 8);
+                                    if (tmpDate < endDate) {
+                                        endDate = tmpDate;
+                                    }
+                                }
+                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
+                            }
+                        }
+                        else {
+                            if (productType == "normal") {
+                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                            }
+                            else if (productType == "bids") {
+                                let endDate = productData.endtime.toDate();
+                                if (productData.bids_info.modtime) {
+                                    const tmpDate = productData.bids_info.modtime.toDate();
+                                    tmpDate.setHours(tmpDate.getHours() + 8);
+                                    if (tmpDate < endDate) {
+                                        endDate = tmpDate;
+                                    }
+                                }
+                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
+                            }
                         }
                     }
                     else {
-                        if (productType == "normal") {
-                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
-                        }
-                        else if (productType == "bids") {
-                            let endDate = productData.endtime.toDate();
-                            if (productData.bids_info.modtime) {
-                                const tmpDate = productData.bids_info.modtime.toDate();
-                                tmpDate.setHours(tmpDate.getHours() + 8);
-                                if (tmpDate < endDate) {
-                                    endDate = tmpDate;
-                                }
-                            }
-                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
-                        }
+                        arr.push(productId);
                     }
-                    prev_view.removeEventListener("click", handleCheck);
-                    prev_view.addEventListener("click", handleCheck);
                 });
+                for (let i = 0; i < arr.length; i++) {
+                    await updateDoc(doc(db, "users", userId), {
+                        view: arrayRemove(arr[i])
+                    });
+                }
+                prev_view.removeEventListener("click", handleCheck);
+                prev_view.addEventListener("click", handleCheck);
             }
         }
         else {
