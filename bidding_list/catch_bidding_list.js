@@ -140,7 +140,6 @@ const start1 = async () => {
     console.log(bidsData);
     let display_list = document.getElementById("display_list");
     display_list.innerHTML = "";
-    let arr = [];
     for (let key of Object.keys(bidsData)) {
         console.log(bidsData[key]);
         const productId = key; // 替換成實際的產品 ID
@@ -150,7 +149,7 @@ const start1 = async () => {
 
         // 使用 getDoc 函數取得該產品的文件快照
         getDoc(productRef)
-        .then((productDoc) => {
+        .then(async (productDoc) => {
             if (productDoc.exists()) {
                 // 取得該產品的資料
                 const productData = productDoc.data();
@@ -168,17 +167,15 @@ const start1 = async () => {
                 console.log("Product data for product with ID", productId, ":", productData);
             }
             else {
-                arr.push(productId);
+                console.log(productId);
+                await updateDoc(doc(db, "users", userId), {
+                    ['bids.' + productId]: deleteField()
+                });
                 console.log("Product with ID", productId, "does not exist.");
             }
         })
         .catch((error) => {
             console.error("Error getting product document:", error);
-        });
-    }
-    for (let i = 0; i < arr.length; i++) {
-        await updateDoc(doc(db, "users", userId), {
-            ['bids.' + arr[i]]: deleteField()
         });
     }
     display_list.removeEventListener("click", handleCheck);

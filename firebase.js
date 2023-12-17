@@ -64,7 +64,6 @@ const display = async () => {
             prev_view_title.innerHTML = "您最近瀏覽的商品";
             userId = user.email;
             const docSnap = await getDoc(doc(db, "users", userId));
-            let arr = [];
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
                 views.forEach(async (productId) => {
@@ -109,14 +108,12 @@ const display = async () => {
                         }
                     }
                     else {
-                        arr.push(productId);
+                        console.log(productId);
+                        await updateDoc(doc(db, "users", userId), {
+                            view: arrayRemove(productId)
+                        });
                     }
                 });
-                for (let i = 0; i < arr.length; i++) {
-                    await updateDoc(doc(db, "users", userId), {
-                        view: arrayRemove(arr[i])
-                    });
-                }
                 prev_view.removeEventListener("click", handleCheck);
                 prev_view.addEventListener("click", handleCheck);
             }
