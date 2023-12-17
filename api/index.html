@@ -11,8 +11,22 @@
     <link rel="stylesheet" href="CSS/products.css">
 </head>
 <body>
-    <main></main>
-
+    <main>
+        <div id="profileContainer"></div>
+        <div id="controlContainer">
+            <div class="sort-buttons">
+                <select id="productType">
+                    <option value="all">所有商品</option>
+                    <option value="normal">一般商品</option>
+                    <option value="bids">競標商品</option>
+                </select>
+                <button id="timeSortBtn">時間↕️</button>
+                <button id="priceSortBtn">價格↕️</button>
+            </div>
+            <button id="displayBtn"><img src="img/list.png"></button>
+        </div>
+        <div id="productContainer"></div>
+    </main>
     <footer>
         <p>&copy; 2023 NTOU_ASDF. 版權所有。</p>
     </footer>

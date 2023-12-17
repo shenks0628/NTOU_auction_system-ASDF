@@ -1,13 +1,13 @@
-.profile {
+#profileContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.profile button {
+#profileContainer button {
     background-color: transparent;
     border: none;
 }
-.profile button>img {
+#profileContainer button>img {
     width: 20px;
     height: 20px;
 }
