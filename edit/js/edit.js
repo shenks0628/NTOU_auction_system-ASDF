@@ -1,9 +1,10 @@
+import { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField, Timestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+// import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -17,10 +18,10 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 const auth = await getAuth();
-const db = getFirestore(app);
-const storage = getStorage();
+// const db = getFirestore(app);
+// const storage = getStorage();
 
 let id = "";
 const urlParams = new URLSearchParams(window.location.search);
@@ -28,32 +29,9 @@ if (urlParams.get('id')) {
   id = urlParams.get('id');
 }
 
-let originProductData = null;
 let beDeletedFiles, imageFile = [];
 let userData = "none";
-async function getProduct() { // 讀資料
-  const productId = id; // 替換成實際的產品 ID
-  // 使用 doc 函數構建該產品的參考路徑
-  const productRef = doc(db, "products", productId);
-  // 使用 getDoc 函數取得該產品的文件快照
-  let productData = await getDoc(productRef)
-    .then((productDoc) => {
-      if (productDoc.exists()) {
-        // 取得該產品的資料
-        let productData = productDoc.data();
-        // productOwnerID = productData.seller;
-        console.log("Product data for product with ID", productId, ":", productData);
-        return productData;
-      }
-      else {
-        console.log("Product with ID", productId, "does not exist.");
-      }
-    })
-    .catch((error) => {
-      console.error("Error getting product document:", error);
-    });
-  return productData;
-}
+
 async function start() {
   window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
@@ -71,8 +49,9 @@ async function start() {
       window.location.href = "../";
     }
   });
+  let originProductData;
   if (id.length > 0) {
-    originProductData = await getProduct();
+    originProductData = await getProduct(id);
     if (originProductData != null && userData.id != originProductData.seller) {
       window.alert("無權限修改此商品");
       window.location.href = "../";
@@ -94,7 +73,7 @@ async function reset() {  // 重置input欄位
   if (id.length > 0) {
     document.getElementById("inputType").setAttribute("disabled", true);
     beDeletedFiles = [];
-    let productData = await getProduct();
+    let productData = await getProduct(id);
     imageFile = productData.imgs;
     showData(productData);
   }
@@ -300,8 +279,7 @@ async function sendCheck() {
       for (let i = 0; i < beDeletedFiles.length; i++) {
         await deleteStorageFile(beDeletedFiles[i]);
       }
-      window.alert("修改成功！");
-      if (id != false)
+      if (id != null)
         window.location.href = "../product?id=" + inputData.id;
     }
   }
@@ -310,139 +288,15 @@ async function sendCheck() {
       let inputData = getInputData();
       let inputImage = await uploadImage(inputData.imgs);
       inputData.imgs = inputImage;
-      id = await addProduct(inputData);
-      if (id != false)
+      id = await addProduct(userData, inputData);
+      if (id != null)
         window.location.href = "../product?id=" + id;
+      else
+        window.location.href = "../";
     }
   }
 }
 
-async function addProduct(inputData) {
-  try {
-    // console.log(inputData);
-    const userID = userData.id;
-    const seller_imgSrc = userData.imgSrc;
-    let type = inputData.type;
-    // if (normal.checked) {
-    //   type = normal.value;
-    // }
-    // else if (bids.checked) {
-    //   type = bids.value;
-    // }
-    if (type == "normal") {
-      let { productID } = await addDoc(collection(db, "products"), {
-        comment: {},
-        type: type,
-        imgs: inputData.imgs,
-        name: inputData.name,
-        description: inputData.description,
-        price: parseInt(inputData.price),
-        quantity: parseInt(inputData.quantity),
-        seller: userID,
-        sellerImg: seller_imgSrc,
-        time: serverTimestamp(),
-        url: inputData.url
-      });
-      window.alert("您已成功新增商品！");
-      return productID;
-    }
-    else if (type == "bids") {
-      let { productID } = await addDoc(collection(db, "products"), {
-        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), modtime: serverTimestamp() },
-        comment: {},
-        type: type,
-        imgs: inputData.imgs,
-        name: inputData.name,
-        description: inputData.description,
-        price: parseInt(inputData.price),
-        quantity: parseInt(1),
-        seller: userID,
-        sellerImg: seller_imgSrc,
-        time: serverTimestamp(),
-        url: inputData.url,
-        endtime: inputData.endtime
-      });
-      window.alert("您已成功新增商品！");
-      return productID;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function uploadImage(inputImage) {
-  let imageURL = [];
-  let dateString = getDateString();
-  for (let i = 0; i < inputImage.length; i++) {
-    const storageRef = ref(storage, "images/" + dateString);
-    await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
-      console.log("Upload success!");
-    });
-    await getDownloadURL(storageRef).then(async (url) => {
-      console.log(url);
-      imageURL.push(url.toString());
-    });
-  }
-  return imageURL;
-}
-async function deleteStorageFile(fileUrl) {
-  const fileRef = ref(storage, fileUrl);
-  // Delete the file
-  await deleteObject(fileRef).then(() => {
-    console.log("Delete complete!");
-  }).catch((error) => {
-    console.log(error);
-    // Uh-oh, an error occurred!
-  });
-}
-async function updateProduct(inputData) { // 修改並更新資料庫
-  try {
-    const productId = inputData.id; // 替換成實際的產品 ID
-    // 使用 doc 函數構建該產品的參考路徑
-    const productRef = doc(db, "products", productId);
-    const type = inputData.type;
-    if (type == "normal") {
-      await updateDoc(productRef, {
-        // bids_info: {},
-        // comment: {},
-        // type: type,
-        imgs: inputData.imgs,
-        name: inputData.name,
-        description: inputData.description,
-        price: parseInt(inputData.price),
-        quantity: parseInt(inputData.quantity),
-        // time: serverTimestamp(),
-        url: inputData.url
-      });
-    }
-    else if (type == "bids") {
-      inputData.bids_info.modtime = Timestamp.fromDate(new Date());
-      await updateDoc(productRef, {
-        bids_info: inputData.bids_info,
-        comment: inputData.comment,
-        type: type,
-        imgs: inputData.imgs,
-        name: inputData.name,
-        description: inputData.description,
-        price: parseInt(inputData.price),
-        quantity: parseInt(inputData.quantity),
-        // time: serverTimestamp(),
-        url: inputData.url,
-        endtime: inputData.endtime
-      });
-    }
-    // document.getElementById("editPage").style.display = "none";
-  } catch (err) {
-    console.error("Error: ", err);
-  }
-}
-
-function getDateString() {
-  let date = new Date();
-  let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
-  return dateString;
-}
 function getInputData() {
   let type = document.getElementById("inputType").options[document.getElementById("inputType").selectedIndex].value;
   var inputData;
