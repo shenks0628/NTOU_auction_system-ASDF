@@ -33,8 +33,10 @@ function edit(docId) {
 
 async function del(docId) {
     console.log(docId);
-    await deleteDoc(doc(db, "products", docId));
-    start();
+    if (confirm('確定要刪除嗎')) {
+        await deleteDoc(doc(db, "products", docId));
+        start();
+    }
 }
 
 function shn() {

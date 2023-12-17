@@ -24,6 +24,32 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
+function edit(docId) {
+    console.log(docId);
+}
+
+async function del(docId) {
+    console.log(docId);
+    if (confirm('確定要刪除嗎')) {
+        await deleteDoc(doc(db, "products", docId));
+        display();
+    }
+}
+
+const handleCheck = (event) => {
+    const targetId = event.target.id;
+    console.log(targetId);
+    // Check if the clicked element is an edit or delete button
+    if (targetId.startsWith("edit")) {
+        const productId = targetId.slice(4);
+        edit(productId);
+    }
+    else if (targetId.startsWith("del")) {
+        const productId = targetId.slice(3);
+        del(productId);
+    }
+}
+
 const display = async () => {
     const prev_view_title = document.getElementById("prev_view_title");
     const latest_normal = document.getElementById("latest_normal");
@@ -79,6 +105,8 @@ const display = async () => {
                             prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
                         }
                     }
+                    prev_view.removeEventListener("click", handleCheck);
+                    prev_view.addEventListener("click", handleCheck);
                 });
             }
         }
@@ -110,6 +138,10 @@ const display = async () => {
         }
         latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
     });
+    latest_normal.removeEventListener("click", handleCheck);
+    latest_normal.addEventListener("click", handleCheck);
+    latest_bids.removeEventListener("click", handleCheck);
+    latest_bids.addEventListener("click", handleCheck);
 }
 
 window.addEventListener("load", display);
