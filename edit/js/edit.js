@@ -23,7 +23,7 @@ const auth = await getAuth();
 // const db = getFirestore(app);
 // const storage = getStorage();
 
-let id = "";
+let id = null;
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('id')) {
   id = urlParams.get('id');
@@ -50,7 +50,7 @@ async function start() {
     }
   });
   let originProductData;
-  if (id.length > 0) {
+  if (id != null) {
     originProductData = await getProduct(id);
     if (originProductData != null && userData.id != originProductData.seller) {
       window.alert("無權限修改此商品");
@@ -70,7 +70,7 @@ function eventSetting() {
   document.getElementById("inputType").addEventListener("change", changeType, false);
 }
 async function reset() {  // 重置input欄位
-  if (id.length > 0) {
+  if (id != null) {
     document.getElementById("inputType").setAttribute("disabled", true);
     beDeletedFiles = [];
     let productData = await getProduct(id);
@@ -176,7 +176,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
-    if (id.length > 0 && productData.bids_info.who1.length > 0) {
+    if (id != null && productData.bids_info.who1.length > 0) {
       document.getElementById("inputPrice").setAttribute("disabled", true);
       document.getElementById("inputDate").setAttribute("disabled", true);
       document.getElementById("inputTime").setAttribute("disabled", true);
@@ -252,24 +252,65 @@ function showCheckPage() {
   let type = document.getElementById("inputType").value;
   if (document.getElementById("inputName").valid == false || document.getElementById("inputPrice").valid == false || (type == "normal" && document.getElementById("inputQuantity").valid == false)) {
     window.alert("請填寫完整資料");
+    return;
   }
   else if (document.getElementById("inputURL").valid == false) {
     window.alert("影片格式不正確，請修改");
+    return;
   }
   else if (type == "bids" && (document.getElementById("inputDate").valid == false || document.getElementById("inputTime").valid == false || !validateDateTime())) {
     alert("請選擇未來7天内的時間");
+    return;
   }
   else {
+    // window.alert("比較系統測試中");
+    setCheckPage();
+    document.getElementById('overlay').style.display = "flex";
     document.getElementById("checkPage").style.display = "block";
-    window.alert("比較系統暫未開放");
   }
 }
 function closeCheckPage() {
+  document.getElementById('overlay').style.display = "none";
   document.getElementById("checkPage").style.display = "none";
+}
+async function setCheckPage() {
+  let originProductData = await getProduct();
+  let oldStr = originProductData.name.trim().split("#");
+  document.getElementById("oldName").innerHTML = oldStr[0];
+  document.getElementById("oldDescription").innerHTML = originProductData.description;
+  document.getElementById("oldPrice").innerHTML = originProductData.price;
+  document.getElementById("oldQuantity").innerHTML = originProductData.quantity;
+  let oldTag = document.getElementById("oldTag");
+  oldTag.innerHTML = "";
+  var f = false;
+  for (var i = 1; i < oldStr.length; i++) {
+    if (oldStr[i].length > 0) {
+      if (f) oldTag.innerHTML += ", "
+      oldTag.innerHTML += oldStr[i];
+      f = true;
+    }
+  }
+
+  let newProductData = getInputData();
+  let newStr = newProductData.name.trim().split("#");
+  document.getElementById("newName").innerHTML = newStr[0];
+  document.getElementById("newDescription").innerHTML = newProductData.description;
+  document.getElementById("newPrice").innerHTML = newProductData.price;
+  document.getElementById("newQuantity").innerHTML = newProductData.quantity;
+  let newTag = document.getElementById("newTag");
+  newTag.innerHTML = "";
+  var f = false;
+  for (var i = 1; i < newStr.length; i++) {
+    if (newStr[i].length > 0) {
+      if (f) newTag.innerHTML += ", "
+      newTag.innerHTML += newStr[i];
+      f = true;
+    }
+  }
 }
 
 async function sendCheck() {
-  if (id.length > 0) {
+  if (id != null) {
     if (window.confirm("是否確認修改？")) {
       let inputData = getInputData();
       let inputImage = await uploadImage(inputData.imgs);
