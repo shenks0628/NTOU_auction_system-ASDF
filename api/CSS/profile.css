@@ -30,6 +30,8 @@
     font-size: 20px;
     display: flex;
 }
-#editNameBtn {
+.profile-name button {
     margin-left: 10px;
+    display: flex;
+    align-items: center;
 }

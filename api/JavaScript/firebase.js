@@ -59,11 +59,16 @@ function productSection(id, data) {
     return newSection;
 }
 
-async function addProductsToMain(q, t='', p='') {
+async function addProductsToMain(q, t='↕️', p='↕️') {
     const newDiv = document.createElement('div');
     newDiv.className = 'sort-display';
     newDiv.innerHTML = `
         <div class="sort-buttons">
+            <select id="productType">
+                <option value="all">所有商品</option>
+                <option value="general">一般商品</option>
+                <option value="auction">競標商品</option>
+            </select>
             <button id="timeSortBtn">時間${t}</button>
             <button id="priceSortBtn">價格${p}</button>
         </div>
@@ -200,6 +205,7 @@ async function getProducts(t = '', p = '') {
         const email = urlParams.get('email');
         const docSnap = await getDoc(doc(db, "users", email));
         if (docSnap.exists()) {
+            const score = Number((docSnap.data().score/docSnap.data().number).toFixed(1));
             const newDiv = document.createElement('div');
             newDiv.className = 'profile';
             if (auth.currentUser && email == auth.currentUser.email) {
@@ -214,9 +220,7 @@ async function getProducts(t = '', p = '') {
                         <span id="editName">${docSnap.data().name}</span>
                         <button id="editNameBtn"><img src="img/pen-circle.png"></button>
                     </div>
-                    <p>${docSnap.data().score}⭐</p>
-                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
-                    <br>
+                    <p>${score}⭐</p><br>
                 `;
                 mainElement.appendChild(newDiv);
                 editNameBtn.onclick = function (e) {
@@ -238,25 +242,20 @@ async function getProducts(t = '', p = '') {
                     </div>
                     <div class="profile-name">
                         <span>${docSnap.data().name}</span>
-                        <button id="chatBtn"><img src="img/comment-alt-dots.png"></button>
+                        ${(email.endsWith('ntou.edu.tw')) ? '<button><img src="img/NTOU.png" alt="NTOU logo"></button>' : ''}
                     </div>
-                    <p>${docSnap.data().score}⭐</p>
-                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
-                    <br>
+                    <p>${score}⭐</p><br>
                 `;
                 mainElement.appendChild(newDiv);
-                chatBtn.onclick = function (e) {
-                    alert(email);
-                };
             }
             if (t == '↑') {
                 addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("time")), t);
             } else if (t == '↓') {
                 addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("time", "desc")), t);
             } else if (p == '↑') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price")), '', p);
+                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price")), '↕️', p);
             } else if (p == '↓') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price", "desc")), '', p);
+                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price", "desc")), '↕️', p);
             } else {
                 addProductsToMain(query(collection(db, "products"), where("seller", "==", email)));
             }
@@ -269,9 +268,9 @@ async function getProducts(t = '', p = '') {
         } else if (t == '↓') {
             addProductsToMain(query(collection(db, "products"), orderBy("time", "desc")), t);
         } else if (p == '↑') {
-            addProductsToMain(query(collection(db, "products"), orderBy("price")), '', p);
+            addProductsToMain(query(collection(db, "products"), orderBy("price")), '↕️', p);
         } else if (p == '↓') {
-            addProductsToMain(query(collection(db, "products"), orderBy("price", "desc")), '', p);
+            addProductsToMain(query(collection(db, "products"), orderBy("price", "desc")), '↕️', p);
         } else {
             addProductsToMain(collection(db, "products"));
         }
