@@ -43,9 +43,10 @@ function encodeEmail(email) {
 }
 function formatDateTime(time) {
     const date = new Date(time);
-    if (isWithinDays(1, time))
+    const now = new Date();
+    if (date.getDate() === now.getDate())
         return `今天 ${formatTime(date)}`;
-    else if (isWithinDays(2, time))
+    else if (date.getDate() === now.getDate()-1)
         return `昨天 ${formatTime(date)}`;
     else
         return `${date.getMonth() + 1}/${date.getDate()} ${formatTime(date)}`;
