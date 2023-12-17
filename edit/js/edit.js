@@ -55,7 +55,7 @@ async function getProduct() { // 讀資料
   return productData;
 }
 async function start() {
-  window.alert("尚未完成判定競標商品不能編輯部分");
+  window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
     console.log(user);
@@ -64,7 +64,6 @@ async function start() {
         id: user.email,
         imgSrc: user.photoURL
       };
-      // profileImage.setAttribute("src", user.photoURL);
     }
     else {
       userData = "none";
@@ -81,11 +80,10 @@ async function start() {
   }
   else
     originProductData = await clearProductData();
-  inputTypeSet();
+  inputTypeSet(originProductData);
   await reset();
 };
 function eventSetting() {
-  // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
   document.getElementById("resetButton").addEventListener("click", reset, false);
   document.getElementById("completeButton").addEventListener("click", showCheckPage, false);
   document.getElementById("checkPageCloseButton").addEventListener("click", closeCheckPage, false);
@@ -107,15 +105,24 @@ async function reset() {  // 重置input欄位
   }
 }
 function changeType() {
-  inputTypeSet();
-}
-function inputTypeSet() {
   if (document.getElementById("inputType").value == "normal") {
     // console.log("normal");
     document.getElementById("quantityContainer").style.display = "block";
     document.getElementById("endTimeContainer").style.display = "none";
   }
   else if (document.getElementById("inputType").value == "bids") {
+    // console.log("bids");
+    document.getElementById("quantityContainer").style.display = "none";
+    document.getElementById("endTimeContainer").style.display = "block";
+  }
+}
+function inputTypeSet(productData) {
+  if (productData.type == "normal") {
+    // console.log("normal");
+    document.getElementById("quantityContainer").style.display = "block";
+    document.getElementById("endTimeContainer").style.display = "none";
+  }
+  else if (productData.type == "bids") {
     // console.log("bids");
     document.getElementById("quantityContainer").style.display = "none";
     document.getElementById("endTimeContainer").style.display = "block";
@@ -151,7 +158,7 @@ async function clearProductData() {
 }
 
 function showData(productData) { // 顯示原商品資料
-  console.log(productData);
+  // console.log(productData);
   if (productData.type == "normal") {
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
@@ -190,6 +197,11 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
+    if (id.length > 0 && productData.bids_info.who1.length > 0) {
+      document.getElementById("inputPrice").setAttribute("disabled", true);
+      document.getElementById("inputDate").setAttribute("disabled", true);
+      document.getElementById("inputTime").setAttribute("disabled", true);
+    }
     document.getElementById("inputType").selectedIndex = 1;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
@@ -253,13 +265,13 @@ function validateDateTime() {
 
   currentDate.setDate(currentDate.getDate() + 7);
 
-  // 检查所选日期是否在7天以内
+  // 檢查所選日期是否在7天以内
   if (selectedDate > currentDate) return false;
   return true;
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  if (document.getElementById("inputName").valid == false || document.getElementById("inputPrice").valid == false || document.getElementById("inputQuantity").valid == false) {
+  if (document.getElementById("inputName").valid == false || document.getElementById("inputPrice").valid == false || (type == "normal" && document.getElementById("inputQuantity").valid == false)) {
     window.alert("請填寫完整資料");
   }
   else if (document.getElementById("inputURL").valid == false) {
@@ -307,7 +319,7 @@ async function sendCheck() {
 
 async function addProduct(inputData) {
   try {
-    console.log(inputData);
+    // console.log(inputData);
     const userID = userData.id;
     const seller_imgSrc = userData.imgSrc;
     let type = inputData.type;
@@ -365,7 +377,7 @@ async function uploadImage(inputImage) {
   for (let i = 0; i < inputImage.length; i++) {
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
-      console.log("Upload Success");
+      console.log("Upload success!");
     });
     await getDownloadURL(storageRef).then(async (url) => {
       console.log(url);
@@ -378,7 +390,7 @@ async function deleteStorageFile(fileUrl) {
   const fileRef = ref(storage, fileUrl);
   // Delete the file
   await deleteObject(fileRef).then(() => {
-    console.log("delete complete");
+    console.log("Delete complete!");
   }).catch((error) => {
     console.log(error);
     // Uh-oh, an error occurred!

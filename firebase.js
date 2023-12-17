@@ -24,42 +24,45 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
+function edit(docId) {
+    console.log(docId);
+}
+
+async function del(docId) {
+    console.log(docId);
+    if (confirm('確定要刪除嗎')) {
+        await deleteDoc(doc(db, "products", docId));
+        display();
+    }
+}
+
+const handleCheck = (event) => {
+    const targetId = event.target.id;
+    console.log(targetId);
+    // Check if the clicked element is an edit or delete button
+    if (targetId.startsWith("edit")) {
+        const productId = targetId.slice(4);
+        edit(productId);
+    }
+    else if (targetId.startsWith("del")) {
+        const productId = targetId.slice(3);
+        del(productId);
+    }
+}
+
 const display = async () => {
     const prev_view_title = document.getElementById("prev_view_title");
     const latest_normal = document.getElementById("latest_normal");
     const latest_bids = document.getElementById("latest_bids");
     const prev_view = document.getElementById("prev_view");
-    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(20));
-    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(20));
-    const queryNormalSnapshot = await getDocs(q_noraml);
-    const queryBidsSnapshot = await getDocs(q_bids);
     latest_normal.innerHTML = "";
     latest_bids.innerHTML = "";
     prev_view.innerHTML = "";
-    queryNormalSnapshot.forEach((doc) => {
-        console.log(doc.id, "=>", doc.data());
-        const productData = doc.data();
-        const productName = productData.name.split('#')[0];
-        latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';
-    });
-    queryBidsSnapshot.forEach((doc) => {
-        console.log(doc.id, "=>", doc.data());
-        const productData = doc.data();
-        const productName = productData.name.split('#')[0];
-        let endDate = productData.endtime.toDate();
-        if (productData.bids_info.modtime) {
-            const tmpDate = productData.bids_info.modtime.toDate();
-            tmpDate.setHours(tmpDate.getHours() + 8);
-            if (tmpDate < endDate) {
-                endDate = tmpDate;
-            }
-        }
-        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
-    });
+    let userId;
     onAuthStateChanged(auth, async(user) => {
         if (user) {
             prev_view_title.innerHTML = "您最近瀏覽的商品";
-            const userId = user.email;
+            userId = user.email;
             const docSnap = await getDoc(doc(db, "users", userId));
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
@@ -69,20 +72,41 @@ const display = async () => {
                     const productData = productDoc.data();
                     const productName = productData.name.split('#')[0];
                     const productType = productData.type;
-                    if (productType == "normal") {
-                        prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn">加入購物車</button></div>';;
-                    }
-                    else if (productType == "bids") {
-                        let endDate = productData.endtime.toDate();
-                        if (productData.bids_info.modtime) {
-                            const tmpDate = productData.bids_info.modtime.toDate();
-                            tmpDate.setHours(tmpDate.getHours() + 8);
-                            if (tmpDate < endDate) {
-                                endDate = tmpDate;
-                            }
+                    const seller = productData.seller;
+                    if (userId == seller) {
+                        if (productType == "normal") {
+                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
                         }
-                        prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn">加入競標清單</button></div>';
+                        else if (productType == "bids") {
+                            let endDate = productData.endtime.toDate();
+                            if (productData.bids_info.modtime) {
+                                const tmpDate = productData.bids_info.modtime.toDate();
+                                tmpDate.setHours(tmpDate.getHours() + 8);
+                                if (tmpDate < endDate) {
+                                    endDate = tmpDate;
+                                }
+                            }
+                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + productId + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + productId + '">刪除商品</button></p></div>';
+                        }
                     }
+                    else {
+                        if (productType == "normal") {
+                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                        }
+                        else if (productType == "bids") {
+                            let endDate = productData.endtime.toDate();
+                            if (productData.bids_info.modtime) {
+                                const tmpDate = productData.bids_info.modtime.toDate();
+                                tmpDate.setHours(tmpDate.getHours() + 8);
+                                if (tmpDate < endDate) {
+                                    endDate = tmpDate;
+                                }
+                            }
+                            prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
+                        }
+                    }
+                    prev_view.removeEventListener("click", handleCheck);
+                    prev_view.addEventListener("click", handleCheck);
                 });
             }
         }
@@ -90,6 +114,46 @@ const display = async () => {
             prev_view_title.innerHTML = "";
         }
     });
+    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(20));
+    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(20));
+    const queryNormalSnapshot = await getDocs(q_noraml);
+    const queryBidsSnapshot = await getDocs(q_bids);
+    queryNormalSnapshot.forEach((doc) => {
+        console.log(doc.id, "=>", doc.data());
+        const productData = doc.data();
+        const productName = productData.name.split('#')[0];
+        const seller = productData.seller;
+        if (userId == seller) {
+            latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
+        }
+        else {
+            latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addn' + doc.id + '">加入購物車</button></div>';
+        }
+    });
+    queryBidsSnapshot.forEach((doc) => {
+        console.log(doc.id, "=>", doc.data());
+        const productData = doc.data();
+        const productName = productData.name.split('#')[0];
+        const seller = productData.seller;
+        let endDate = productData.endtime.toDate();
+        if (productData.bids_info.modtime) {
+            const tmpDate = productData.bids_info.modtime.toDate();
+            tmpDate.setHours(tmpDate.getHours() + 8);
+            if (tmpDate < endDate) {
+                endDate = tmpDate;
+            }
+        }
+        if (userId == seller) {
+            latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
+        }
+        else {
+            latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+        }
+    });
+    latest_normal.removeEventListener("click", handleCheck);
+    latest_normal.addEventListener("click", handleCheck);
+    latest_bids.removeEventListener("click", handleCheck);
+    latest_bids.addEventListener("click", handleCheck);
 }
 
 window.addEventListener("load", display);
