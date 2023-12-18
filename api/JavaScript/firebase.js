@@ -150,24 +150,25 @@ async function getProduct(id) {
 }
 
 async function addCart(id) {
-    onAuthStateChanged(auth, async(user) => {
-        if (user) {
-            try {
-                const userSnap = await getDoc(doc(db, "users", user.email));
-                const cart = userSnap.data().cart ? userSnap.data().cart : {};
-                const productSnap = await getDoc(doc(db, "products", id));
-                cart[id] = cart.hasOwnProperty(id) ? cart[id]+1 : 1;
+    if (auth.currentUser) {
+        const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
+        const cart = userSnap.data().cart ? userSnap.data().cart : {};
+        const productSnap = await getDoc(doc(db, "products", id));
+        const num = window.prompt("選擇數量:");
+        if (num || num == "") {
+            if (!(/^[1-9]+$/.test(num))) {
+                window.alert("無效數量！");
+            } else {
+                cart[id] = cart.hasOwnProperty(id) ? cart[id] + parseInt(num) : parseInt(num);
                 if (cart[id] > productSnap.data().quantity) {
-                    alert('已達庫存上限')
+                    window.alert("已達庫存上限！");
                 } else {
-                    await updateDoc(doc(db, "users", user.email), { cart: cart });
-                    alert('加入成功');
+                    await updateDoc(doc(db, "users", auth.currentUser.email), { cart: cart });
+                    window.alert("加入成功！");
                 }
-            } catch (error) { alert('加入失敗'); }
-        } else {
-            window.location.href = '../sign';
+            }
         }
-    });
+    } else { window.alert("請先登入帳號！"); }
 }
 async function getAvatar(email) {
     try {
