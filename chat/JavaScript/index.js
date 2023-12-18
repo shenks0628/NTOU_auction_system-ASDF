@@ -87,6 +87,8 @@ async function getMessages() {
         let html = `<img src="${data.imgs[0]}"><div class="details"><h2>${data.name.split('#')[0]}</h2>`;
         if (msg.length === 1)
             html += `<p>商品編號: ${id}</p></div>`;
+        else if (msg[msg.length-1].content.startsWith('<img src="'))
+            html += `<p>圖片已傳送</p></div>`;
         else
             html += `<p>${msg[msg.length-1].content}</p></div>`;
         for (let i = msg.length-1; i >= 0; i--) {
