@@ -51,11 +51,8 @@ async function addToCart(docId) {
     const num = window.prompt("請輸入您想加入的商品數量（僅接受數字輸入，且不可為 '0'）：");
     if (num || num == "") {
         const isNumeric = /^[0-9]+$/.test(num);
-        if (!isNumeric) {
+        if (!isNumeric || parseInt(num) == 0) {
             window.alert("無效數量！因為您的輸入格式有問題！");
-        }
-        else if (parseInt(num) == 0) {
-            window.alert("'0' 為無效輸入，無法加入購物車！")
         }
         else {
             cart[docId] = cart.hasOwnProperty(docId) ? cart[docId] + parseInt(num) : parseInt(num);
