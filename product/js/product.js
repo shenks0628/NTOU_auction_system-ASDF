@@ -1,3 +1,4 @@
+import { setCart } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -76,13 +77,14 @@ function eventSetting() {
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
     document.getElementById("editButton").addEventListener("click", toEditPage, false);
+    document.getElementById("cartButton").addEventListener("click", addToCart, false);
     // document.getElementById("edit").addEventListener("click", edit, false);
     // document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
     // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
     // document.getElementById("completeButton").addEventListener("click", updateProduct, false);
 }
 
-function setProduct() { // 設定顯示的商品
+async function setProduct() { // 設定顯示的商品
     let str = productData.name.trim().split("#");
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
@@ -114,7 +116,6 @@ function setProduct() { // 設定顯示的商品
     if (Object.keys(commentArray).length > 0) {
         var commentBlock = document.createElement("div");
         commentBlock.className = "commentBlock";
-        var idx = 0;
         for (var key of Object.keys(commentArray)) {
             console.log(key);
             // 創建評論區塊元素
@@ -122,25 +123,20 @@ function setProduct() { // 設定顯示的商品
             commentBlock.className = "commentBlock";
 
             // 顯示使用者和部分內容
-            if (commentArray[key].length > 50) {
-                commentBlock.innerHTML = "<div><strong>" + key + ":</strong><br><span id='comment" + idx + "'>" + commentArray[key].slice(0, 50) + "<span class='readMore'>...點擊查看更多</span>" + "</span></div>";
-                commentBlock.onclick = readMore(idx, commentArray[key]);
-            }
-            else {
-                commentBlock.innerHTML = "<p><strong>" + key + ":</strong> " + commentArray[key] + "</p>";
-            }
+            commentBlock.innerHTML = '<div class="comment" style="display:flex;"><img src="' + await getUserImg(key) + '" alt="' + key + '" width="50px" height="50px" style="border-radius: 50%;">&nbsp<div class="conmmentMessage"><div class="commentScore">' + '⭐'.repeat(commentArray[key][0]) + '</div><div class="commentText">' + commentArray[key].substr(1) + '</div></div></div>';
             itemComment.appendChild(commentBlock);
-            idx++;
         }
     }
     else {
         itemComment.innerHTML = "此商品暫時沒有評論";
     }
 }
-function readMore(idx, comment) { // 評論的查看更多
-    return function () {
-        document.getElementById("comment" + idx).innerHTML = comment;
-    }
+async function getUserImg(email) {
+    try {
+        const userSnap = await getDoc(doc(db, "users", email));
+        console.log(userSnap.data().imgSrc);
+        return userSnap.data().imgSrc;
+    } catch (error) { return 'img/sheng.jpg'; }
 }
 
 function setting() { // 判定是否為買 or 賣家
@@ -170,43 +166,43 @@ function setting() { // 判定是否為買 or 賣家
     if (userID != "none") {
         const userRef = doc(db, "users", userID);
         getDoc(userRef)
-        .then((userDoc) => {
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                if (userData) {
-                    let viewarr = userData.view;
-                    let flag = false;
-                    for (let i = 0; i < viewarr.length; i++) {
-                        if (viewarr[i] == id) {
-                            for (let j = i; j >= 1; j--) {
-                                viewarr[j] = viewarr[j - 1];
+            .then((userDoc) => {
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData) {
+                        let viewarr = userData.view;
+                        let flag = false;
+                        for (let i = 0; i < viewarr.length; i++) {
+                            if (viewarr[i] == id) {
+                                for (let j = i; j >= 1; j--) {
+                                    viewarr[j] = viewarr[j - 1];
+                                }
+                                viewarr[0] = id;
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (!flag) {
+                            if (viewarr.length < 10) {
+                                viewarr.push(id);
+                            }
+                            for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
+                                viewarr[i] = viewarr[i - 1];
                             }
                             viewarr[0] = id;
-                            flag = true;
-                            break;
                         }
+                        updateDoc(doc(db, "users", userID), {
+                            view: viewarr
+                        });
                     }
-                    if (!flag) {
-                        if (viewarr.length < 10) {
-                            viewarr.push(id);
-                        }
-                        for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
-                            viewarr[i] = viewarr[i - 1];
-                        }
-                        viewarr[0] = id;
-                    }
-                    updateDoc(doc(db, "users", userID), {
-                        view: viewarr
-                    });
                 }
-            }
-            else {
-                console.log("User with ID", userID, "does not exist.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting user document:", error);
-        });
+                else {
+                    console.log("User with ID", userID, "does not exist.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error getting user document:", error);
+            });
     }
 }
 
@@ -236,6 +232,16 @@ function changeInfo() { // 切換商品資訊/評論
 }
 function toEditPage() {
     window.location.href = "../edit?id=" + id;
+}
+
+function addToCart() {
+    if (userID === undefined) {
+        window.alert("請先登入後再來使用此功能！");
+        return;
+    }
+    else {
+        setCart(userID, id);
+    }
 }
 window.addEventListener("load", start, false);
 
