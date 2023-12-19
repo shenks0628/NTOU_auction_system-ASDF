@@ -97,11 +97,14 @@ function displayCart() {
     cartTable.innerHTML = `
     <tr>
         <th></th>
+        <th>商品圖片</th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
         <th>總價</th>
-        <th>是否有貨</th>
+        <th>是否有庫存</th>
+        <th>移除商品</th>
+        <th>修改數量</th>
     <tr/>
     `;
     console.log("有進來這裡面");
@@ -113,6 +116,11 @@ function displayCart() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><input type="checkbox" class="item-checkbox" data-item-name="${item.key}"></td>
+                <td>
+                    <a href="../product/?id=${item.key}" >
+                        <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
+                    </a>
+                </td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -128,6 +136,11 @@ function displayCart() {
             const subtotal = item.price * item.quantity;
             row.innerHTML = `
                 <td></td>
+                <td>
+                    <a href="../product/?id=${item.key}">
+                        <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
+                    </a>
+                </td>
                 <td>${item.name}</td>
                 <td>${item.price} 元</td>
                 <td>${item.quantity}</td>
@@ -191,11 +204,14 @@ const start1 = () => {
     cartTable.innerHTML = `
     <tr>
         <th></th>
+        <th>商品圖片</th>
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
         <th>總價</th>
-        <th>是否有貨</th>
+        <th>是否有庫存</th>
+        <th>移除商品</th>
+        <th>修改數量</th>
     <tr/>
     `;
     let totalAmount = 0;
@@ -212,7 +228,7 @@ const start1 = () => {
             console.log("Product data for product with ID", productId, ":", productData);
                 if(cartData[key]<=productData.quantity){
                     const pName = productData.name.split('#')[0];
-                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity};
+                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0]};
                     cartItems.push(newItem);
                     console.log(cartItems);
                     totalAmount += newItem.price * newItem.quantity;
@@ -220,33 +236,42 @@ const start1 = () => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
+                        <td>
+                            <a href="../product/?id=${newItem.key}" >
+                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                            </a>
+                        </td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
                         <td>${newItem.price * newItem.quantity} 元</td>
-                        <td>${newItem.check}<td/>
+                        <td>${newItem.check}</td>
                         <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>
+                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
                     `;
                     cartTable.appendChild(row);
                 }
                 else{
                     const prName = productData.name.split('#')[0];
                     window.alert("你所選的商品:"+prName+"數量不足,請更新商品數量或移除購物車");
-                    const newItem = { name: prName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity};
+                    const newItem = { name: prName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0]};
                     cartItems.push(newItem);
                     console.log(cartItems);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td></td>
+                        <td>
+                            <a href="../product/?id=${newItem.key}">
+                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                            </a>
+                        </td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
                         <td>${newItem.price * newItem.quantity} 元</td>
-                        <td>${newItem.check}<td/>
+                        <td>${newItem.check}</td>
                         <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
                         <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>
-                        
                     `;
                     cartTable.appendChild(row);
                 }
@@ -275,7 +300,7 @@ const start1 = () => {
         const clickedElement = event.target;
         if (clickedElement.classList.contains("another-button")) {
             const itemid = clickedElement.getAttribute("data-item-name");
-            const userInput = window.prompt("請輸入一個數字：");
+            const userInput = window.prompt("請輸入您想加入的商品數量（僅接受數字輸入，且不可為 '0'）：");
             if (userInput || userInput == "") { // 按 submit
                 const isNumeric = /^[0-9]+$/.test(userInput);
                 if (!isNumeric) { // 如果輸入不是全不都數字/輸入空白
@@ -392,7 +417,7 @@ const start1 = () => {
                             displayCart();
                         }
                         else{
-                            window.alert(removedItem.name+"庫存有更新,商品數量不足");
+                            window.alert(removedItem.name+"的庫存有更新導致商品數量不足，請重整頁面");
                             removedItem.Stockquantity=productData.quantity;
                             removedItem.check="沒貨";
                             displayCart();
@@ -405,3 +430,4 @@ const start1 = () => {
 };
 
 window.addEventListener("load", start);
+//cart
