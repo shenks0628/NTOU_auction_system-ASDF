@@ -275,7 +275,7 @@ const start1 = () => {
         const clickedElement = event.target;
         if (clickedElement.classList.contains("another-button")) {
             const itemid = clickedElement.getAttribute("data-item-name");
-            const userInput = window.prompt("請輸入一個數字：");
+            const userInput = window.prompt("請輸入您想加入的商品數量（僅接受數字輸入，且不可為 '0'）：");
             if (userInput || userInput == "") { // 按 submit
                 const isNumeric = /^[0-9]+$/.test(userInput);
                 if (!isNumeric) { // 如果輸入不是全不都數字/輸入空白
@@ -392,7 +392,7 @@ const start1 = () => {
                             displayCart();
                         }
                         else{
-                            window.alert(removedItem.name+"庫存有更新,商品數量不足");
+                            window.alert(removedItem.name+"的庫存有更新導致商品數量不足，請重整頁面");
                             removedItem.Stockquantity=productData.quantity;
                             removedItem.check="沒貨";
                             displayCart();

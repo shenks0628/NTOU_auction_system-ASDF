@@ -68,7 +68,7 @@ const start1 = () => {
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
-        <th></th>
+        <th>評價</th>
     <tr/>
     `;
     for (let key of Object.keys(recordData)){
@@ -97,7 +97,7 @@ const start1 = () => {
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
-                        <td></td>
+                        <td>已評價</td>
                     `;
                     recordTable.appendChild(row);
                 }
