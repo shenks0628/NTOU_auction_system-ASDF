@@ -97,7 +97,7 @@ async function verifyIdentity(email) {
                         if (!isWithinDays(1, msg.time))
                             alert('已超過取消時間，無法取消訂單!');
                         else if (confirm('確定要取消訂單嗎?'))
-                            cancelOrder();
+                            cancelOrder(quantity);
                     });
                     document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
                         if (isWithinDays(1, msg.time))
@@ -131,8 +131,9 @@ async function verifyIdentity(email) {
         }
     }
 }
-async function cancelOrder() {
+async function cancelOrder(quantity) {
     await deleteDoc(messagesRef);
+    await updateDoc(doc(db, "products", productID), { quantity: increment(quantity) });
     window.location.href = 'index.html';
 }
 async function confirmOrder(quantity) {
