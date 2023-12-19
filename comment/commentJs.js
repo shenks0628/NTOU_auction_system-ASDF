@@ -29,7 +29,6 @@ const images =[];
 const start = () => {
 
     const title = document.getElementById("title");
-    const comment = document.querySelector("main");
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
             const userEmail = user.email;
@@ -37,7 +36,8 @@ const start = () => {
             const userInfo = userRef.data();
 
             const urlParams = new URLSearchParams(window.location.search);
-            const itemName = urlParams.get('itemName');
+            console.log(urlParams);
+            const itemName = urlParams.get('id');
             console.log(itemName);
 
             var avarta = document.getElementById("avartar");
@@ -60,6 +60,7 @@ const start = () => {
 };
 
 async function addItemImg(id) {
+    console.log(id);
     const product = await getDoc(doc(db, "products", id));
     const productData = product.data();
     console.log(productData);
@@ -80,7 +81,6 @@ const display_pic = async() => {
     
 var currentIndex = 0;
 var productImg = document.getElementById("productImg");
-console.log(productImg);
 var prevBtn = document.getElementById("prevBtn");
 var nextBtn = document.getElementById("nextBtn");
 
@@ -111,7 +111,8 @@ nextBtn.addEventListener("click", showNextImage);
 
 // 一開始顯示第一張圖片
 showImage(currentIndex);
-
+console.log(productImg);
 };
+
 window.addEventListener("load", display_pic);
 window.addEventListener("load", start);

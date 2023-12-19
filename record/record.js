@@ -120,11 +120,11 @@ const start1 = () => {
                         // 檢查點擊的元素是否是按鈕
                         if (event.target.matches('.remove-button')) {
                           // 獲取按鈕的 data-item-name 屬性的值
-                            const itemName = event.target.dataset.itemName;
+                            const id = event.target.dataset.itemName;
                       
                           // 執行相應的操作
-                            console.log(itemName);
-                            const commentUrl = "../comment/comment.html?id=" + encodeURIComponent(itemName);
+                            console.log(id);
+                            const commentUrl = "../comment/comment.html?id=" + encodeURIComponent(id);
                             window.location.href = commentUrl;
                         }
                     });
