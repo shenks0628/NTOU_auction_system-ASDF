@@ -25,4 +25,3 @@ displayBtn.onclick = function (e) {
         localStorage.setItem('ASDF-display', 'menu');
     }
 }
-//mobile folder

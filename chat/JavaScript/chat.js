@@ -194,7 +194,8 @@ async function uploadFile() {
         }
         textInput.disabled = true;
         const storage = getStorage();
-        const storageRef = ref(storage, 'files/' + file.name);
+        const filename = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const storageRef = ref(storage, 'files/' + filename);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         // Register three observers:

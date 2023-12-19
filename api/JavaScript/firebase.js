@@ -26,14 +26,14 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 function productSection(id, data) {
-    const btn = '<button><img src="img/add-cart.png" alt="add-cart"></button>';
+    const btn = `<button><img src="img/${data.type == 'bids' ? 'auction' : 'add-cart'}.png" alt="add-cart"></button>`;
     const btns = '<button><img src="img/pen.png" alt="edit"></button><button><img src="img/minus.png" alt="remove"></button>';
     const newSection = document.createElement('section');
     newSection.className = 'product';
     newSection.innerHTML = `
         <img src="${data.imgs[0]}" alt="product-image">
         <div class="product-detail">
-            <div>
+            <div class="contents">
                 <p class="name">${data.name.split('#')[0]}</p>
                 <p class="price">$${data.price}</p>
             </div>
@@ -42,7 +42,10 @@ function productSection(id, data) {
     `;
     newSection.onclick = async function (e) {
         if (!e.target.closest('button')) {
-            window.location.href = '?id=' + id;
+            if (document.body.clientWidth >= 768)
+                window.location.href = '../product?id=' + id;
+            else
+                window.location.href = 'mobile.html?id=' + id;
         } else {
             if (e.target.alt === 'edit') {
 
@@ -52,7 +55,10 @@ function productSection(id, data) {
                     location.reload();
                 }
             } else {
-                addCart(id);
+                if (data.type == 'bids')
+                    console.log('addBids(id)');
+                else
+                    addCart(id);
             }
         }
     }
@@ -144,8 +150,6 @@ async function getProduct(id) {
                 });
             }
         }
-    } else {
-        productContainer.innerHTML = "No such document!";
     }
 }
 
@@ -174,7 +178,7 @@ async function getAvatar(email) {
     try {
         const userSnap = await getDoc(doc(db, "users", email));
         return userSnap.data().imgSrc;
-    } catch (error) { return 'img/sheng.jpg'; }
+    } catch (error) { return 'img/ASDF.jpg'; }
 }
 
 productType.onchange = async function (e) {
@@ -306,7 +310,7 @@ async function createProductContainer() {
         else
             await createProducts(collection(db, "products"));
     }
-    if (productContainer.innerHTML === '') productContainer.innerHTML = 'No such document!';
+    if (productContainer.innerHTML === '') productContainer.innerHTML = '<h2>No such document!</h2>';
 
     async function createProducts(q) {
         const querySnapshot = await getDocs(q);
