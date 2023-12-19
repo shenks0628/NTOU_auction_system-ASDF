@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { collection, doc, setDoc, getDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -37,7 +37,7 @@ const start = () => {
 
             const urlParams = new URLSearchParams(window.location.search);
             console.log(urlParams);
-            const itemName = urlParams.get('id');
+            const itemName = urlParams.get('itemName');
             console.log(itemName);
 
             var avarta = document.getElementById("avartar");
@@ -46,8 +46,10 @@ const start = () => {
             avarta.appendChild(imgAvarta);
 
             addItemImg(itemName);
-
-            document.getElementById("submitBtn").addEventListener("click", addcomment);
+            var submitBtn = document.getElementById("submitBtn");
+            submitBtn.addEventListener("click", () => {
+              addcomment(itemName, userEmail);
+            })
 
         }else { // 沒有登入
             console.log("沒拿到userid");
@@ -73,8 +75,19 @@ async function addItemImg(id) {
 }
 
 
-const addcomment = () => {
+const addcomment = (id,userEmail) => {
 
+  var commentInput = document.getElementById("commentInput");
+  var stars = Array.from(document.querySelectorAll('.star'));
+  var rating = stars.filter(star => star.classList.contains('active')).length;
+  var comment = commentInput.value;
+  console.log(rating, comment);
+  const updatedComment = rating + comment.toString();
+  getDoc(doc(db, "products", id)).then((docx) => {
+    const data = docx.data();
+    data.comment[userEmail] = updatedComment;
+    updateDoc(doc(db, "products", id), data);
+  })
 };
 
 const display_pic = async() => {
