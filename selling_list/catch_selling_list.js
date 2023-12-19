@@ -33,7 +33,7 @@ function edit(docId) {
 
 async function del(docId) {
     console.log(docId);
-    if (confirm('確定要刪除嗎')) {
+    if (confirm('確定要刪除嗎？')) {
         await deleteDoc(doc(db, "products", docId));
         start();
     }
