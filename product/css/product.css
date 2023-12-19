@@ -35,6 +35,8 @@ button {
 }
 
 .infoContainer {
+  display: flex;
+  flex-direction: column;
   margin: 10px;
 }
 
@@ -140,6 +142,7 @@ button {
   } */
   #product {
     flex-direction: column;
+    align-items: center;
   }
 
   #content {
