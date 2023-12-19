@@ -181,6 +181,7 @@ const display = async () => {
                         const productData = productDoc.data();
                         const productName = productData.name.split('#')[0];
                         const productType = productData.type;
+                        const quantity = productData.quantity;
                         const seller = productData.seller;
                         if (userId == seller) {
                             if (productType == "normal") {
@@ -200,7 +201,12 @@ const display = async () => {
                         }
                         else {
                             if (productType == "normal") {
-                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                                if (quantity == 0) {
+                                    prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button disabled class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                                }
+                                else {
+                                    prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                                }
                             }
                             else if (productType == "bids") {
                                 let endDate = productData.endtime.toDate();
@@ -239,32 +245,38 @@ const display = async () => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
         const productName = productData.name.split('#')[0];
-        const seller = productData.seller;
-        if (userId == seller) {
-            latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
-        }
-        else {
-            latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addn' + doc.id + '">加入購物車</button></div>';
+        const quantity = productData.quantity;
+        if (quantity > 0) {
+            const seller = productData.seller;
+            if (userId == seller) {
+                latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
+            }
+            else {
+                latest_normal.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addn' + doc.id + '">加入購物車</button></div>';
+            }
         }
     });
     queryBidsSnapshot.forEach((doc) => {
         console.log(doc.id, "=>", doc.data());
         const productData = doc.data();
         const productName = productData.name.split('#')[0];
-        const seller = productData.seller;
-        let endDate = productData.endtime.toDate();
-        if (productData.bids_info.modtime) {
-            const tmpDate = productData.bids_info.modtime.toDate();
-            tmpDate.setHours(tmpDate.getHours() + 8);
-            if (tmpDate < endDate) {
-                endDate = tmpDate;
+        const quantity = productData.quantity;
+        if (quantity > 0) {
+            const seller = productData.seller;
+            let endDate = productData.endtime.toDate();
+            if (productData.bids_info.modtime) {
+                const tmpDate = productData.bids_info.modtime.toDate();
+                tmpDate.setHours(tmpDate.getHours() + 8);
+                if (tmpDate < endDate) {
+                    endDate = tmpDate;
+                }
             }
-        }
-        if (userId == seller) {
-            latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
-        }
-        else {
-            latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+            if (userId == seller) {
+                latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
+            }
+            else {
+                latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+            }
         }
     });
     latest_normal.removeEventListener("click", handleCheck);
