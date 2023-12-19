@@ -405,3 +405,4 @@ const start1 = () => {
 };
 
 window.addEventListener("load", start);
+//cart
