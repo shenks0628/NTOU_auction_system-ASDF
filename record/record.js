@@ -124,7 +124,7 @@ const start1 = () => {
                       
                           // 執行相應的操作
                             console.log(itemName);
-                            const commentUrl = "../comment/comment.html?itemName=" + encodeURIComponent(itemName);
+                            const commentUrl = "../comment/comment.html?id=" + encodeURIComponent(itemName);
                             window.location.href = commentUrl;
                         }
                     });
