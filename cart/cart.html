@@ -5,16 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>結帳頁面</title>
     <link rel="stylesheet" href="../index.css" type="text/css" media="screen" charset="utf-8">
+    <style>
+        h2{
+            font-size: 40px;
+            font-weight: bolder;
+            text-align: center;
+        }
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 10px;
+        }
+        .cart-table {
+            border-collapse: collapse; /* 合併邊框 */
+            width: 100%; /* 設定表格寬度 */
+        }
+
+        .cart-table th, .cart-table td {
+            border: 1px solid #000; /* 設定所有單元格的邊框 */
+            padding: 8px; /* 設定內距 */
+            text-align: center; /* 設定文字置中 */
+        }
+
+        .cart-table tr:first-child th {
+            background-color: #f2f2f2; /* 設定表頭背景色 */
+        }
+        .total {
+            margin-left: 890px;
+        }
+
+        #billcheck {
+            margin-left: 920px;
+        }
+
+    </style>
 </head>
 <body>
     <main>
         <h2 class="fp_title" id="title">購物車</h2>
         <div id="div_cart">
-            <table id="cart">
+            <table id="cart" class="cart-table">
             </table>
-            
             <div class="total">總計: <span id="totalAmount">0</span> 元</div>
-
             <button id="billcheck" type="submit">下訂單</button>
         </div>
     </main>

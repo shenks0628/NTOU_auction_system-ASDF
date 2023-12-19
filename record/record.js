@@ -90,7 +90,7 @@ const start1 = () => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
-                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                            <a href="../product/?id=${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
@@ -107,7 +107,7 @@ const start1 = () => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
-                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                            <a href="../product/?id=${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
