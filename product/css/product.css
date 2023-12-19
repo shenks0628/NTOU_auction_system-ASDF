@@ -26,19 +26,24 @@ button {
 }
 
 #product {
-  align-items: center;
+  display: flex;
+  /* align-items: center; */
   box-sizing: border-box;
   /* padding: 20px; */
   width: 100%;
+  flex: 1;
 }
 
 .infoContainer {
-  margin: 5px;
+  margin: 10px;
 }
 
 .itemContainer {
+  display: flex;
+  flex-direction: column;
+  /* align-items: normal; */
   flex: 1;
-  margin: 5px;
+  margin: 10px;
   box-sizing: border-box;
   /* width: 50%; */
 }
@@ -103,7 +108,7 @@ button {
 
 @media screen and (min-width:768px) {
   #product {
-    display: flex;
+    /* display: flex; */
     height: 100%;
   }
 
@@ -133,12 +138,17 @@ button {
   #comparePart {
     flex-direction: column;
   } */
+  #product {
+    flex-direction: column;
+  }
+
   #content {
     flex-direction: column;
   }
 
   .infoContainer {
     text-align: center;
+    max-width: 400px;
   }
 
   .itemContainer,

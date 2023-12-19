@@ -11,21 +11,24 @@
 <body>
   <div id="site" style="width:100%; height: 100%; display: flex; flex-direction: column; min-height: 100vh;">
     <div class="" id="content">
-      <section id="product">
-        <div class="infoContainer">
+      <main id="product">
+        <section class="infoContainer">
+          <div><img src="images/back.png" title="返回上一頁" width="50px" height="50px" style="cursor: pointer;"
+              onclick="history.back()"></div>
           <img class="itemImage" id="itemPicture" src="images/loader.gif">
           <br>
           <h1>
             標籤：<div id="itemTag" style="display: inline;">無</div>
           </h1>
-        </div>
-        <div class="itemContainer">
+        </section>
+        <hr>
+        <section class="itemContainer">
           <div style="display: flex;">
             <button style="flex:1; background-color: unset;" class="changeInfo" id="ToDiscription"
               disabled>商品資訊</button>
             <button style="flex:1; background-color: unset;" class="changeInfo" id="ToComment">查看評論</button>
           </div>
-          <div id="description" class="overflow-y: auto; max-height: 300px; max-width:915.27px;">
+          <div id="description" class="overflow-y: auto; max-height: 300px; flex:1;">
             <hr>
             <h1>商品名稱</h1>
             <div id="itemName">Name</div>
@@ -36,9 +39,10 @@
             <h1>剩餘數量：<div id="itemQuantity" style="display: inline;"></div>
             </h1>
             <hr>
-            <div style="float: right;"><button id="cartButton" type="button">加入購物車</button><button class="editButton"
-                id="editButton" style="background-color: unset;"><img src="./images/edit.png" alt="edit" title="前往編輯商品"
-                  width="30px" height="30px"></button></div>
+            <div><button id="cartButton" type="button" style="background-color: unset; float: right;"><img
+                  src="./images/add-cart.png" alt="edit" title="加入購物車" width="50px" height="50px"></button><button
+                class="editButton" id="editButton" style="background-color: unset; float: right;"><img
+                  src="./images/edit.png" alt="edit" title="前往編輯商品" width="50px" height="50px"></button></div>
           </div>
           <div id="review" style="display: none;">
             <hr>
@@ -50,11 +54,11 @@
             </div>
             <hr>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
     <footer id="footer">
-      <h1>© NTOU_ASDF</h1>
+      <h2>© NTOU_ASDF</h2>
     </footer>
   </div>
   <script src="js/product.js" type="module"></script>
