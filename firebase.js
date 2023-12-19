@@ -31,7 +31,7 @@ function edit(docId) {
 
 async function del(docId) {
     console.log(docId);
-    if (confirm('確定要刪除嗎')) {
+    if (confirm('確定要刪除嗎？')) {
         await deleteDoc(doc(db, "products", docId));
         display();
     }
@@ -67,9 +67,6 @@ async function addToCart(docId) {
                 window.alert("您已成功將此商品加入購物車！");
             }
         }
-    }
-    else {
-        window.alert("您已取消將商品加入購物車！");
     }
 }
 
@@ -137,9 +134,6 @@ async function addToBids(docId) {
                 console.error("Error getting product document:", error);
             });
         }
-    }
-    else {
-        window.alert("您已取消加注！");
     }
 }
 
