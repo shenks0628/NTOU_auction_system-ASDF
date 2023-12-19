@@ -136,7 +136,7 @@ const handleCheck = (event) => {
     }
 }
 
-const start1 = () => {
+const start1 = async () => {
     console.log(bidsData);
     let display_list = document.getElementById("display_list");
     display_list.innerHTML = "";
@@ -149,7 +149,7 @@ const start1 = () => {
 
         // 使用 getDoc 函數取得該產品的文件快照
         getDoc(productRef)
-        .then((productDoc) => {
+        .then(async (productDoc) => {
             if (productDoc.exists()) {
                 // 取得該產品的資料
                 const productData = productDoc.data();
@@ -167,6 +167,10 @@ const start1 = () => {
                 console.log("Product data for product with ID", productId, ":", productData);
             }
             else {
+                console.log(productId);
+                await updateDoc(doc(db, "users", userId), {
+                    ['bids.' + productId]: deleteField()
+                });
                 console.log("Product with ID", productId, "does not exist.");
             }
         })

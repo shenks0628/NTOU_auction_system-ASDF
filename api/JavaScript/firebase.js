@@ -42,7 +42,7 @@ function productSection(id, data) {
     `;
     newSection.onclick = async function (e) {
         if (!e.target.closest('button')) {
-            searchProduct(id);
+            window.location.href = '?id=' + id;
         } else {
             if (e.target.alt === 'edit') {
 
@@ -59,50 +59,6 @@ function productSection(id, data) {
     return newSection;
 }
 
-async function addProductsToMain(q, t='', p='') {
-    const newDiv = document.createElement('div');
-    newDiv.className = 'sort-display';
-    newDiv.innerHTML = `
-        <div class="sort-buttons">
-            <button id="timeSortBtn">時間${t}</button>
-            <button id="priceSortBtn">價格${p}</button>
-        </div>
-        <button id="displayBtn"><img src="img/${localStorage.getItem('ASDF-display') !== 'list' ? 'list' : 'menu'}.png"></button>
-    `;
-    mainElement.appendChild(newDiv);
-    timeSortBtn.onclick = function (e) {
-        getProducts((t !== '↓') ? '↓' : '↑');
-    }
-    priceSortBtn.onclick = function (e) {
-        getProducts('', (p !== '↑') ? '↑' : '↓');
-    }
-    displayBtn.onclick = function (e) {
-        if (localStorage.getItem('ASDF-display') !== 'list') {
-            mainElement.querySelectorAll('section').forEach((section) => {
-                section.className = 'product row';
-            });
-            displayBtn.innerHTML = '<img src="img/menu.png">';
-            localStorage.setItem('ASDF-display', 'list');
-        } else {
-            mainElement.querySelectorAll('section').forEach((section) => {
-                section.className = 'product';
-            });
-            displayBtn.innerHTML = '<img src="img/list.png">';
-            localStorage.setItem('ASDF-display', 'menu');
-        }
-    }
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        if (doc.data().name.includes(keywords)) {
-            mainElement.appendChild(productSection(doc.id, doc.data()));
-        }
-    });
-    if (localStorage.getItem('ASDF-display') !== 'menu') {
-        mainElement.querySelectorAll('section').forEach((section) => {
-            section.className = 'product row';
-        });
-    }
-}
 
 async function getProduct(id) {
     const docSnap = await getDoc(doc(db, "products", id));
@@ -125,7 +81,7 @@ async function getProduct(id) {
                 </div>
             `;
         }
-        let mainHTML = `
+        document.querySelector('main').innerHTML = `
             <section class="product-images">
                 <img id="product-image" src="${imgs[0]}" alt="product-image">
                 <div>${buttonsHTML}</div>
@@ -144,7 +100,6 @@ async function getProduct(id) {
                 <h4>Comments</h4><br>${commentsHTML}
             </section>
         `;
-        mainElement.innerHTML = mainHTML;
         const productBtns = document.querySelectorAll('.product-button');
         productBtns[0].classList.add('choose');
         productBtns.forEach(button => {
@@ -190,136 +145,30 @@ async function getProduct(id) {
             }
         }
     } else {
-        mainElement.innerHTML = "No such document!";
-    }
-}
-
-async function getProducts(t = '', p = '') {
-    mainElement.innerHTML = '';
-    if (urlParams.get('email')) {
-        const email = urlParams.get('email');
-        const docSnap = await getDoc(doc(db, "users", email));
-        if (docSnap.exists()) {
-            const newDiv = document.createElement('div');
-            newDiv.className = 'profile';
-            if (auth.currentUser && email == auth.currentUser.email) {
-                newDiv.innerHTML = `
-                    <h2>User Profile</h2><br>
-                    <div class="profile-avatar">
-                        <img id="editAvatar" src="${docSnap.data().imgSrc}" alt="User Avatar">
-                        <input id="file" type="file" accept="image/*" style="display: none">
-                        <button onclick="file.click()"><img src="img/pen-circle.png"></button>
-                    </div>
-                    <div class="profile-name">
-                        <span id="editName">${docSnap.data().name}</span>
-                        <button id="editNameBtn"><img src="img/pen-circle.png"></button>
-                    </div>
-                    <p>${docSnap.data().score}⭐</p>
-                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
-                    <br>
-                `;
-                mainElement.appendChild(newDiv);
-                editNameBtn.onclick = function (e) {
-                    const newName = prompt("輸入新的名字:", "");
-                    if (newName !== null && newName.trim() !== "") {
-                        uploadName(email, newName);
-                    } else if (newName.trim() === "") {
-                        alert("名字不能為空，請重新輸入。");
-                    }
-                };
-                file.onchange = (event) => {
-                    uploadAvatar();
-                };
-            } else {
-                newDiv.innerHTML = `
-                    <h2>User Profile</h2><br>
-                    <div class="profile-avatar">
-                        <img src="${docSnap.data().imgSrc}" alt="User Avatar">
-                    </div>
-                    <div class="profile-name">
-                        <span>${docSnap.data().name}</span>
-                        <button id="chatBtn"><img src="img/comment-alt-dots.png"></button>
-                    </div>
-                    <p>${docSnap.data().score}⭐</p>
-                    ${(email.endsWith('ntou.edu.tw')) ? '<p>海大認證帳戶</p>' : ''}
-                    <br>
-                `;
-                mainElement.appendChild(newDiv);
-                chatBtn.onclick = function (e) {
-                    alert(email);
-                };
-            }
-            if (t == '↑') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("time")), t);
-            } else if (t == '↓') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("time", "desc")), t);
-            } else if (p == '↑') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price")), '', p);
-            } else if (p == '↓') {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email), orderBy("price", "desc")), '', p);
-            } else {
-                addProductsToMain(query(collection(db, "products"), where("seller", "==", email)));
-            }
-        } else {
-            mainElement.innerHTML = "No such document!";
-        }
-    } else {
-        if (t == '↑') {
-            addProductsToMain(query(collection(db, "products"), orderBy("time")), t);
-        } else if (t == '↓') {
-            addProductsToMain(query(collection(db, "products"), orderBy("time", "desc")), t);
-        } else if (p == '↑') {
-            addProductsToMain(query(collection(db, "products"), orderBy("price")), '', p);
-        } else if (p == '↓') {
-            addProductsToMain(query(collection(db, "products"), orderBy("price", "desc")), '', p);
-        } else {
-            addProductsToMain(collection(db, "products"));
-        }
+        productContainer.innerHTML = "No such document!";
     }
 }
 
 async function addCart(id) {
-    onAuthStateChanged(auth, async(user) => {
-        if (user) {
-            try {
-                const userSnap = await getDoc(doc(db, "users", user.email));
-                const cart = userSnap.data().cart ? userSnap.data().cart : {};
-                const productSnap = await getDoc(doc(db, "products", id));
-                cart[id] = cart.hasOwnProperty(id) ? cart[id]+1 : 1;
+    if (auth.currentUser) {
+        const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
+        const cart = userSnap.data().cart ? userSnap.data().cart : {};
+        const productSnap = await getDoc(doc(db, "products", id));
+        const num = window.prompt("選擇數量:");
+        if (num || num == "") {
+            if (!(/^[1-9]+$/.test(num))) {
+                window.alert("無效數量！");
+            } else {
+                cart[id] = cart.hasOwnProperty(id) ? cart[id] + parseInt(num) : parseInt(num);
                 if (cart[id] > productSnap.data().quantity) {
-                    alert('已達庫存上限')
+                    window.alert("已達庫存上限！");
                 } else {
-                    await updateDoc(doc(db, "users", user.email), {
-                        cart: cart
-                    });
-                    alert('加入成功');
+                    await updateDoc(doc(db, "users", auth.currentUser.email), { cart: cart });
+                    window.alert("加入成功！");
                 }
-            } catch (error) { alert('加入失敗'); }
-        } else {
-            window.location.href = '../sign';
+            }
         }
-    });
-}
-async function uploadName(email, name) {
-    await updateProfile(auth.currentUser, {displayName: name});
-    await updateDoc(doc(db, "users", email), {name: name});
-    editName.innerHTML = name;
-    alert('更新成功');
-}
-async function uploadAvatar() {
-    const fileInput = file.files[0];
-    if (fileInput) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `avatar/${auth.currentUser.email}.png`);
-        const metadata = {contentType: 'image/png'};
-        await uploadBytes(storageRef, fileInput, metadata);
-        getDownloadURL(storageRef).then(async(url) => {
-            await updateProfile(auth.currentUser, {photoURL: url});
-            await updateDoc(doc(db, "users", auth.currentUser.email), {imgSrc: url});
-            editAvatar.src = url;
-            alert('更新成功');
-        });
-    }
+    } else { window.alert("請先登入帳號！"); }
 }
 async function getAvatar(email) {
     try {
@@ -328,8 +177,147 @@ async function getAvatar(email) {
     } catch (error) { return 'img/sheng.jpg'; }
 }
 
+productType.onchange = async function (e) {
+    await createProductContainer();
+}
+timeSortBtn.onclick = async function (e) {
+    if (timeSort !== 'desc') {
+        timeSort = 'desc';
+        priceSort = '';
+        await createProductContainer();
+        timeSortBtn.innerHTML = '時間↑';
+        priceSortBtn.innerHTML = '價格↕️';
+    } else {
+        timeSort = 'asc';
+        priceSort = '';
+        await createProductContainer();
+        timeSortBtn.innerHTML = '時間↓';
+        priceSortBtn.innerHTML = '價格↕️';
+    }
+}
+priceSortBtn.onclick = async function (e) {
+    if (priceSort !== 'asc') {
+        timeSort = '';
+        priceSort = 'asc';
+        await createProductContainer();
+        timeSortBtn.innerHTML = '時間↕️';
+        priceSortBtn.innerHTML = '價格↓';
+    } else {
+        timeSort = '';
+        priceSort = 'desc';
+        await createProductContainer();
+        timeSortBtn.innerHTML = '時間↕️';
+        priceSortBtn.innerHTML = '價格↑';
+    }
+}
+
 if (urlParams.get('id')) {
     getProduct(urlParams.get('id'));
 } else {
-    getProducts();
+    if (urlParams.get('email'))
+        createProfileContainer(urlParams.get('email'));
+    createProductContainer();
+}
+
+async function createProfileContainer(email) {
+    const userDoc = await getDoc(doc(db, "users", email));
+    if (userDoc.exists()) {
+        const user = userDoc.data();
+        const score = Number((user.score/user.number).toFixed(1));
+        if (auth.currentUser && email == auth.currentUser.email) {
+            profileContainer.innerHTML = `
+                <h2>User Profile</h2><br>
+                <div class="profile-avatar">
+                    <img id="editAvatar" src="${user.imgSrc}" alt="User Avatar">
+                    <input id="file" type="file" accept="image/*" style="display: none">
+                    <button onclick="file.click()"><img src="img/pen-circle.png"></button>
+                </div>
+                <div class="profile-name">
+                    <span id="editName">${user.name}</span>
+                    <button id="editNameBtn"><img src="img/pen-circle.png"></button>
+                </div>
+                <p>${score}⭐</p><br>
+            `;
+            editNameBtn.onclick = function (e) {
+                const newName = prompt("輸入新的名字:", "");
+                if (newName !== null && newName.trim() !== "")
+                    uploadName(email, newName);
+                else if (newName.trim() === "")
+                    alert("名字不能為空，請重新輸入。");
+            };
+            file.onchange = (event) => {
+                uploadAvatar();
+            };
+        } else {
+            profileContainer.innerHTML = `
+                <h2>User Profile</h2><br>
+                <div class="profile-avatar">
+                    <img src="${user.imgSrc}" alt="User Avatar">
+                </div>
+                <div class="profile-name">
+                    <span>${user.name}</span>
+                    ${(email.endsWith('ntou.edu.tw')) ? '<button><img src="img/NTOU.png" alt="NTOU logo"></button>' : ''}
+                </div>
+                <p>${score}⭐</p><br>
+            `;
+        }
+    }
+
+    async function uploadName(email, name) {
+        await updateProfile(auth.currentUser, {displayName: name});
+        await updateDoc(doc(db, "users", email), {name: name});
+        editName.innerHTML = name;
+        alert('更新成功');
+    }
+    async function uploadAvatar() {
+        const fileInput = file.files[0];
+        if (fileInput) {
+            const storage = getStorage();
+            const storageRef = ref(storage, `avatar/${auth.currentUser.email}.png`);
+            const metadata = {contentType: 'image/png'};
+            await uploadBytes(storageRef, fileInput, metadata);
+            getDownloadURL(storageRef).then(async(url) => {
+                await updateProfile(auth.currentUser, {photoURL: url});
+                await updateDoc(doc(db, "users", auth.currentUser.email), {imgSrc: url});
+                editAvatar.src = url;
+                alert('更新成功');
+            });
+        }
+    }
+}
+async function createProductContainer() {
+    productContainer.innerHTML = '';
+    if (urlParams.get('email')) {
+        const email = urlParams.get('email');
+        const docSnap = await getDoc(doc(db, "users", email));
+        if (docSnap.exists()) {
+            if (timeSort !== '')
+                await createProducts(query(collection(db, "products"), where("seller", "==", email), orderBy("time", timeSort)));
+            else if (priceSort !== '')
+                await createProducts(query(collection(db, "products"), where("seller", "==", email), orderBy("price", priceSort)));
+            else
+                await createProducts(query(collection(db, "products"), where("seller", "==", email)));
+        }
+    } else {
+        if (timeSort !== '')
+            await createProducts(query(collection(db, "products"), orderBy("time", timeSort)));
+        else if (priceSort !== '')
+            await createProducts(query(collection(db, "products"), orderBy("price", priceSort)));
+        else
+            await createProducts(collection(db, "products"));
+    }
+    if (productContainer.innerHTML === '') productContainer.innerHTML = 'No such document!';
+
+    async function createProducts(q) {
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            if (doc.data().name.includes(keywords) && (productType.value === 'all' || productType.value === doc.data().type))
+                productContainer.appendChild(productSection(doc.id, doc.data()));
+        });
+        if (localStorage.getItem('ASDF-display') !== 'menu') {
+            productContainer.querySelectorAll('section').forEach((section) => {
+                section.className = 'product row';
+            });
+        }
+    }
 }

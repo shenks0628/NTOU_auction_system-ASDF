@@ -68,7 +68,7 @@ main {
     -ms-user-select: text; /* 兼容 IE/Edge 浏览器 */
 }
 .message img {
-    width: 100px;
+    width: 100%;
 }
 .message button {
     width: 100%;
