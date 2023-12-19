@@ -88,9 +88,6 @@ function add(docId) {
             });
         }
     }
-    else {
-        window.alert("您已取消加注！");
-    }
 }
 
 function exit(docId) {

@@ -68,9 +68,6 @@ async function addToCart(docId) {
             }
         }
     }
-    else {
-        window.alert("您已取消將商品加入購物車！");
-    }
 }
 
 async function addToBids(docId) {
@@ -137,9 +134,6 @@ async function addToBids(docId) {
                 console.error("Error getting product document:", error);
             });
         }
-    }
-    else {
-        window.alert("您已取消加注！");
     }
 }
 
