@@ -86,6 +86,15 @@ section {
     cursor: pointer;
 }
 
+.disabled_btn {
+    padding: 10px 15px;
+    background-color: #434747bc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /* 產品樣式 */
 .fp_title {
     padding-left: 20px;

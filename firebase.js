@@ -202,7 +202,7 @@ const display = async () => {
                         else {
                             if (productType == "normal") {
                                 if (quantity == 0) {
-                                    prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button disabled class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
+                                    prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button disabled class="disabled_btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
                                 }
                                 else {
                                     prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="api/index.html?id=' + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productId + '">加入購物車</button></div>';
