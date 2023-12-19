@@ -48,6 +48,12 @@ button {
   align-items: center;
 }
 
+#editBlock {
+  max-width: 500px;
+  width: 100%;
+  font-size: 20px;
+}
+
 @media screen and (min-width:768px) {
   #checkPage {
     position: fixed;

@@ -119,7 +119,6 @@ async function clearProductData() {
     price: "",
     quantity: "",
     seller: "",
-    sellerImg: "",
     time: Timestamp.fromDate(new Date()),
     url: "",
     endtime: Timestamp.fromDate(new Date())
@@ -244,26 +243,26 @@ function validateDateTime() {
 
   currentDate.setDate(currentDate.getDate() + 7);
 
-  // 檢查所選日期是否在7天以内
+  // 檢查所選日期是否在未來7天以内
   if (selectedDate > currentDate) return false;
   return true;
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  if (document.getElementById("inputName").valid == false || document.getElementById("inputPrice").valid == false || (type == "normal" && document.getElementById("inputQuantity").valid == false)) {
+  console.log(document.getElementById("inputName").checkValidity());
+  if (document.getElementById("inputName").checkValidity() == false || document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
     window.alert("請填寫完整資料");
-    return;
+    // return;
   }
-  else if (document.getElementById("inputURL").valid == false) {
+  else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
-    return;
+    // return;
   }
-  else if (type == "bids" && (document.getElementById("inputDate").valid == false || document.getElementById("inputTime").valid == false || !validateDateTime())) {
-    alert("請選擇未來7天内的時間");
-    return;
+  else if (type == "bids" && (document.getElementById("inputDate").checkValidity() == false || document.getElementById("inputTime").checkValidity() == false || !validateDateTime())) {
+    window.alert("請選擇未來7天内的時間");
+    // return;
   }
   else {
-    // window.alert("比較系統測試中");
     setCheckPage();
     document.getElementById('overlay').style.display = "flex";
     document.getElementById("checkPage").style.display = "block";
@@ -274,20 +273,22 @@ function closeCheckPage() {
   document.getElementById("checkPage").style.display = "none";
 }
 async function setCheckPage() {
-  let originProductData = await getProduct();
-  let oldStr = originProductData.name.trim().split("#");
-  document.getElementById("oldName").innerHTML = oldStr[0];
-  document.getElementById("oldDescription").innerHTML = originProductData.description;
-  document.getElementById("oldPrice").innerHTML = originProductData.price;
-  document.getElementById("oldQuantity").innerHTML = originProductData.quantity;
-  let oldTag = document.getElementById("oldTag");
-  oldTag.innerHTML = "";
-  var f = false;
-  for (var i = 1; i < oldStr.length; i++) {
-    if (oldStr[i].length > 0) {
-      if (f) oldTag.innerHTML += ", "
-      oldTag.innerHTML += oldStr[i];
-      f = true;
+  if (id != null) {
+    let originProductData = await getProduct();
+    let oldStr = originProductData.name.trim().split("#");
+    document.getElementById("oldName").innerHTML = oldStr[0];
+    document.getElementById("oldDescription").innerHTML = originProductData.description;
+    document.getElementById("oldPrice").innerHTML = originProductData.price;
+    document.getElementById("oldQuantity").innerHTML = originProductData.quantity;
+    let oldTag = document.getElementById("oldTag");
+    oldTag.innerHTML = "";
+    var f = false;
+    for (var i = 1; i < oldStr.length; i++) {
+      if (oldStr[i].length > 0) {
+        if (f) oldTag.innerHTML += ", "
+        oldTag.innerHTML += oldStr[i];
+        f = true;
+      }
     }
   }
 

@@ -63,7 +63,6 @@ async function addProduct(userData, inputData) {
         price: parseInt(inputData.price),
         quantity: parseInt(inputData.quantity),
         seller: userID,
-        sellerImg: seller_imgSrc,
         time: serverTimestamp(),
         url: inputData.url
       });
@@ -81,7 +80,6 @@ async function addProduct(userData, inputData) {
         price: parseInt(inputData.price),
         quantity: parseInt(1),
         seller: userID,
-        sellerImg: seller_imgSrc,
         time: serverTimestamp(),
         url: inputData.url,
         endtime: inputData.endtime
