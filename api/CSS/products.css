@@ -47,18 +47,20 @@
 .product button:hover {
     opacity: 0.8;
 }
-.product.row {
+#productContainer.row {
+    display: block;
+}
+#productContainer.row .product {
+    width: auto;
     flex-direction: row;
     align-items: center;
 }
-.product.row > img {
+#productContainer.row .product>img {
     max-width: 64px;
     max-height: 64px;
 }
-.product.sticky {
-    position: sticky;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.9);
+#productContainer.row .product-detail {
+    width: calc(100% - 64px);
 }
 
 #controlContainer {
@@ -89,6 +91,6 @@
 
 @media screen and (max-width: 768px) {
     .product {
-        width: 100%;
+        width: -webkit-fill-available;
     }
 }
