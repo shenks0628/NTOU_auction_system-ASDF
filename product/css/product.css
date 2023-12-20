@@ -50,6 +50,11 @@ button {
   /* width: 50%; */
 }
 
+#bidButton {
+  display: none;
+  /*預設隱藏*/
+}
+
 #cartButton {
   display: none;
   /*預設隱藏*/

@@ -1,4 +1,4 @@
-import { setCart } from "./firebase.js";
+import { setCart, addToBids } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -78,6 +78,7 @@ function eventSetting() {
 
     document.getElementById("editButton").addEventListener("click", toEditPage, false);
     document.getElementById("cartButton").addEventListener("click", addToCart, false);
+    document.getElementById("bidButton").addEventListener("click", addToBidList, false);
     // document.getElementById("edit").addEventListener("click", edit, false);
     // document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
     // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
@@ -144,24 +145,24 @@ function setting() { // 判定是否為買 or 賣家
     if (productOwnerID == "none") return;
     if (userID == "none") {
         document.getElementById("cartButton").style.display = "none";
-        let editButton = document.getElementsByClassName("editButton");
-        for (var i = 0; i < editButton.length; i++) {
-            editButton[i].style.display = "none";
-        }
+        document.getElementById("bidButton").style.display = "none";
+        document.getElementById("editButton").style.display = "none";
     }
     else if (userID == productOwnerID && productOwnerID != "none") {
         document.getElementById("cartButton").style.display = "none";
-        let editButton = document.getElementsByClassName("editButton");
-        for (var i = 0; i < editButton.length; i++) {
-            editButton[i].style.display = "inline";
-        }
+        document.getElementById("bidButton").style.display = "none";
+        document.getElementById("editButton").style.display = "block";
     }
     else {
-        document.getElementById("cartButton").style.display = "block";
-        let editButton = document.getElementsByClassName("editButton");
-        for (var i = 0; i < editButton.length; i++) {
-            editButton[i].style.display = "none";
+        if (productData.type == "normal") {
+            document.getElementById("cartButton").style.display = "block";
+            document.getElementById("bidButton").style.display = "none";
         }
+        else if (productData.type == "bids") {
+            document.getElementById("cartButton").style.display = "none";
+            document.getElementById("bidButton").style.display = "block";
+        }
+        document.getElementById("editButton").style.display = "none";
     }
     if (userID != "none") {
         const userRef = doc(db, "users", userID);
@@ -241,6 +242,15 @@ function addToCart() {
     }
     else {
         setCart(userID, id);
+    }
+}
+function addToBidList() {
+    if (userID === undefined) {
+        window.alert("請先登入後再來使用此功能！");
+        return;
+    }
+    else {
+        addToBids(userID, id);
     }
 }
 window.addEventListener("load", start, false);
