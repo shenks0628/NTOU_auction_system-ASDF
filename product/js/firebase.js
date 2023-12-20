@@ -54,12 +54,8 @@ async function setCart(userId, docId) {
   //     window.alert("您已取消將商品加入購物車！");
   // }
 }
-async function addToBids(docId) {
+async function addToBids(userId, docId) {
   console.log(docId);
-  if (userId === undefined) {
-    window.alert("請先登入後再來使用此功能！");
-    return;
-  }
   const productRef = doc(db, "products", docId);
   const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的金額（僅接受數字輸入）：");
   if (price || price == "") {
@@ -103,4 +99,4 @@ async function addToBids(docId) {
   //     window.alert("您已取消加注！");
   // }
 }
-export { setCart };
+export { setCart, addToBids };
