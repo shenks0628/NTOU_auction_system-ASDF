@@ -99,4 +99,44 @@ async function addToBids(userId, docId) {
   //     window.alert("您已取消加注！");
   // }
 }
-export { setCart, addToBids };
+async function getUser(email) {
+  try {
+    const userSnap = await getDoc(doc(db, "users", email));
+    // console.log(userSnap.data());
+    return userSnap.data();
+  } catch (error) { return null; }
+}
+async function getUserImg(email) {
+  let user = await getUser(email);
+  if (user != null && user.hasOwnProperty("imgSrc")) {
+    return user.imgSrc;
+  }
+  else {
+    return 'img/sheng.jpg';
+  }
+}
+async function getUserName(email) {
+  let user = await getUser(email);
+  if (user != null && user.hasOwnProperty("name")) {
+    return user.name;
+  }
+  else {
+    return "unknown";
+  }
+}
+async function getUserScore(email) {
+  let user = await getUser(email);
+  if (user != null && user.hasOwnProperty("score") && user.hasOwnProperty("number")) {
+    if (user.number == 0) {
+      return 0;
+    }
+    else {
+      let score = user.score / user.number;
+      return score.toFixed(1);
+    }
+  }
+  else {
+    return 0;
+  }
+}
+export { setCart, addToBids, getUserImg, getUserName, getUserScore };
