@@ -24,7 +24,7 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 function add() {
-    window.location.href = "insert.html";
+    window.location.href = "../edit/index.html";
 }
 
 function edit(docId) {
