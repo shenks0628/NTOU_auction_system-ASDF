@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc,deleteField} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -123,10 +123,18 @@ const addcomment = async(id,userEmail) => {
     data.record[id] = {isRate: true, quantity: originalQuantity};
     updateDoc(doc(db, "users", userEmail), data);
   })
+  await getDoc(doc(db, "messages", id)).then((docx3) => {//刪除聊天室
+    const data3 = docx3.data();
+    var modifiedEmail = userEmail.replace(/\./g, '_');
+    console.log(modifiedEmail,data3[modifiedEmail]);
+    updateDoc(doc(db, "messages", id),{
+      [modifiedEmail]: deleteField()
+    })
+  })
 
 };
 
-const display_pic = async() => {
+const display_pic = () => {
     
 var currentIndex = 0;
 var productImg = document.getElementById("productImg");
@@ -160,8 +168,6 @@ nextBtn.addEventListener("click", showNextImage);
 
 // 一開始顯示第一張圖片
 showImage(currentIndex);
-console.log(productImg);
 };
-
-window.addEventListener("load", display_pic);
 window.addEventListener("load", start);
+window.addEventListener("load", display_pic);
