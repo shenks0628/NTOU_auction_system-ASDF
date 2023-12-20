@@ -48,7 +48,28 @@ const start = () => {
             addItemImg(itemName);
             var submitBtn = document.getElementById("submitBtn");
             submitBtn.addEventListener("click", () => {
-              addcomment(itemName, userEmail);
+              var comment = document.getElementById("commentInput");
+              var stars = Array.from(document.querySelectorAll('.star'));
+              var rating = stars.filter(star => star.classList.contains('active')).length;
+              console.log(rating,comment.value,comment.value.length);
+              if(comment.value == ""|| rating == 0||comment.value.length > 50) {
+                  if(comment.value == "") {
+                    window.alert("請輸入評論");
+                  }else if(rating == 0) {
+                    window.alert("請輸入星星數");
+                  }else if(comment.value.length > 50) {
+                    window.alert("評論字數超過50字");
+                  }
+              }else{
+                  addcomment(itemName, userEmail)
+                  .then(() => {
+                    window.alert("評論成功");
+                    window.history.back();
+                  })
+                  .catch(error => {
+                    console.error("評論發生錯誤:", error);
+                  });
+              }
             })
 
         }else { // 沒有登入
@@ -75,7 +96,7 @@ async function addItemImg(id) {
 }
 
 
-const addcomment = (id,userEmail) => {
+const addcomment = async(id,userEmail) => {
 
   var commentInput = document.getElementById("commentInput");
   var stars = Array.from(document.querySelectorAll('.star'));
@@ -83,11 +104,26 @@ const addcomment = (id,userEmail) => {
   var comment = commentInput.value;
   console.log(rating, comment);
   const updatedComment = rating + comment.toString();
-  getDoc(doc(db, "products", id)).then((docx) => {
+
+  await getDoc(doc(db, "products", id)).then((docx) => {//新增評論
     const data = docx.data();
     data.comment[userEmail] = updatedComment;
     updateDoc(doc(db, "products", id), data);
+    const sellerEmail = data.seller;
+    getDoc(doc(db, "users", sellerEmail)).then((docx2) => {//添加星數到賣家評分
+      const data2 = docx2.data();
+      data2.score+=parseInt(rating);
+      data2.number++;
+      updateDoc(doc(db, "users", sellerEmail), data2);
+    })
   })
+  await getDoc(doc(db, "users", userEmail)).then((docx) => {
+    const data = docx.data();
+    const originalQuantity = data.record[id].quantity; // 獲取原始的quantity值
+    data.record[id] = {isRate: true, quantity: originalQuantity};
+    updateDoc(doc(db, "users", userEmail), data);
+  })
+
 };
 
 const display_pic = async() => {
