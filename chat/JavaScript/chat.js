@@ -31,6 +31,7 @@ const productID = urlParams.get('id');
 const buyerRef = doc(db, "users", buyer);
 const messagesRef = doc(db, "messages", productID);
 const encodeBuyer = encodeEmail(buyer);
+const mainElement = document.querySelector('main');
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -60,7 +61,6 @@ function isWithinDays(days, time) {
     return Date.now()-time < 86400000*days;
 }
 async function verifyIdentity(email) {
-    const mainElement = document.querySelector('main');
     const docSnap = await getDoc(doc(db, "products", productID));
     if (docSnap.exists() && (email == buyer || email == docSnap.data().seller)) {
         mainElement.innerHTML = '';
@@ -129,6 +129,7 @@ async function verifyIdentity(email) {
             `;
             mainElement.appendChild(newDiv);
         }
+        scrollDownBtn.className = 'display';
     }
 }
 async function cancelOrder(quantity) {
@@ -148,9 +149,8 @@ async function confirmOrder(quantity) {
         user: 'system'
     });
     if (buyerDoc.exists() && buyerDoc.data().record[productID])
-        await updateDoc(buyerRef, { [`record.${productID}.quantity`]: increment(quantity) });
-    else
-        await updateDoc(buyerRef, { [`record.${productID}`]: {isRate: false, quantity: quantity} });
+        quantity += buyerDoc.data().record[productID].quantity;
+    await updateDoc(buyerRef, { [`record.${productID}`]: {isRate: false, quantity: quantity} });
     await updateDoc(messagesRef, { [encodeBuyer]: messages });
     window.location.href = window.location.href;
 }
@@ -167,7 +167,19 @@ async function uploadMessage() {
         textInput.value = '';
     } catch (e) { window.location.href = window.location.href; }
 }
-
+function isScrolledToBottom() {
+    return mainElement.scrollTop + mainElement.clientHeight >= mainElement.scrollHeight - 1;
+}
+mainElement.addEventListener('scroll', function () {
+    scrollUpBtn.className = mainElement.scrollTop>1 ? 'display' : '';
+    scrollDownBtn.className = isScrolledToBottom() ? '' : 'display';
+});
+scrollUpBtn.onclick = function (e) {
+    mainElement.scrollTop = 0;
+}
+scrollDownBtn.onclick = function (e) {
+    mainElement.scrollTop = mainElement.scrollHeight;
+}
 sendBtn.onclick = function (e) {
     uploadMessage();
 }
