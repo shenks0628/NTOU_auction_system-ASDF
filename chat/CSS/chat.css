@@ -36,10 +36,12 @@ header a {
 header img {
     width: 16px;
     height: 16px;
-    display: none;
-    margin-left: 5px;
     cursor: pointer;
-}        
+}
+.back {
+    position: fixed;
+    left: 10px;
+}     
 
 main {
     width: 100%;
@@ -182,10 +184,18 @@ dialog textarea {
     height: 74px;
     cursor: pointer;
 }
-#qrcode {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);}
-#qrcode img {width: 256px; height: 256px;}
-#multiSendBtn {background-color: #4caf50;}
-#multiExitBtn {background-color: #f44336;}
-#multiSendBtn:hover {background-color: #45a049;}
-#multiExitBtn:hover {background-color: #d32f2f;}
-#multiSendBtn, #multiExitBtn {width: 50%; color: white; border: none; padding: 10px 15px; font-size: 14px; transition: background-color 0.3s;}
+#scrollUpBtn, #scrollDownBtn {
+    display: none;
+    position: fixed;
+    right: 20px;
+    background-color: gray;
+}
+#scrollUpBtn {
+    top: 70px;
+}
+#scrollDownBtn {
+    bottom: 70px;
+}
+#scrollUpBtn.display, #scrollDownBtn.display {
+    display: block;
+}
