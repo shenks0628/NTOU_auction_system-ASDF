@@ -86,6 +86,13 @@ const start = async () => {
     const show_hide_normal = document.getElementById("show_hide_normal");
     const show_hide_bids = document.getElementById("show_hide_bids");
     const add_btn = document.getElementById("add");
+    let url;
+    if (window.innerWidth <= 970) {
+        url = "../api/mobile.html?id=";
+    }
+    else {
+        url = "../product/index.html?id=";
+    }
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             title.innerHTML = "賣場清單";
@@ -111,7 +118,7 @@ const start = async () => {
                 const productData = doc.data();
                 const productName = productData.name.split('#')[0];
                 if (productData.type == "normal") {
-                    normal_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="../api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                    normal_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
                 }
                 else if (productData.type == "bids") {
                     let endDate = productData.endtime.toDate();
@@ -122,7 +129,7 @@ const start = async () => {
                             endDate = tmpDate;
                         }
                     }
-                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="../api/index.html?id=' + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
+                    bids_display_list.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p>';
                 }
             });
             normal_display_list.removeEventListener("click", handleCheck);
