@@ -18,7 +18,8 @@
           <option value="bids">競標商品</option>
         </select>
       </div>
-      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]+$" required>(名稱不可含有#)
+      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,50}$"
+          required>上限50個字(名稱不可含有#)
       </div>
       <div id="descriptionContainer">描述：<input type="text" id="inputDescription" name="inputDescription"></div>
       <div id="priceContainer">價格：<input type="number" id="inputPrice" name="inputPrice" min="0" required></div>
@@ -57,8 +58,8 @@
           <div>價格：<span id="oldPrice"></span></div>
           <div>數量：<span id="oldQuantity"></span></div>
           <div>標籤：<span id="oldTag"></span></div>
-          <!-- <div>圖片：<span id="oldImage"></span></div>
-          <div>內嵌影片：<span id="oldURL"></span></div> -->
+          <!-- <div>圖片：<span id="oldImage"></span></div> -->
+          <div>內嵌影片：<span id="oldURL"></span></div>
         </div>
         <div id="new" style="background-color: rgb(0, 64, 0); color:antiquewhite; overflow-y: auto; margin: 1%;">
           <div style="font-weight: bold;">修改後</div>
@@ -68,8 +69,8 @@
           <div>價格：<span id="newPrice"></span></div>
           <div>數量：<span id="newQuantity"></span></div>
           <div>標籤：<span id="newTag"></span></div>
-          <!-- <div>圖片：<span id="newImage"></span></div>
-          <div>內嵌影片：<span id="newURL"></span></div> -->
+          <!-- <div>圖片：<span id="newImage"></span></div> -->
+          <div>內嵌影片：<span id="newURL"></span></div>
         </div>
       </div>
       <button id="sendButton" style="font-size: large;">送出</button>&nbsp;<button id="checkPageCloseButton"

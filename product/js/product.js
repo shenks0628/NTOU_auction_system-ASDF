@@ -1,4 +1,4 @@
-import { setCart, addToBids } from "./firebase.js";
+import { setCart, addToBids, getUserImg, getUserName, getUserScore } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -71,7 +71,7 @@ function start() {
     });
 };
 function eventSetting() {
-    imgs = document.getElementById("itemPicture"),
+    imgs = document.getElementById("bigImageItem"),
         imgs.addEventListener("click", changeImage, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
@@ -90,6 +90,12 @@ async function setProduct() { // 設定顯示的商品
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
     document.title = "商品：" + str[0];
+    let sellerImage = document.getElementById("sellerImage");
+    sellerImage.setAttribute("src", await getUserImg(productData.seller));
+    let productSeller = document.getElementById("productSeller");
+    productSeller.setAttribute("href", "?email=" + productData.seller);
+    let sellerName = document.getElementById("sellerName");
+    sellerName.innerHTML = (await getUserScore(productData.seller)).toString() + '⭐' + "<br>" + await getUserName(productData.seller);
     let itemDescription = document.getElementById("itemDescription");
     itemDescription.innerHTML = productData.description;
     let itemPrice = document.getElementById("itemPrice");
@@ -132,13 +138,8 @@ async function setProduct() { // 設定顯示的商品
         itemComment.innerHTML = "此商品暫時沒有評論";
     }
 }
-async function getUserImg(email) {
-    try {
-        const userSnap = await getDoc(doc(db, "users", email));
-        console.log(userSnap.data().imgSrc);
-        return userSnap.data().imgSrc;
-    } catch (error) { return 'img/sheng.jpg'; }
-}
+
+
 
 function setting() { // 判定是否為買 or 賣家
     // console.log(userID, productOwnerID);

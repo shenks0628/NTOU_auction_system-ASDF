@@ -291,6 +291,7 @@ async function setCheckPage() {
       }
     }
   }
+  document.getElementById("oldURL").innerHTML = originProductData.url;
 
   let newProductData = getInputData();
   let newStr = newProductData.name.trim().split("#");
@@ -308,6 +309,8 @@ async function setCheckPage() {
       f = true;
     }
   }
+  // document.getElementById("newImage").innerHTML;
+  document.getElementById("newURL").innerHTML = newProductData.url;
 }
 
 async function sendCheck() {
