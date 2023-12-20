@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
-let userId;
+let userId, bidsData;
 
 function edit(docId) {
     console.log(docId);
@@ -89,7 +89,7 @@ async function addToBids(docId) {
                 if (productDoc.exists()) {
                     const productData = productDoc.data();
                     console.log("Product data for product with ID", docId, ":", productData);
-                    if (parseInt(price) < parseInt(bidsData[docId])) {
+                    if (bidsData.hasOwnProperty(docId) && parseInt(price) < parseInt(bidsData[docId])) {
                         window.alert("無效加注！因為您的注金比您原先的注金低！");
                     }
                     else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
@@ -181,6 +181,7 @@ const display = async () => {
             const docSnap = await getDoc(doc(db, "users", userId));
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
+                bidsData = docSnap.data().bids;
                 views.forEach(async (productId) => {
                     console.log(productId);
                     const productDoc = await getDoc(doc(db, "products", productId));
