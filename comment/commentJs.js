@@ -64,7 +64,7 @@ const start = () => {
                   addcomment(itemName, userEmail)
                   .then(() => {
                     window.alert("評論成功");
-                    //window.history.back();
+                    window.history.back();
                   })
                   .catch(error => {
                     console.error("評論發生錯誤:", error);
@@ -134,7 +134,7 @@ const addcomment = async(id,userEmail) => {
 
 };
 
-const display_pic = async() => {
+const display_pic = () => {
     
 var currentIndex = 0;
 var productImg = document.getElementById("productImg");
@@ -168,8 +168,6 @@ nextBtn.addEventListener("click", showNextImage);
 
 // 一開始顯示第一張圖片
 showImage(currentIndex);
-console.log(productImg);
 };
-
-window.addEventListener("load", display_pic);
 window.addEventListener("load", start);
+window.addEventListener("load", display_pic);
