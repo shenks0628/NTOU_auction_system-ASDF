@@ -180,7 +180,7 @@ function toEditPage() {
 }
 
 function addToCart() {
-    if (userID === undefined) {
+    if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;
     }
@@ -189,7 +189,7 @@ function addToCart() {
     }
 }
 function addToBidList() {
-    if (userID === undefined) {
+    if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;
     }
