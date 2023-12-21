@@ -31,13 +31,32 @@
             background-color: #f2f2f2; /* 設定表頭背景色 */
         }
         .total {
-            margin-left: 890px;
+            margin-left: 89%;/*890*/
         }
-
         #billcheck {
-            margin-left: 920px;
+            margin-left: 90%;/*920*/
         }
-
+        /* 當螢幕寬度小於或等於 700px 時 */
+        @media screen and (max-width: 760px) {
+            h2 {
+                font-size: 30px; /* 調整標題的大小 */
+                text-align: center; /* 讓 h2 文字置中 */
+            }
+            main {
+                padding: 5px; /* 調整主要區域的 padding */
+            }
+            .cart-table th, .cart-table td {
+                padding: 5px; /* 調整表格單元格的 padding */
+            }
+            .total {
+                margin-left: 0; /* 移除右邊距 */
+                text-align: center; /* 調整文本對齊方式 */
+            }
+            #billcheck {
+                margin-left: 0; /* 移除右邊距 */
+                text-align: center; /* 調整文本對齊方式 */
+            }
+        }
     </style>
 </head>
 <body>
