@@ -29,6 +29,7 @@ const images =[];
 const start = () => {
 
     const title = document.getElementById("title");
+    let imgs = document.getElementById("imgs");
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
             const userEmail = user.email;
@@ -45,7 +46,9 @@ const start = () => {
             imgAvarta.src = userInfo.imgSrc;
             avarta.appendChild(imgAvarta);
 
-            addItemImg(itemName);
+            addItemImg(itemName).then(async() => {
+              display_pic();
+            })
             var submitBtn = document.getElementById("submitBtn");
             submitBtn.addEventListener("click", () => {
               var comment = document.getElementById("commentInput");
@@ -135,39 +138,45 @@ const addcomment = async(id,userEmail) => {
 };
 
 const display_pic = () => {
-    
-var currentIndex = 0;
-var productImg = document.getElementById("productImg");
-var prevBtn = document.getElementById("prevBtn");
-var nextBtn = document.getElementById("nextBtn");
+  var currentIndex = 0;
+  var productImg = document.getElementById("productImg");
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
 
-function showImage(index) {
-  productImg.src = images[index];
-}
-
-function showPrevImage() {
-  if (currentIndex === 0) {
-    currentIndex = images.length - 1;
-  } else {
-    currentIndex--;
+  function showImage(index) {
+    productImg.src = images[index];
   }
-  showImage(currentIndex);
-}
 
-function showNextImage() {
-  if (currentIndex === images.length - 1) {
-    currentIndex = 0;
-  } else {
-    currentIndex++;
+  function showPrevImage() {
+    if (currentIndex === 0) {
+      currentIndex = images.length - 1;
+    } else {
+      currentIndex--;
+    }
+    showImage(currentIndex);
   }
+
+  function showNextImage() {
+    if (currentIndex === images.length - 1) {
+      currentIndex = 0;
+    } else {
+      currentIndex++;
+    }
+    showImage(currentIndex);
+  }
+
+  function showNextImageOnClick() {
+    showNextImage();
+  }
+
+  // 添加點擊事件監聽器到圖片
+  productImg.addEventListener("click", showNextImageOnClick);
+
+  //prevBtn.addEventListener("click", showPrevImage);
+  //nextBtn.addEventListener("click", showNextImage);
+
+  // 一開始顯示第一張圖片
   showImage(currentIndex);
-}
-
-prevBtn.addEventListener("click", showPrevImage);
-nextBtn.addEventListener("click", showNextImage);
-
-// 一開始顯示第一張圖片
-showImage(currentIndex);
 };
 window.addEventListener("load", start);
-window.addEventListener("load", display_pic);
+//window.addEventListener("load", display_pic);
