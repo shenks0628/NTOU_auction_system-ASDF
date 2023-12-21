@@ -20,11 +20,11 @@
             <a href="?" class="title-span"><font color="#007355">A</font><font color="#F65353">S</font><font color="#F59A23">D</font><font color="#82218B">F</font></a>
             <div class="right">
                 <div class="search-bar">
-                    <button class="left" id="searchBarBtn">
-                        <img src="img/basket-shopping-simple.png" alt="search mode">
+                    <button class="left" id="searchBarMode">
+                        <img src="img/shopping-cart.png" alt="search mode">
                     </button>
                     <input id="searchBarInput" type="text" placeholder="Search">
-                    <button class="right" onclick="toUrl('api/?search='+searchBarInput.value)">
+                    <button class="right" id="searchBarSearch">
                         <img src="img/search.png" alt="search">
                     </button>
                 </div>
@@ -33,11 +33,11 @@
         </div>
         
         <div id="menuSearch">
-            <button class="left" id="menuSearchBtn">
-                <img src="img/basket-shopping-simple.png" alt="search mode">
+            <button class="left" id="menuSearchMode">
+                <img src="img/shopping-cart.png" alt="search mode">
             </button>
             <input id="menuSearchInput" type="text" placeholder="Search">
-            <button class="right" onclick="toUrl('api/?search='+menuSearchInput.value)">
+            <button class="right" id="menuSearchSearch">
                 <img src="img/search.png" alt="search">
             </button>
         </div>
