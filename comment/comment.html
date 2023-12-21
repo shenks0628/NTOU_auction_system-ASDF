@@ -6,73 +6,85 @@
     <title>評論</title>
     <link rel="stylesheet" href="../index.css" type="text/css" media="screen" charset="utf-8">
     <style>
-        body{
+        body {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color:whitesmoke;
-            text-align: center ;
+            background-color: whitesmoke;
+            text-align: center;
             margin: 10px 10px auto;
         }
+    
         .rating-container {
             display: flex;
-            align-items: center;
+            text-align: center;
             justify-content: space-between;
         }
-
+    
         .rating-label {
             margin-right: 10px;
         }
+    
         .rating {
             font-size: 20px;
             cursor: pointer;
         }
+    
         .star {
             display: inline-block;
             margin-right: 5px;
         }
-        .star:hover,.star.active {
+    
+        .star:hover,
+        .star.active {
             color: gold;
         }
-
-        textarea{
+    
+        textarea {
+            max-width: 100%;
+            max-height: 100%;
             border: solid 0.5px lightgray;
             border-radius: 3px;
             padding: 10px;
             height: 60px;
-            width: 820px; height: 50px; resize: none
+            width: 820px;
+            height: 50px;
+            resize: none;
         }
-        #commentContainer{
-            transform: scale(1.1);
+    
+        #commentContainer {
             background: white;
-            vertical-align: top;
-            margin-top: 30px;
+            margin-top: 20px;
             box-shadow: 4px 0 4px 0 lightgray;
-            display: inline-block;
-            padding: 20px 20px 20px 20px;
-            text-align: left;
-            width: 900px;
+            display: block;
+            padding: 20px 20px 10px 10px;
+            text-align: right;
+            width: 850px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        #productImg{
+    
+        #productImg {
+            aspect-ratio: 1 / 1;
             width: 500px;
-            height: 500px;
             background-position: center;
             background-repeat: no-repeat;
+            background-size: contain;
         }
-
+    
         #avartar {
-            margin-left:auto;
+            margin-left: auto;
         }
-
+    
         #avartar img {
             border-radius: 50%;
             float: right;
             margin-right: 10px;
+            margin-bottom: 15px;
             width: 60px;
             height: 60px;
         }
-
+    
         #submitBtn {
             background-color: #4CAF50;
             color: white;
@@ -81,11 +93,11 @@
             cursor: pointer;
             border-radius: 4px;
         }
-
+    
         #submitBtn:hover {
             background-color: #45a049;
         }
-
+    
         button {
             padding: 5px 10px;
             font-size: 16px;
@@ -94,34 +106,31 @@
             background-color: #f2f2f2;
             color: #333;
         }
-
-        /* 左邊按鈕的樣式 */
-        #prevBtn {
-            margin-right: 10px;
+    
+        /* 手機版樣式 */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px auto;
+            }
+    
+            textarea {
+                width: 100%;
+            }
+    
+            #commentContainer {
+                transform: scale(0.9);
+                width: 100%;
+            }
+    
+            #productImg {
+                transform: scale(0.9);
+            }
         }
-
-        /* 右邊按鈕的樣式 */
-        #nextBtn {
-            margin-left: 10px;
-        }
-
-        #imgCtrl {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-        }
-
     </style>
 </head>
 <body>
-<div id="imgCtrl">
-    <button id="prevBtn"><</button>
-    <img id="productImg">
-    <button id="nextBtn">></button>
-</div>
+<img id="productImg">
 <div id="commentContainer">
-
     <div class="rating-container">
         <span class="rating-label">滿意度:</span>
         <div class="rating" onclick="handleRating(event)">
@@ -134,7 +143,6 @@
         <div id="avartar"></div>
     </div>
     <textarea id="commentInput" placeholder="請輸入你對商品的評論"></textarea>
-
     <button id="submitBtn">提交</button>
 </div>
 </div>
