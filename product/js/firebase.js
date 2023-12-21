@@ -23,6 +23,73 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 // const storage = getStorage();
 
+async function getProduct(id) { // 讀資料
+  const productId = id; // 替換成實際的產品 ID
+  // 使用 doc 函數構建該產品的參考路徑
+  const productRef = doc(db, "products", productId);
+  // 使用 getDoc 函數取得該產品的文件快照
+  let productData = getDoc(productRef)
+    .then((productDoc) => {
+      if (productDoc.exists()) {
+        // 取得該產品的資料
+        let productData = productDoc.data();
+        console.log("Product data for product with ID", productId, ":", productData);
+        return productData;
+      }
+      else {
+        console.log("Product with ID", productId, "does not exist.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error getting product document:", error);
+    });
+  return productData;
+}
+
+async function updateView(userID, id) {
+  if (userID != "none") {
+    const userRef = doc(db, "users", userID);
+    getDoc(userRef)
+      .then((userDoc) => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData) {
+            let viewarr = userData.view;
+            let flag = false;
+            for (let i = 0; i < viewarr.length; i++) {
+              if (viewarr[i] == id) {
+                for (let j = i; j >= 1; j--) {
+                  viewarr[j] = viewarr[j - 1];
+                }
+                viewarr[0] = id;
+                flag = true;
+                break;
+              }
+            }
+            if (!flag) {
+              if (viewarr.length < 10) {
+                viewarr.push(id);
+              }
+              for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
+                viewarr[i] = viewarr[i - 1];
+              }
+              viewarr[0] = id;
+            }
+            updateDoc(doc(db, "users", userID), {
+              view: viewarr
+            });
+          }
+        }
+        else {
+          console.log("User with ID", userID, "does not exist.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting user document:", error);
+      });
+  }
+}
+
 async function setCart(userId, docId) {
   console.log(docId);
   const userSnap = await getDoc(doc(db, "users", userId));
@@ -139,4 +206,4 @@ async function getUserScore(email) {
     return 0;
   }
 }
-export { setCart, addToBids, getUserImg, getUserName, getUserScore };
+export { getProduct, updateView, setCart, addToBids, getUserImg, getUserName, getUserScore };
