@@ -93,7 +93,7 @@ async function setProduct(productData) { // 設定顯示的商品
     let sellerImage = document.getElementById("sellerImage");
     sellerImage.setAttribute("src", await getUserImg(productData.seller));
     let productSeller = document.getElementById("productSeller");
-    productSeller.setAttribute("href", "?email=" + productData.seller);
+    productSeller.setAttribute("href", "../api?email=" + productData.seller);
     let sellerName = document.getElementById("sellerName");
     sellerName.innerHTML = (await getUserScore(productData.seller)).toString() + '⭐' + "<br>" + await getUserName(productData.seller);
     let itemPrice = document.getElementById("itemPrice");
