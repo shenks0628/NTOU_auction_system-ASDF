@@ -132,7 +132,7 @@ async function updateProduct(inputData) { // 修改並更新資料庫
 }
 async function uploadImage(inputImage) {
   let imageURL = [];
-  let dateString = getDateString();
+  let dateString = new Date().toISOString();
   for (let i = 0; i < inputImage.length; i++) {
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
@@ -154,10 +154,5 @@ async function deleteStorageFile(fileUrl) {
     console.log(error);
     // Uh-oh, an error occurred!
   });
-}
-function getDateString() {
-  let date = new Date();
-  let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
-  return dateString;
 }
 export { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile };
