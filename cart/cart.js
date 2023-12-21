@@ -230,9 +230,9 @@ const start1 = () => {
         getDoc(productRef)
         .then((productDoc) => {
             if (productDoc.exists()) {
-            // 取得該產品的資料
-            const productData = productDoc.data();
-            console.log("Product data for product with ID", productId, ":", productData);
+                // 取得該產品的資料
+                const productData = productDoc.data();
+                console.log("Product data for product with ID", productId, ":", productData);
                 if(cartData[key]<=productData.quantity){
                     const pName = productData.name.split('#')[0];
                     const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0]};
@@ -284,7 +284,10 @@ const start1 = () => {
                 }
             } 
             else {
-            console.log("Product with ID", productId, "does not exist.");
+                updateDoc(doc(db, "users", userId), {
+                    ['cart.' + productId]: deleteField()
+                });
+                console.log("Product with ID", productId, "does not exist.");
             }
         })
         .catch((error) => {
