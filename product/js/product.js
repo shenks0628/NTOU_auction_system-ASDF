@@ -45,7 +45,7 @@ const getProduct = async () => { // 讀資料
                 productOwnerID = productData.seller;
                 setting(userID, productOwnerID);
                 console.log("Product data for product with ID", productId, ":", productData);
-                setProduct();
+                setProduct(productData);
             }
             else {
                 console.log("Product with ID", productId, "does not exist.");
@@ -85,7 +85,7 @@ function eventSetting() {
     // document.getElementById("completeButton").addEventListener("click", updateProduct, false);
 }
 
-async function setProduct() { // 設定顯示的商品
+async function setProduct(productData) { // 設定顯示的商品
     let str = productData.name.trim().split("#");
     let itemName = document.getElementById("itemName");
     itemName.innerHTML = str[0];
@@ -93,13 +93,28 @@ async function setProduct() { // 設定顯示的商品
     let sellerImage = document.getElementById("sellerImage");
     sellerImage.setAttribute("src", await getUserImg(productData.seller));
     let productSeller = document.getElementById("productSeller");
-    productSeller.setAttribute("href", "?email=" + productData.seller);
+    productSeller.setAttribute("href", "../api?email=" + productData.seller);
     let sellerName = document.getElementById("sellerName");
     sellerName.innerHTML = (await getUserScore(productData.seller)).toString() + '⭐' + "<br>" + await getUserName(productData.seller);
-    let itemDescription = document.getElementById("itemDescription");
-    itemDescription.innerHTML = productData.description;
     let itemPrice = document.getElementById("itemPrice");
     itemPrice.innerHTML = "$" + productData.price.toString();
+    if (productData.type == "normal") {
+        document.getElementById("productEndTime").style.display = "none";
+    }
+    else if (productData.type == "bids") {
+        let endtime = productData.endtime.toDate();
+        document.getElementById("itemEndTime").innerHTML = endtime.toLocaleString();
+        let now = new Date();
+        now.setMinutes(now.getMinutes() + 30);
+        if (now > endtime) {
+            document.getElementById("itemEndTime").style.color = "red";
+        }
+        else {
+            document.getElementById("itemEndTime").style.color = "black";
+        }
+    }
+    let itemDescription = document.getElementById("itemDescription");
+    itemDescription.innerHTML = productData.description;
     let itemQuantity = document.getElementById("itemQuantity");
     itemQuantity.innerHTML = productData.quantity.toString();
     let itemTag = document.getElementById("itemTag");

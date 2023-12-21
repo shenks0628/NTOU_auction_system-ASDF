@@ -71,7 +71,7 @@ async function addProduct(userData, inputData) {
     }
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
-        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), modtime: serverTimestamp() },
+        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), addAmount: inputData.price },
         comment: {},
         type: type,
         imgs: inputData.imgs,
@@ -111,7 +111,6 @@ async function updateProduct(inputData) { // 修改並更新資料庫
       });
     }
     else if (type == "bids") {
-      inputData.bids_info.modtime = Timestamp.fromDate(new Date());
       await updateDoc(productRef, {
         bids_info: inputData.bids_info,
         comment: inputData.comment,

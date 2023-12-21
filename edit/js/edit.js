@@ -109,6 +109,9 @@ function inputTypeSet(productData) {
 }
 
 async function clearProductData() {
+  let defaultEndTime = new Date();
+  defaultEndTime.setHours(defaultEndTime.getHours() + 8);
+  console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
@@ -119,9 +122,9 @@ async function clearProductData() {
     price: "",
     quantity: "",
     seller: "",
-    time: Timestamp.fromDate(new Date()),
+    time: Timestamp.fromDate(defaultEndTime),
     url: "",
-    endtime: Timestamp.fromDate(new Date())
+    endtime: Timestamp.fromDate(defaultEndTime)
   };
   return productData;
   // document.getElementById("inputName").value = "";
@@ -141,7 +144,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -172,7 +175,6 @@ function showData(productData) { // 顯示原商品資料
     }
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
-    document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
     if (id != null && productData.bids_info.who1.length > 0) {
@@ -183,7 +185,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 1;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -215,8 +217,9 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
 
-    document.getElementById("inputDate").value = productData.endtime.toDate().toISOString().split('T')[0];
-    document.getElementById("inputTime").value = productData.endtime.toDate().toTimeString().substr(0, 8);
+    document.getElementById("inputDate").value = productData.endtime.toDate().getFullYear() + '-' + productData.endtime.toDate().getMonth() + '-' + productData.endtime.toDate().getDate();
+    console.log(('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes() + ':' + productData.endtime.toDate().getSeconds());
+    document.getElementById("inputTime").value = ('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes();
   }
 }
 function temporaryDeleteImage(img, src) {
@@ -290,8 +293,8 @@ async function setCheckPage() {
         f = true;
       }
     }
+    document.getElementById("oldURL").innerHTML = originProductData.url;
   }
-  document.getElementById("oldURL").innerHTML = originProductData.url;
 
   let newProductData = getInputData();
   let newStr = newProductData.name.trim().split("#");
@@ -350,7 +353,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(document.getElementById("inputQuantity").value),
       imgs: document.getElementById("inputImage").files,
@@ -362,7 +365,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(1),
       imgs: document.getElementById("inputImage").files,
