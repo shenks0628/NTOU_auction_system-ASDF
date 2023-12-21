@@ -203,7 +203,7 @@ const display = async () => {
     latest_bids.innerHTML = "";
     prev_view.innerHTML = "";
     let url;
-    if (window.innerWidth <= 970) {
+    if (window.innerWidth <= 767) {
         url = "api/mobile.html?id=";
     }
     else {
