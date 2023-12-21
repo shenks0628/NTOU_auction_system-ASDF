@@ -144,7 +144,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -185,7 +185,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 1;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -293,8 +293,8 @@ async function setCheckPage() {
         f = true;
       }
     }
+    document.getElementById("oldURL").innerHTML = originProductData.url;
   }
-  document.getElementById("oldURL").innerHTML = originProductData.url;
 
   let newProductData = getInputData();
   let newStr = newProductData.name.trim().split("#");
@@ -353,7 +353,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(document.getElementById("inputQuantity").value),
       imgs: document.getElementById("inputImage").files,
@@ -365,7 +365,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(1),
       imgs: document.getElementById("inputImage").files,

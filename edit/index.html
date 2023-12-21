@@ -21,7 +21,11 @@
       <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,50}$"
           required>上限50個字(名稱不可含有#)
       </div>
-      <div id="descriptionContainer">描述：<input type="text" id="inputDescription" name="inputDescription"></div>
+      <div id="descriptionContainer">描述：
+        <br>
+        <textarea id="inputDescription" name="inputDescription" rows="5" placeholder="介紹一下這個商品吧"
+          style="width:100%; resize: none; overflow-y: auto; box-sizing: border-box;"></textarea>
+      </div>
       <div id="priceContainer">價格：<input type="number" id="inputPrice" name="inputPrice" min="0" required></div>
       <div id="quantityContainer">數量：<input type="number" id="inputQuantity" name="inputQuantity" min="0" required>
       </div>
@@ -49,32 +53,41 @@
     </footer>
     <div class="overlay" id="overlay"></div>
     <dialog id="checkPage">
-      <div id="comparePart" style="display: flex;">
-        <div id="old" style="background-color:rgb(64, 0, 0);color:antiquewhite; overflow-y: auto;margin: 1%;">
-          <div style="font-weight: bold;">修改前</div>
-          <hr>
-          <div>名稱：<span id="oldName"></span></div>
-          <div>描述：<span id="oldDescription"></span></div>
-          <div>價格：<span id="oldPrice"></span></div>
-          <div>數量：<span id="oldQuantity"></span></div>
-          <div>標籤：<span id="oldTag"></span></div>
-          <!-- <div>圖片：<span id="oldImage"></span></div> -->
-          <div>內嵌影片：<span id="oldURL"></span></div>
+      <div id="checkContainer">
+        <div style="margin: 1%; height: 30px;">
+          <button id="checkPageCloseButton" style="font-size: large; float: left; background-color: unset;"><img
+              src="./images/return.png" height="25px" width="25px" title="返回"></button>
+          <button id="sendButton" style="font-size: large; float: right;">送出</button>
         </div>
-        <div id="new" style="background-color: rgb(0, 64, 0); color:antiquewhite; overflow-y: auto; margin: 1%;">
-          <div style="font-weight: bold;">修改後</div>
-          <hr>
-          <div>名稱：<span id="newName"></span></div>
-          <div>描述：<span id="newDescription"></span></div>
-          <div>價格：<span id="newPrice"></span></div>
-          <div>數量：<span id="newQuantity"></span></div>
-          <div>標籤：<span id="newTag"></span></div>
-          <!-- <div>圖片：<span id="newImage"></span></div> -->
-          <div>內嵌影片：<span id="newURL"></span></div>
+        <div id="comparePart" style="display: flex;">
+          <div id="old" style="background-color:rgb(64, 0, 0);color:antiquewhite; font-weight: bold;">
+            <div>修改前</div>
+            <hr>
+            <div>名稱：<span id="oldName"></span></div>
+            <div>描述：
+              <div id="oldDescription"></div>
+            </div>
+            <div>價格：<span id="oldPrice"></span></div>
+            <div>數量：<span id="oldQuantity"></span></div>
+            <div>標籤：<span id="oldTag"></span></div>
+            <!-- <div>圖片：<span id="oldImage"></span></div> -->
+            <div>內嵌影片：<span id="oldURL"></span></div>
+          </div>
+          <div id="new" style="background-color: rgb(0, 64, 0); color:antiquewhite; font-weight: bold;">
+            <div>修改後</div>
+            <hr>
+            <div>名稱：<span id="newName"></span></div>
+            <div>描述：
+              <div id="newDescription"></div>
+            </div>
+            <div>價格：<span id="newPrice"></span></div>
+            <div>數量：<span id="newQuantity"></span></div>
+            <div>標籤：<span id="newTag"></span></div>
+            <!-- <div>圖片：<span id="newImage"></span></div> -->
+            <div>內嵌影片：<span id="newURL"></span></div>
+          </div>
         </div>
       </div>
-      <button id="sendButton" style="font-size: large;">送出</button>&nbsp;<button id="checkPageCloseButton"
-        style="font-size: large;">繼續修改</button>
     </dialog>
   </div>
 
