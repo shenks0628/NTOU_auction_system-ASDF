@@ -1,0 +1,71 @@
+<html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>financial Report</title>
+        <style>
+            /* 通用樣式 */
+            body {
+                font-family: Arial, sans-serif;
+            }
+    
+            header {
+                font-size: 44px;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+    
+            .pageContainer {
+                display: flex;
+                justify-content: center;
+            }
+    
+            .container {
+                width: 700px;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color:ghostwhite;
+            }
+    
+            label {
+                font-weight: bold;
+                font-size: 32px;
+                margin-top: 10px;
+            }
+    
+            #display_most,
+            #display_high,
+            #display_all {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 5px;
+                border-radius: 5px;
+            }
+    
+            /* 手機端樣式 */
+            @media (max-width: 768px) {
+                .container {
+                    width: 100%;
+                    padding: 10px;
+                }
+            }
+        </style> 
+    </head>
+    <header>您的財務報表</header>
+<body>
+    <div class="pageContainer">
+        <div class="container">
+            <label class="mostlabel">最高成交量商品</label>
+            <div id="display_most"></div>
+            <label class="highlabel">收入最高商品</label>
+            <div id="display_high"></div>
+            <label class="alllabel">所有商品</label>
+            <div id="display_all"></div>
+        </div> 
+    </div>
+   
+<script src="financial_report.js" type="module"></script>
+</body>
+</html>
