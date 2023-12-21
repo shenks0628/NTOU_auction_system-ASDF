@@ -98,8 +98,20 @@ async function addToBids(docId) {
                         if (productDoc.exists()) {
                             const productData = productDoc.data();
                             console.log("Product data for product with ID", docId, ":", productData);
-                            if (parseInt(price) <= parseInt(bidsData[docId])) {
-                                window.alert("無效加注！因為您新的注金不比您原先的注金高！");
+                            if (parseInt(price) < parseInt(bidsData[docId])) {
+                                window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                            }
+                            else if (userId == productData.bids_info.who1) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(productData.bids_info.price2) + parseInt(addAmount), parseInt(price)),
+                                    ['bids_info.price1']: parseInt(price),
+                                    ['bids_info.addAmount']: parseInt(addAmount),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！恭喜您已成為目前的最高下注者！");
                             }
                             else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
                                 await updateDoc(doc(db, "products", docId), {
@@ -115,6 +127,17 @@ async function addToBids(docId) {
                                     ['bids.' + docId]: parseInt(price)
                                 });
                                 window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                            }
+                            else if (userId == productData.bids_info.who2) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(price) + parseInt(productData.bids_info.addAmount), parseInt(productData.bids_info.price1)),
+                                    ['bids_info.price2']: parseInt(price),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
                             }
                             else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
                                 await updateDoc(doc(db, "products", docId), {
