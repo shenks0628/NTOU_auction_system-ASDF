@@ -47,6 +47,7 @@ main {
     color: #333;
     margin: 0;
     margin-bottom: 5px;
+    white-space: nowrap;
 }
 .chat .details p {
     font-size: 14px;
