@@ -23,8 +23,36 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-const start = () => {
+let productsdata;
+let userEmail;
 
-    const title = document.getElementById("title");
-    
+const start = () => {
+    onAuthStateChanged(auth, async (user) =>{
+        if (user) {
+            userEmail = user.email;
+            console.log(userEmail);
+            const userRef = await getDoc(doc(db, "users", userEmail));
+            const userInfo = userRef.data();
+            productsdata = userInfo.sold;
+            console.log(productsdata);
+            showMost(productsdata);
+        }else { // 沒有登入
+            console.log("沒拿到userid");
+            userInfo = undefined;
+           title.innerHTML = "請先登入後再來查看";
+            comment.style.display = "none";
+       }
+    })
+
 }
+
+function showMost(data){
+    const most = data.sort((a, b) => b - a).slice(0, 5);
+    console.log(most);
+    for (let i = 0; i < most.length; i++) {
+        console.log(most[i]);
+        const item = document.getElementById("item" + i);
+        item.innerHTML = most[i];
+    }
+}
+window.addEventListener("load", start);
