@@ -129,7 +129,7 @@ async function verifyIdentity(email) {
             `;
             mainElement.appendChild(newDiv);
         }
-        scrollDownBtn.className = 'display';
+        scrollDownBtn.className = isScrolledToBottom() ? '' : 'display';
     }
 }
 async function cancelOrder(quantity) {
