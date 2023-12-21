@@ -89,7 +89,7 @@ async function addToBids(docId) {
             const addAmount = window.prompt("請輸入您自動加注的每次增加金額：（僅接受數字輸入，且不可為 '0'）");
             if (addAmount || addAmount == "") {
                 const isNumeric1 = /^[0-9]+$/.test(addAmount);
-                if (!isNumeric1) {
+                if (!isNumeric1 || parseInt(addAmount) == 0) {
                     window.alert("無效金額！因為您的輸入格式有問題！");
                 }
                 else {
