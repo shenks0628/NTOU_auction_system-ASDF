@@ -109,6 +109,9 @@ function inputTypeSet(productData) {
 }
 
 async function clearProductData() {
+  let defaultEndTime = new Date();
+  defaultEndTime.setHours(defaultEndTime.getHours() + 8);
+  console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
@@ -119,9 +122,9 @@ async function clearProductData() {
     price: "",
     quantity: "",
     seller: "",
-    time: Timestamp.fromDate(new Date()),
+    time: Timestamp.fromDate(defaultEndTime),
     url: "",
-    endtime: Timestamp.fromDate(new Date())
+    endtime: Timestamp.fromDate(defaultEndTime)
   };
   return productData;
   // document.getElementById("inputName").value = "";
@@ -172,7 +175,6 @@ function showData(productData) { // 顯示原商品資料
     }
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
-    document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
     if (id != null && productData.bids_info.who1.length > 0) {
@@ -215,8 +217,9 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
 
-    document.getElementById("inputDate").value = productData.endtime.toDate().toISOString().split('T')[0];
-    document.getElementById("inputTime").value = productData.endtime.toDate().toTimeString().substr(0, 8);
+    document.getElementById("inputDate").value = productData.endtime.toDate().getFullYear() + '-' + productData.endtime.toDate().getMonth() + '-' + productData.endtime.toDate().getDate();
+    console.log(('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes() + ':' + productData.endtime.toDate().getSeconds());
+    document.getElementById("inputTime").value = ('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes();
   }
 }
 function temporaryDeleteImage(img, src) {
