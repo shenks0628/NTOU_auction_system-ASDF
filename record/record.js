@@ -138,7 +138,7 @@ const start1 = () => {
                 //recordTable.appendChild(separatorRow);
             } 
             else {
-            console.log("Product with ID", productId, "does not exist.");
+                console.log("Product with ID", productId, "does not exist.");
             }
         })
         .catch((error) => {
