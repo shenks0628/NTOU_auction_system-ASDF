@@ -29,6 +29,8 @@ function add() {
 
 function edit(docId) {
     console.log(docId);
+    const url = "../edit/index.html?id=" + docId;
+    window.location.href = url;
 }
 
 async function del(docId) {

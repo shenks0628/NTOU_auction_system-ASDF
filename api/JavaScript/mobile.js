@@ -53,7 +53,7 @@ async function getProduct(id) {
         productImgsDiv.innerHTML = buttonsHTML;
         detailDiv.innerHTML = `
             <div><h3>${docSnap.data().name.split('#')[0]}</h3><p>$${docSnap.data().price}</p></div>
-            <a href="?email=${seller}"><img class="seller-avatar" src="${await getAvatar(seller)}" alt="seller-avatar"></a>
+            <a href="index.html?email=${seller}"><img class="seller-avatar" src="${await getAvatar(seller)}" alt="seller-avatar"></a>
         `;
         detailSmallDiv.innerHTML = `
             <div class="contents">

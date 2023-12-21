@@ -27,6 +27,8 @@ let userId, bidsData;
 
 function edit(docId) {
     console.log(docId);
+    const url = "edit/index.html?id=" + docId;
+    window.location.href = url;
 }
 
 async function del(docId) {
@@ -77,62 +79,95 @@ async function addToBids(docId) {
         return ;
     }
     const productRef = doc(db, "products", docId);
-    const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的金額（僅接受數字輸入）：");
+    const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的最高金額（僅接受數字輸入）：");
     if (price || price == "") {
         const isNumeric = /^[0-9]+$/.test(price);
         if (!isNumeric) {
             window.alert("無效加注！因為您的輸入格式有問題！");
         }
         else {
-            getDoc(productRef)
-            .then(async (productDoc) => {
-                if (productDoc.exists()) {
-                    const productData = productDoc.data();
-                    console.log("Product data for product with ID", docId, ":", productData);
-                    if (bidsData.hasOwnProperty(docId) && parseInt(price) < parseInt(bidsData[docId])) {
-                        window.alert("無效加注！因為您的注金比您原先的注金低！");
-                    }
-                    else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
-                        await updateDoc(doc(db, "products", docId), {
-                            price: Math.min(parseInt(productData.bids_info.price1) + 50, parseInt(price)),
-                            ['bids_info.who2']: productData.bids_info.who1,
-                            ['bids_info.who1']: userId,
-                            ['bids_info.price2']: parseInt(productData.bids_info.price1),
-                            ['bids_info.price1']: parseInt(price),
-                            ['bids_info.modtime']: serverTimestamp()
-                        });
-                        await updateDoc(doc(db, "users", userId), {
-                            ['bids.' + docId]: parseInt(price)
-                        });
-                        window.alert("加注成功！恭喜您已成為目前的最高下注者！");
-                    }
-                    else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
-                        await updateDoc(doc(db, "products", docId), {
-                            price: Math.min(parseInt(price) + 50, parseInt(productData.bids_info.price1)),
-                            ['bids_info.who2']: userId,
-                            ['bids_info.price2']: parseInt(price),
-                            ['bids_info.modtime']: serverTimestamp()
-                        });
-                        await updateDoc(doc(db, "users", userId), {
-                            ['bids.' + docId]: parseInt(price)
-                        });
-                        window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
-                    }
-                    else {
-                        await updateDoc(doc(db, "users", userId), {
-                            ['bids.' + docId]: parseInt(price)
-                        });
-                        window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！");
-                    }
-                    start();
+            const addAmount = window.prompt("請輸入您自動加注的每次增加金額：（僅接受數字輸入，且不可為 '0'）");
+            if (addAmount || addAmount == "") {
+                const isNumeric1 = /^[0-9]+$/.test(addAmount);
+                if (!isNumeric1 || parseInt(addAmount) == 0) {
+                    window.alert("無效金額！因為您的輸入格式有問題！");
                 }
                 else {
-                    console.log("Product with ID", docId, "does not exist.");
+                    getDoc(productRef)
+                    .then(async (productDoc) => {
+                        if (productDoc.exists()) {
+                            const productData = productDoc.data();
+                            console.log("Product data for product with ID", docId, ":", productData);
+                            if (parseInt(price) < parseInt(bidsData[docId])) {
+                                window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                            }
+                            else if (userId == productData.bids_info.who1) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(productData.bids_info.price2) + parseInt(addAmount), parseInt(price)),
+                                    ['bids_info.price1']: parseInt(price),
+                                    ['bids_info.addAmount']: parseInt(addAmount),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                            }
+                            else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(productData.bids_info.price1) + parseInt(addAmount), parseInt(price)),
+                                    ['bids_info.who2']: productData.bids_info.who1,
+                                    ['bids_info.who1']: userId,
+                                    ['bids_info.price2']: parseInt(productData.bids_info.price1),
+                                    ['bids_info.price1']: parseInt(price),
+                                    ['bids_info.addAmount']: parseInt(addAmount),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                            }
+                            else if (userId == productData.bids_info.who2) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(price) + parseInt(productData.bids_info.addAmount), parseInt(productData.bids_info.price1)),
+                                    ['bids_info.price2']: parseInt(price),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
+                            }
+                            else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
+                                await updateDoc(doc(db, "products", docId), {
+                                    price: Math.min(parseInt(price) + parseInt(productData.bids_info.addAmount), parseInt(productData.bids_info.price1)),
+                                    ['bids_info.who2']: userId,
+                                    ['bids_info.price2']: parseInt(price),
+                                    ['bids_info.modtime']: serverTimestamp()
+                                });
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
+                            }
+                            else {
+                                await updateDoc(doc(db, "users", userId), {
+                                    ['bids.' + docId]: parseInt(price)
+                                });
+                                window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！");
+                            }
+                            display();
+                        }
+                        else {
+                            console.log("Product with ID", docId, "does not exist.");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error getting product document:", error);
+                    });
                 }
-            })
-            .catch((error) => {
-                console.error("Error getting product document:", error);
-            });
+            }
         }
     }
 }

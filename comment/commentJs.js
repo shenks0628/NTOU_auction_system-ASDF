@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc,deleteField} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -29,6 +29,7 @@ const images =[];
 const start = () => {
 
     const title = document.getElementById("title");
+    let imgs = document.getElementById("imgs");
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
             const userEmail = user.email;
@@ -45,7 +46,9 @@ const start = () => {
             imgAvarta.src = userInfo.imgSrc;
             avarta.appendChild(imgAvarta);
 
-            addItemImg(itemName);
+            addItemImg(itemName).then(async() => {
+              display_pic();
+            })
             var submitBtn = document.getElementById("submitBtn");
             submitBtn.addEventListener("click", () => {
               var comment = document.getElementById("commentInput");
@@ -123,45 +126,57 @@ const addcomment = async(id,userEmail) => {
     data.record[id] = {isRate: true, quantity: originalQuantity};
     updateDoc(doc(db, "users", userEmail), data);
   })
+  await getDoc(doc(db, "messages", id)).then((docx3) => {//刪除聊天室
+    const data3 = docx3.data();
+    var modifiedEmail = userEmail.replace(/\./g, '_');
+    console.log(modifiedEmail,data3[modifiedEmail]);
+    updateDoc(doc(db, "messages", id),{
+      [modifiedEmail]: deleteField()
+    })
+  })
 
 };
 
-const display_pic = async() => {
-    
-var currentIndex = 0;
-var productImg = document.getElementById("productImg");
-var prevBtn = document.getElementById("prevBtn");
-var nextBtn = document.getElementById("nextBtn");
+const display_pic = () => {
+  var currentIndex = 0;
+  var productImg = document.getElementById("productImg");
+  var prevBtn = document.getElementById("prevBtn");
+  var nextBtn = document.getElementById("nextBtn");
 
-function showImage(index) {
-  productImg.src = images[index];
-}
-
-function showPrevImage() {
-  if (currentIndex === 0) {
-    currentIndex = images.length - 1;
-  } else {
-    currentIndex--;
+  function showImage(index) {
+    productImg.src = images[index];
   }
-  showImage(currentIndex);
-}
 
-function showNextImage() {
-  if (currentIndex === images.length - 1) {
-    currentIndex = 0;
-  } else {
-    currentIndex++;
+  function showPrevImage() {
+    if (currentIndex === 0) {
+      currentIndex = images.length - 1;
+    } else {
+      currentIndex--;
+    }
+    showImage(currentIndex);
   }
+
+  function showNextImage() {
+    if (currentIndex === images.length - 1) {
+      currentIndex = 0;
+    } else {
+      currentIndex++;
+    }
+    showImage(currentIndex);
+  }
+
+  function showNextImageOnClick() {
+    showNextImage();
+  }
+
+  // 添加點擊事件監聽器到圖片
+  productImg.addEventListener("click", showNextImageOnClick);
+
+  //prevBtn.addEventListener("click", showPrevImage);
+  //nextBtn.addEventListener("click", showNextImage);
+
+  // 一開始顯示第一張圖片
   showImage(currentIndex);
-}
-
-prevBtn.addEventListener("click", showPrevImage);
-nextBtn.addEventListener("click", showNextImage);
-
-// 一開始顯示第一張圖片
-showImage(currentIndex);
-console.log(productImg);
 };
-
-window.addEventListener("load", display_pic);
 window.addEventListener("load", start);
+//window.addEventListener("load", display_pic);

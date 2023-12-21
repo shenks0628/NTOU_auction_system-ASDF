@@ -138,7 +138,7 @@ async function createProfileContainer(email) {
                     <span id="editName">${user.name}</span>
                     <button id="editNameBtn"><img src="img/pen-circle.png"></button>
                 </div>
-                <p>${score}⭐</p><br>
+                <p>${score}⭐</p><p>${email}</p><br>
             `;
             editNameBtn.onclick = function (e) {
                 const newName = prompt("輸入新的名字:", "");
@@ -160,7 +160,7 @@ async function createProfileContainer(email) {
                     <span>${user.name}</span>
                     ${(email.endsWith('ntou.edu.tw')) ? '<button><img src="img/NTOU.png" alt="NTOU logo"></button>' : ''}
                 </div>
-                <p>${score}⭐</p><br>
+                <p>${score}⭐</p><p>${email}</p><br>
             `;
         }
     }
