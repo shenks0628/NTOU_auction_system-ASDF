@@ -81,7 +81,8 @@ const start1 = () => {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
-                const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: recordData[key].quantity,key: key,img:productData.imgs[0]};
+                const pName = productData.name.split('#')[0];
+                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: recordData[key].quantity,key: key,img:productData.imgs[0]};
                 console.log(recordData[key].isRate);
                 if(recordData[key].isRate){
                     recordItems.push(newItem)
