@@ -62,23 +62,23 @@ async function getMessages() {
 
     async function getItemsIBought() {
         const querySnapshot = await getDocs(query(collection(db, "messages")));
-        querySnapshot.forEach(async(docSnap) => {
+        for (const docSnap of querySnapshot.docs) {
             if (docSnap.data()[encodeEmail()]) {
                 const product = await getDoc(doc(db, "products", docSnap.id));
                 createMsgToMain(product, auth.currentUser.email, docSnap.data()[encodeEmail()]);
             }
-        });
+        }
     }
     async function getMyProducts() {
         const querySnapshot = await getDocs(query(collection(db, "products"), where("seller", "==", auth.currentUser.email)));
-        await querySnapshot.forEach(async(docSnap) => {
+        for (const docSnap of querySnapshot.docs) {
             const messagesDoc = await getDoc(doc(db, "messages", docSnap.id));
             if (messagesDoc.exists()) {
-                Object.entries(messagesDoc.data()).forEach(async([key, value]) => {
+                Object.entries(messagesDoc.data()).forEach(([key, value]) => {
                     createMsgToMain(docSnap, decodeEmail(key), value);
                 });
             }
-        });
+        }
     }
     function createMsgToMain(product, email, msg) {
         const id = product.id, data = product.data();
@@ -92,7 +92,7 @@ async function getMessages() {
         else
             html += `<p>${msg[msg.length-1].content}</p></div>`;
         for (let i = msg.length-1; i >= 0; i--) {
-            if (msg[i].user == auth.currentUser.email) break;
+            if (msg[i].user == auth.currentUser.email || (msg[i].user == 'system' && i != 0 && email != auth.currentUser.email)) break;
             cnt++;
         }
         if (cnt > 0) html += `<div class="unread">${cnt}</div>`;
