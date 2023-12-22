@@ -445,7 +445,8 @@ const start1 = () => {
                         }
                         else{
                             const productData = productDoc.data();
-                            window.alert("您的"+productData.name+"商品尚未填寫完評論，請先完成評論後再來下訂單");
+                            const pName = productData.name.split('#')[0];
+                            window.alert("您的"+pName+"商品尚未填寫完評論，請先完成評論後再來下訂單");
                         }
                     }
                     else{
