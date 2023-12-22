@@ -131,9 +131,10 @@ async function updateProduct(inputData) { // 修改並更新資料庫
   }
 }
 async function uploadImage(inputImage) {
+  // console.log(inputImage);
   let imageURL = [];
-  let dateString = new Date().toISOString();
   for (let i = 0; i < inputImage.length; i++) {
+    let dateString = new Date().toISOString();
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
       console.log("Upload success!");

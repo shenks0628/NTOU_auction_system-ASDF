@@ -88,13 +88,13 @@ button {
 }
 
 .productImage {
-  max-width: 100%;
-  max-height: auto;
+  width: 100%;
+  height: auto;
 }
 
 .bigImageItem {
-  max-width: 100%;
-  max-height: auto;
+  width: 100%;
+  height: auto;
 }
 
 .commentBlock {
