@@ -36,12 +36,52 @@
             }
     
             #display_most,
-            #display_high,
-            #display_all {
+            #display_high{
                 border: 1px solid #ccc;
                 padding: 10px;
                 margin-top: 5px;
+                margin-left: 5px;
                 border-radius: 5px;
+                flex-basis: 30%;
+                display:flex;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                justify-content: space-around;
+            }
+
+            #display_all{
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+                margin-left: 5px;
+                border-radius: 5px;
+                display:flex;
+                flex-direction: row;
+                flex-basis: 30%;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                justify-content: space-around;
+            }
+
+            #display_all div{
+                display: flex;
+                flex-direction: row;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            #display_all > div > p{
+                display: inline-block;
+                flex-direction: column;
+                margin-top: auto;
+                margin-bottom: auto;
+                margin-left: 20px;
+                margin-right: 10px;
+            }
+
+            img{
+                width: 200px;
             }
     
             /* 手機端樣式 */
