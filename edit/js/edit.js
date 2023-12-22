@@ -36,7 +36,7 @@ async function start() {
   window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
-    console.log(user);
+    // console.log(user);
     if (user) {
       userData = {
         id: user.email,
@@ -74,12 +74,12 @@ async function reset() {  // 重置input欄位
     document.getElementById("inputType").setAttribute("disabled", true);
     beDeletedFiles = [];
     let productData = await getProduct(id);
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
   else {
     let productData = await clearProductData();
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
 }
@@ -111,7 +111,7 @@ function inputTypeSet(productData) {
 async function clearProductData() {
   let defaultEndTime = new Date();
   defaultEndTime.setHours(defaultEndTime.getHours() + 8);
-  console.log(defaultEndTime);
+  // console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
