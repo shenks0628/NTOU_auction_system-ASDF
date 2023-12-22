@@ -29,6 +29,25 @@
         .record-table tr:first-child th {
             background-color: #f2f2f2; /* 設定表頭背景色 */
         }
+        @media screen and (max-width: 768px) {
+            html {
+                font-size: 100%;
+            }
+            h2 {
+                font-size: 30px; /* 調整標題的大小 */
+                text-align: center; /* 讓 h2 文字置中 */
+            }
+            main {
+                padding: 5px; /* 調整主要區域的 padding */
+            }
+            .record-table {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .record-table th, .record-table td {
+                padding: 5px; /* 調整表格單元格的 padding */
+            }
+        }
         /*hr {*/
             /*border: none;  移除預設的邊框 */
             /*height: 1px; /* 設定分隔線的高度 */
