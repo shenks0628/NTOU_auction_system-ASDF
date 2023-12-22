@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, updateDoc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, updateDoc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -28,6 +28,7 @@ const db = getFirestore(app);
 function productSection(id, data) {
     const btn = `<button><img src="img/${data.type == 'bids' ? 'auction' : 'add-cart'}.png" alt="add-cart"></button>`;
     const btns = '<button><img src="img/pen.png" alt="edit"></button><button><img src="img/minus.png" alt="remove"></button>';
+    const focus = data.type == 'bids' ? data.endtime.toDate().toLocaleString() : `${data.quantity} pieces available`;
     const newSection = document.createElement('section');
     newSection.className = 'product';
     newSection.innerHTML = `
@@ -35,7 +36,7 @@ function productSection(id, data) {
         <div class="product-detail">
             <div class="contents">
                 <p class="name">${data.name.split('#')[0]}</p>
-                <p class="price">$${data.price}</p>
+                <p class="price">$${data.price} <span class="focus">${focus}</p>
             </div>
             <div class="buttons">${auth.currentUser && data.seller === auth.currentUser.email ? btns : btn}</div>
         </div>
@@ -56,7 +57,7 @@ function productSection(id, data) {
                 }
             } else {
                 if (data.type == 'bids')
-                    console.log('addBids(id)');
+                    addBids(id);
                 else
                     addCart(id);
             }
@@ -81,6 +82,98 @@ async function addCart(id) {
                 } else {
                     await updateDoc(doc(db, "users", auth.currentUser.email), { cart: cart });
                     window.alert("加入成功！");
+                }
+            }
+        }
+    } else { window.alert("請先登入帳號！"); }
+}
+function addBids(docId) {
+    if (auth.currentUser) {
+        const userId = auth.currentUser.email;
+        const productRef = doc(db, "products", docId);
+        const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的最高金額（僅接受數字輸入）：");
+        if (price || price == "") {
+            const isNumeric = /^[0-9]+$/.test(price);
+            if (!isNumeric) {
+                window.alert("無效加注！因為您的輸入格式有問題！");
+            }
+            else {
+                const addAmount = window.prompt("請輸入您自動加注的每次增加金額：（僅接受數字輸入，且不可為 '0'）");
+                if (addAmount || addAmount == "") {
+                    const isNumeric1 = /^[0-9]+$/.test(addAmount);
+                    if (!isNumeric1 || parseInt(addAmount) == 0) {
+                        window.alert("無效金額！因為您的輸入格式有問題！");
+                    }
+                    else {
+                        getDoc(productRef)
+                        .then(async (productDoc) => {
+                            if (productDoc.exists()) {
+                                const productData = productDoc.data();
+                                const docSnap = await getDoc(doc(db, "users", userId));
+                                if (docSnap.exists() && parseInt(price) < parseInt(docSnap.data().bids[docId])) {
+                                    window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                                }
+                                else if (userId == productData.bids_info.who1) {
+                                    await updateDoc(doc(db, "products", docId), {
+                                        price: Math.min(parseInt(productData.bids_info.price2) + parseInt(addAmount), parseInt(price)),
+                                        ['bids_info.price1']: parseInt(price),
+                                        ['bids_info.addAmount']: parseInt(addAmount),
+                                        ['bids_info.modtime']: serverTimestamp()
+                                    });
+                                    await updateDoc(doc(db, "users", userId), {
+                                        ['bids.' + docId]: parseInt(price)
+                                    });
+                                    window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                                }
+                                else if (parseInt(price) > parseInt(productData.bids_info.price1)) {
+                                    await updateDoc(doc(db, "products", docId), {
+                                        price: Math.min(parseInt(productData.bids_info.price1) + parseInt(addAmount), parseInt(price)),
+                                        ['bids_info.who2']: productData.bids_info.who1,
+                                        ['bids_info.who1']: userId,
+                                        ['bids_info.price2']: parseInt(productData.bids_info.price1),
+                                        ['bids_info.price1']: parseInt(price),
+                                        ['bids_info.addAmount']: parseInt(addAmount),
+                                        ['bids_info.modtime']: serverTimestamp()
+                                    });
+                                    await updateDoc(doc(db, "users", userId), {
+                                        ['bids.' + docId]: parseInt(price)
+                                    });
+                                    window.alert("加注成功！恭喜您已成為目前的最高下注者！");
+                                }
+                                else if (userId == productData.bids_info.who2) {
+                                    await updateDoc(doc(db, "products", docId), {
+                                        price: Math.min(parseInt(price) + parseInt(productData.bids_info.addAmount), parseInt(productData.bids_info.price1)),
+                                        ['bids_info.price2']: parseInt(price),
+                                        ['bids_info.modtime']: serverTimestamp()
+                                    });
+                                    await updateDoc(doc(db, "users", userId), {
+                                        ['bids.' + docId]: parseInt(price)
+                                    });
+                                    window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
+                                }
+                                else if (parseInt(price) > parseInt(productData.bids_info.price2)) {
+                                    await updateDoc(doc(db, "products", docId), {
+                                        price: Math.min(parseInt(price) + parseInt(productData.bids_info.addAmount), parseInt(productData.bids_info.price1)),
+                                        ['bids_info.who2']: userId,
+                                        ['bids_info.price2']: parseInt(price),
+                                        ['bids_info.modtime']: serverTimestamp()
+                                    });
+                                    await updateDoc(doc(db, "users", userId), {
+                                        ['bids.' + docId]: parseInt(price)
+                                    });
+                                    window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！\n且需注意，若競價金額與您的注金金額相同，您仍不是最高下注者，因為您較晚下注！");
+                                }
+                                else {
+                                    await updateDoc(doc(db, "users", userId), {
+                                        ['bids.' + docId]: parseInt(price)
+                                    });
+                                    window.alert("加注成功！但您下注的金額仍低於目前最高下注者的金額！");
+                                }
+                                window.location.href = window.location.href;
+                            }
+                        })
+                        .catch((error) => {});
+                    }
                 }
             }
         }

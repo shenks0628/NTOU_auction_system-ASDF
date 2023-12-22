@@ -168,7 +168,7 @@ iframe {
     color: aquamarine;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
     html {
         font-size: 100%;
     }

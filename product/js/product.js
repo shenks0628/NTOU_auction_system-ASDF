@@ -1,10 +1,10 @@
-import { setCart, addToBids, getUserImg, getUserName, getUserScore } from "./firebase.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getProduct, updateView, setCart, addToBids, getUserImg, getUserName, getUserScore } from "./firebase.js";
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+// import { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -18,10 +18,10 @@ const firebaseConfig = {
     measurementId: "G-FLXQ2BQCZF"
 };
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const auth = getAuth();
-const db = getFirestore(app);
+// const db = getFirestore(app);
 // const storage = getStorage();
 
 var imgs;
@@ -32,34 +32,13 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('id')) {
     id = urlParams.get('id');
 }
-const getProduct = async () => { // 讀資料
-    const productId = id; // 替換成實際的產品 ID
-    // 使用 doc 函數構建該產品的參考路徑
-    const productRef = doc(db, "products", productId);
-    // 使用 getDoc 函數取得該產品的文件快照
-    getDoc(productRef)
-        .then((productDoc) => {
-            if (productDoc.exists()) {
-                // 取得該產品的資料
-                productData = productDoc.data();
-                productOwnerID = productData.seller;
-                setting(userID, productOwnerID);
-                console.log("Product data for product with ID", productId, ":", productData);
-                setProduct(productData);
-            }
-            else {
-                console.log("Product with ID", productId, "does not exist.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting product document:", error);
-        });
-
-}
-function start() {
+async function start() {
     eventSetting();
-    getProduct();
-    onAuthStateChanged(auth, (user) => {
+    productData = await getProduct(id);
+    productOwnerID = productData.seller;
+    setProduct(productData);
+    setting(userID, productOwnerID);
+    await onAuthStateChanged(auth, (user) => {
         console.log(user);
         if (user) { // 登入狀態
             userID = user.email;
@@ -67,37 +46,29 @@ function start() {
         else {
             userID = "none";
         }
-        setting(userID, productOwnerID);
     });
+    setting(userID, productOwnerID);
+    // console.log(userID, id);
+    await updateView(userID, id);
 };
 function eventSetting() {
-    imgs = document.getElementById("bigImageItem"),
-        imgs.addEventListener("click", changeImage, false);
+    imgs = document.getElementById("bigImageItem"), imgs.addEventListener("click", changeImage, false);
     document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
     document.getElementById("ToComment").addEventListener("click", changeInfo, false);
 
     document.getElementById("editButton").addEventListener("click", toEditPage, false);
     document.getElementById("cartButton").addEventListener("click", addToCart, false);
     document.getElementById("bidButton").addEventListener("click", addToBidList, false);
-    // document.getElementById("edit").addEventListener("click", edit, false);
-    // document.getElementById("editPageCloseButton").addEventListener("click", closeEditPage, false);
-    // document.getElementById("saveButton").addEventListener("click", temporaryStore, false);
-    // document.getElementById("completeButton").addEventListener("click", updateProduct, false);
 }
 
 async function setProduct(productData) { // 設定顯示的商品
     let str = productData.name.trim().split("#");
-    let itemName = document.getElementById("itemName");
-    itemName.innerHTML = str[0];
+    document.getElementById("itemName").innerHTML = str[0];
     document.title = "商品：" + str[0];
-    let sellerImage = document.getElementById("sellerImage");
-    sellerImage.setAttribute("src", await getUserImg(productData.seller));
-    let productSeller = document.getElementById("productSeller");
-    productSeller.setAttribute("href", "../api?email=" + productData.seller);
-    let sellerName = document.getElementById("sellerName");
-    sellerName.innerHTML = (await getUserScore(productData.seller)).toString() + '⭐' + "<br>" + await getUserName(productData.seller);
-    let itemPrice = document.getElementById("itemPrice");
-    itemPrice.innerHTML = "$" + productData.price.toString();
+    document.getElementById("sellerImage").setAttribute("src", await getUserImg(productData.seller));
+    document.getElementById("productSeller").setAttribute("href", "../api?email=" + productData.seller);
+    document.getElementById("sellerName").innerHTML = (await getUserScore(productData.seller)).toString() + '⭐' + "<br>" + await getUserName(productData.seller);
+    document.getElementById("itemPrice").innerHTML = "$" + productData.price.toString();
     if (productData.type == "normal") {
         document.getElementById("productEndTime").style.display = "none";
     }
@@ -113,10 +84,8 @@ async function setProduct(productData) { // 設定顯示的商品
             document.getElementById("itemEndTime").style.color = "black";
         }
     }
-    let itemDescription = document.getElementById("itemDescription");
-    itemDescription.innerHTML = productData.description;
-    let itemQuantity = document.getElementById("itemQuantity");
-    itemQuantity.innerHTML = productData.quantity.toString();
+    document.getElementById("itemDescription").innerHTML = productData.description;
+    document.getElementById("itemQuantity").innerHTML = productData.quantity.toString();
     let itemTag = document.getElementById("itemTag");
     let f = false;
     itemTag.innerHTML = "";
@@ -180,47 +149,6 @@ function setting() { // 判定是否為買 or 賣家
         }
         document.getElementById("editButton").style.display = "none";
     }
-    if (userID != "none") {
-        const userRef = doc(db, "users", userID);
-        getDoc(userRef)
-            .then((userDoc) => {
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData) {
-                        let viewarr = userData.view;
-                        let flag = false;
-                        for (let i = 0; i < viewarr.length; i++) {
-                            if (viewarr[i] == id) {
-                                for (let j = i; j >= 1; j--) {
-                                    viewarr[j] = viewarr[j - 1];
-                                }
-                                viewarr[0] = id;
-                                flag = true;
-                                break;
-                            }
-                        }
-                        if (!flag) {
-                            if (viewarr.length < 10) {
-                                viewarr.push(id);
-                            }
-                            for (let i = Math.min(viewarr.length - 1, 9); i >= 1; i--) {
-                                viewarr[i] = viewarr[i - 1];
-                            }
-                            viewarr[0] = id;
-                        }
-                        updateDoc(doc(db, "users", userID), {
-                            view: viewarr
-                        });
-                    }
-                }
-                else {
-                    console.log("User with ID", userID, "does not exist.");
-                }
-            })
-            .catch((error) => {
-                console.error("Error getting user document:", error);
-            });
-    }
 }
 
 function changeImage() { // 切換商品照片
@@ -252,7 +180,7 @@ function toEditPage() {
 }
 
 function addToCart() {
-    if (userID === undefined) {
+    if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;
     }
@@ -261,7 +189,7 @@ function addToCart() {
     }
 }
 function addToBidList() {
-    if (userID === undefined) {
+    if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;
     }
