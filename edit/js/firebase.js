@@ -71,7 +71,7 @@ async function addProduct(userData, inputData) {
     }
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
-        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), modtime: serverTimestamp() },
+        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), addAmount: inputData.price },
         comment: {},
         type: type,
         imgs: inputData.imgs,
@@ -111,7 +111,6 @@ async function updateProduct(inputData) { // 修改並更新資料庫
       });
     }
     else if (type == "bids") {
-      inputData.bids_info.modtime = Timestamp.fromDate(new Date());
       await updateDoc(productRef, {
         bids_info: inputData.bids_info,
         comment: inputData.comment,
@@ -133,7 +132,7 @@ async function updateProduct(inputData) { // 修改並更新資料庫
 }
 async function uploadImage(inputImage) {
   let imageURL = [];
-  let dateString = getDateString();
+  let dateString = new Date().toISOString();
   for (let i = 0; i < inputImage.length; i++) {
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
@@ -155,10 +154,5 @@ async function deleteStorageFile(fileUrl) {
     console.log(error);
     // Uh-oh, an error occurred!
   });
-}
-function getDateString() {
-  let date = new Date();
-  let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
-  return dateString;
 }
 export { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile };

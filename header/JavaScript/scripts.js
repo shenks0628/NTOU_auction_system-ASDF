@@ -15,6 +15,26 @@ menuBtn.onclick = function () {
         menuSearch.classList.add('straight');
     }
 }
+searchBarMode.onclick = function () {
+    const shop = '<img src="img/shopping-cart.png" alt="search mode">';
+    const user = '<img src="img/users.png" alt="search mode">';
+    searchBarMode.innerHTML = searchBarMode.innerHTML===user ? shop : user;
+}
+searchBarSearch.onclick = function () {
+    const mode = searchBarMode.innerHTML;
+    const user = '<img src="img/users.png" alt="search mode">';
+    toUrl(`api/?${mode===user ? 'email' : 'search'}=${searchBarInput.value}`);
+}
+menuSearchMode.onclick = function () {
+    const shop = '<img src="img/shopping-cart.png" alt="search mode">';
+    const user = '<img src="img/users.png" alt="search mode">';
+    menuSearchMode.innerHTML = menuSearchMode.innerHTML===user ? shop : user;
+}
+menuSearchSearch.onclick = function () {
+    const mode = menuSearchMode.innerHTML;
+    const user = '<img src="img/users.png" alt="search mode">';
+    toUrl(`api/?${mode===user ? 'email' : 'search'}=${menuSearchInput.value}`);
+}
 function toUrl(url) {
     mainIframe.src = '../' + url;
 }

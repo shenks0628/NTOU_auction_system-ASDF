@@ -7,7 +7,7 @@
     text-align: center;
 }
 .product {
-    width: 250px;
+    width: 300px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
