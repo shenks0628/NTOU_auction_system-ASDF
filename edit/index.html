@@ -18,12 +18,13 @@
           <option value="bids">競標商品</option>
         </select>
       </div>
-      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,50}$" required>
-        <div style="font-size: medium; color: slategrey; display: inline;">上限50個字(名稱不可含有#)</div>
+      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,30}$" required>
+        <div style="font-size: medium; color: slategrey; display: inline;">上限30個字(名稱不可含有#)</div>
       </div>
       <div id="descriptionContainer">描述：
+        <div style="font-size: medium; color: slategrey; display: inline;">上限500字</div>
         <br>
-        <textarea id="inputDescription" name="inputDescription" rows="5" placeholder="介紹一下這個商品吧"
+        <textarea id="inputDescription" name="inputDescription" maxlength="500" rows="5" placeholder="介紹一下這個商品吧"
           style="width:100%; resize: none; overflow-y: auto; box-sizing: border-box;"></textarea>
       </div>
       <div id="priceContainer">價格：<input type="number" id="inputPrice" name="inputPrice" min="0" required></div>
