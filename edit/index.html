@@ -18,8 +18,8 @@
           <option value="bids">競標商品</option>
         </select>
       </div>
-      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,50}$"
-          required>上限50個字(名稱不可含有#)
+      <div id="nameContainer">名稱：<input type="text" id="inputName" name="inputName" pattern="^[^#]{1,50}$" required>
+        <div style="font-size: medium; color: slategrey; display: inline;">上限50個字(名稱不可含有#)</div>
       </div>
       <div id="descriptionContainer">描述：
         <br>
@@ -37,8 +37,12 @@
       <div id="imageContainer">圖片：
         <span id="oldImage"></span><input type="file" id="inputImage" name="inputImage" accept="image/*" multiple>
       </div>
-      <div id="urlContainer">內嵌影片：<input type="text" id="inputURL" name="inputURL"
-          pattern="^((https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+)?$">(限Youtube影片)
+      <div id="urlContainer">YouTube內嵌影片網址：
+        <input type="text" id="inputURL" name="inputURL" pattern="^(https:\/\/www\.youtube\.com\/embed\/.+)?$">
+        <div style="font-size: medium; color: slategrey;">(了解內嵌影片請<span style="color: blue; cursor: pointer;"
+            onclick="window.open('https:/\/support.google.com/youtube/answer/171780?hl=zh-Hant')">點我</span>)
+          <!-- ^((https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+)?$ -->
+        </div>
       </div>
       <div id="endTimeContainer">最晚結束時間：<input type="date" id="inputDate" name="inputDate" required><input type="time"
           id="inputTime" name="inputTime" required>

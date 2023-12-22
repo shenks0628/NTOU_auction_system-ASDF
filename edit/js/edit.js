@@ -267,12 +267,12 @@ function showCheckPage() {
   }
   else {
     setCheckPage();
-    document.getElementById('overlay').style.display = "flex";
+    document.getElementById("overlay").style.display = "flex";
     document.getElementById("checkPage").style.display = "block";
   }
 }
 function closeCheckPage() {
-  document.getElementById('overlay').style.display = "none";
+  document.getElementById("overlay").style.display = "none";
   document.getElementById("checkPage").style.display = "none";
 }
 async function setCheckPage() {
