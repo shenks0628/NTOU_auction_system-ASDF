@@ -253,7 +253,13 @@ function validateDateTime() {
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
   console.log(document.getElementById("inputName").checkValidity());
-  if (document.getElementById("inputName").checkValidity() == false || document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
+  if (document.getElementById("inputName").checkValidity() == false) {
+    window.alert("商品名稱格式錯誤，請修改");
+  }
+  else if (document.getElementById("inputDescription").checkValidity() == false) {
+    window.alert("商品敘述字數超過上限，請修改");
+  }
+  else if (document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
     window.alert("請填寫完整資料");
     // return;
   }
@@ -267,12 +273,12 @@ function showCheckPage() {
   }
   else {
     setCheckPage();
-    document.getElementById('overlay').style.display = "flex";
+    document.getElementById("overlay").style.display = "flex";
     document.getElementById("checkPage").style.display = "block";
   }
 }
 function closeCheckPage() {
-  document.getElementById('overlay').style.display = "none";
+  document.getElementById("overlay").style.display = "none";
   document.getElementById("checkPage").style.display = "none";
 }
 async function setCheckPage() {

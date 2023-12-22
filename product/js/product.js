@@ -59,6 +59,9 @@ function eventSetting() {
     document.getElementById("editButton").addEventListener("click", toEditPage, false);
     document.getElementById("cartButton").addEventListener("click", addToCart, false);
     document.getElementById("bidButton").addEventListener("click", addToBidList, false);
+
+    document.getElementById("watchMoreInfo").addEventListener("click", showMoreInfoPage, false);
+    document.getElementById("overlay").addEventListener("click", closeMoreInfoPage, false);
 }
 
 async function setProduct(productData) { // 設定顯示的商品
@@ -121,6 +124,12 @@ async function setProduct(productData) { // 設定顯示的商品
     else {
         itemComment.innerHTML = "此商品暫時沒有評論";
     }
+    if (productData.url.length > 0) {
+        document.getElementById("video").setAttribute("src", productData.url);
+    }
+    else {
+        document.getElementById("watchMoreInfo").style.display = "none";
+    }
 }
 
 
@@ -175,6 +184,20 @@ function changeInfo() { // 切換商品資訊/評論
         document.getElementById("review").style.display = "block";
     }
 }
+
+function showMoreInfoPage() {
+    document.getElementById('overlay').style.display = "flex";
+    // document.getElementById("productVideo").style.display = "block";
+    document.getElementById("moreInfoPage").style.display = "block";
+}
+function closeMoreInfoPage() {
+    document.getElementById('overlay').style.display = "none";
+    document.getElementById("moreInfoPage").style.display = "none";
+    let url = document.getElementById("video").getAttribute("src");
+    document.getElementById("video").setAttribute("src", url);
+    // document.getElementById("productVideo").style.display = "none";
+}
+
 function toEditPage() {
     window.location.href = "../edit?id=" + id;
 }
