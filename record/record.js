@@ -138,7 +138,17 @@ const start1 = () => {
                 //recordTable.appendChild(separatorRow);
             } 
             else {
-            console.log("Product with ID", productId, "does not exist.");
+                (async () => {
+                    try {
+                        await updateDoc(doc(db, "users", userId), {
+                            ['record.' + productId]: deleteField()
+                        });
+                        console.log('資料更新成功！');
+                    } catch (error) {
+                        console.error('更新資料時出現錯誤：', error);
+                    }
+                })();
+                console.log("Product with ID", productId, "does not exist.");
             }
         })
         .catch((error) => {
