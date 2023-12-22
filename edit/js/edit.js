@@ -74,12 +74,12 @@ async function reset() {  // 重置input欄位
     document.getElementById("inputType").setAttribute("disabled", true);
     beDeletedFiles = [];
     let productData = await getProduct(id);
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
   else {
     let productData = await clearProductData();
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
 }
@@ -139,7 +139,7 @@ async function clearProductData() {
 }
 
 function showData(productData) { // 顯示原商品資料
-  // console.log(productData);
+  console.log(productData);
   if (productData.type == "normal") {
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
