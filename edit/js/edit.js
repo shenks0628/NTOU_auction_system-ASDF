@@ -36,7 +36,7 @@ async function start() {
   window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
-    console.log(user);
+    // console.log(user);
     if (user) {
       userData = {
         id: user.email,
@@ -111,7 +111,7 @@ function inputTypeSet(productData) {
 async function clearProductData() {
   let defaultEndTime = new Date();
   defaultEndTime.setHours(defaultEndTime.getHours() + 8);
-  console.log(defaultEndTime);
+  // console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
@@ -139,7 +139,7 @@ async function clearProductData() {
 }
 
 function showData(productData) { // 顯示原商品資料
-  console.log(productData);
+  // console.log(productData);
   if (productData.type == "normal") {
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
