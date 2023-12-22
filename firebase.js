@@ -276,10 +276,12 @@ const display = async () => {
                         });
                     }
                 });
+                prev_view.removeEventListener("click", handleCheck);
+                prev_view.addEventListener("click", handleCheck);
                 const querySnapshot = await getDocs(collection(db, "products"));
                 let cnt = 0;
                 querySnapshot.forEach((productDoc) => {
-                    const productData = doc.data();
+                    const productData = productDoc.data();
                     const productName = productData.name.split('#')[0];
                     const productType = productData.type;
                     const quantity = productData.quantity;
@@ -306,10 +308,13 @@ const display = async () => {
                         });
                     }
                 });
-                prev_view.removeEventListener("click", handleCheck);
-                prev_view.addEventListener("click", handleCheck);
-                rec.removeEventListener("click", handleCheck);
-                rec.addEventListener("click", handleCheck);
+                if (cnt == 0) {
+                    rec_title.innerHTML = "";
+                }
+                else {
+                    rec.removeEventListener("click", handleCheck);
+                    rec.addEventListener("click", handleCheck);
+                }
             }
         }
         else {
