@@ -289,7 +289,7 @@ const display = async () => {
                     const seller = productData.seller;
                     if (quantity > 0 && userId != seller && cnt < 10 && !arr.includes(productDoc.id)) {
                         searches.forEach(async (keyWord) => {
-                            if (productData.name.includes(keyWord)) {
+                            if (productData.name.includes(keyWord) && !arr.includes(productDoc.id)) {
                                 cnt++;
                                 arr.push(productDoc.id);
                                 if (productType == "normal") {
