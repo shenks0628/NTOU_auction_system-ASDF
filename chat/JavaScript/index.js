@@ -71,7 +71,7 @@ async function getMessages() {
     }
     async function getMyProducts() {
         const querySnapshot = await getDocs(query(collection(db, "products"), where("seller", "==", auth.currentUser.email)));
-        querySnapshot.forEach(async(docSnap) => {
+        await querySnapshot.forEach(async(docSnap) => {
             const messagesDoc = await getDoc(doc(db, "messages", docSnap.id));
             if (messagesDoc.exists()) {
                 Object.entries(messagesDoc.data()).forEach(async([key, value]) => {
