@@ -14,6 +14,7 @@
                 <div id="dropdown" class="dropdown-content">
                     <button id="profileBtn">個人頁面</button>
                     <button id="chatBtn">聊天室</button>
+                    <button id="sellBtn">賣東西</button>
                     <button id="logoutBtn">登出</button>
                 </div>
             </div>
@@ -46,10 +47,11 @@
             <ul id="menuUl">
                 <li><button onclick="toUrl('api/?type=general')">一般商品</button></li>
                 <li><button onclick="toUrl('api/?type=auction')">競標商品</button></li>
-                <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
-                <li><button onclick="toUrl('selling_list/selling_list.html')">賣東西</button></li>
                 <li><button onclick="toUrl('bidding_list/bidding_list.html')">競標清單</button></li>
-                <li><button>聯絡我們</button></li>
+                <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
+                <li><button onclick="toUrl('record/record.html')">購買紀錄</button></li>
+                <li><button onclick="toUrl('financial_report')">銷售紀錄</button></li>
+                <li><button onclick="toUrl('')">聯絡我們</button></li>
             </ul>
         </nav>
     </header>

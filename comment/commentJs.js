@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc,deleteField} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { writeBatch,collection, doc, setDoc, getDoc, getDocs,updateDoc ,query, orderBy, limit, where, onSnapshot, deleteDoc,deleteField} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -22,7 +22,6 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
-
 const images =[];
 
 
@@ -64,10 +63,12 @@ const start = () => {
                     window.alert("評論字數超過50字");
                   }
               }else{
-                  addcomment(itemName, userEmail)
-                  .then(() => {
-                    window.alert("評論成功");
-                    window.history.back();
+                  updateOther(itemName, userEmail)
+                  .then(async() => {
+                    await addcomment(itemName, userEmail).then(() => {
+                      window.alert("評論成功");
+                      window.history.back();
+                    })
                   })
                   .catch(error => {
                     console.error("評論發生錯誤:", error);
@@ -98,32 +99,12 @@ async function addItemImg(id) {
     });
 }
 
-
-const addcomment = async(id,userEmail) => {
-
-  var commentInput = document.getElementById("commentInput");
-  var stars = Array.from(document.querySelectorAll('.star'));
-  var rating = stars.filter(star => star.classList.contains('active')).length;
-  var comment = commentInput.value;
-  console.log(rating, comment);
-  const updatedComment = rating + comment.toString();
-
-  await getDoc(doc(db, "products", id)).then((docx) => {//新增評論
-    const data = docx.data();
-    data.comment[userEmail] = updatedComment;
-    updateDoc(doc(db, "products", id), data);
-    const sellerEmail = data.seller;
-    getDoc(doc(db, "users", sellerEmail)).then((docx2) => {//添加星數到賣家評分
-      const data2 = docx2.data();
-      data2.score+=parseInt(rating);
-      data2.number++;
-      updateDoc(doc(db, "users", sellerEmail), data2);
-    })
-  })
-  await getDoc(doc(db, "users", userEmail)).then((docx) => {
+const updateOther = async(id,userEmail) => {
+  await getDoc(doc(db, "users", userEmail)).then(async(docx) => {//更改record的isRate為true
     const data = docx.data();
     const originalQuantity = data.record[id].quantity; // 獲取原始的quantity值
     data.record[id] = {isRate: true, quantity: originalQuantity};
+    console.log(data.record[id]);
     updateDoc(doc(db, "users", userEmail), data);
   })
   await getDoc(doc(db, "messages", id)).then((docx3) => {//刪除聊天室
@@ -134,14 +115,47 @@ const addcomment = async(id,userEmail) => {
       [modifiedEmail]: deleteField()
     })
   })
+}
 
+const addcomment = async(id,userEmail) => {
+  var commentInput = document.getElementById("commentInput");
+  var stars = Array.from(document.querySelectorAll('.star'));
+  var rating = stars.filter(star => star.classList.contains('active')).length;
+  var comment = commentInput.value;
+  console.log(rating, comment);
+  const updatedComment = rating + comment.toString();
+
+  await getDoc(doc(db, "products", id)).then(async(docx) => {//新增評論
+    const data = docx.data();
+    data.comment[userEmail] = updatedComment;
+    updateDoc(doc(db, "products", id), data);
+    const sellerEmail = data.seller;
+    await getDoc(doc(db, "users", sellerEmail)).then(async(docx2) => {//添加星數到賣家評分
+      const data2 = docx2.data();
+      data2.score+=parseInt(rating);
+      data2.number++;
+      let total = 0;
+      const userQuerySnapshot = await getDocs(collection(db,"users"));
+      userQuerySnapshot.forEach((doc) => {
+        const data3 = doc.data();
+        if (data3.record[id] && data3.record[id].isRate) {//更新賣家販賣商品數量
+          console.log(data3.name, data3.record);
+          total += data3.record[id].quantity;
+          console.log(total);
+        }
+      });
+      data2.sold[id] = total;
+      console.log("sold",data2.sold[id]);
+      await updateDoc(doc(db, "users", sellerEmail), data2);//更新賣家評分及販賣商品數量
+    })
+  })
 };
+
+
 
 const display_pic = () => {
   var currentIndex = 0;
   var productImg = document.getElementById("productImg");
-  var prevBtn = document.getElementById("prevBtn");
-  var nextBtn = document.getElementById("nextBtn");
 
   function showImage(index) {
     productImg.src = images[index];
@@ -172,11 +186,7 @@ const display_pic = () => {
   // 添加點擊事件監聽器到圖片
   productImg.addEventListener("click", showNextImageOnClick);
 
-  //prevBtn.addEventListener("click", showPrevImage);
-  //nextBtn.addEventListener("click", showNextImage);
-
   // 一開始顯示第一張圖片
   showImage(currentIndex);
 };
 window.addEventListener("load", start);
-//window.addEventListener("load", display_pic);

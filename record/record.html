@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../index.css" type="text/css" media="screen" charset="utf-8">
     <style>
         h2{
-            font-size: 50px;
+            font-size: 40px;
             font-weight: bolder;
             text-align: center;
         }
@@ -16,15 +16,10 @@
             margin: auto;
             padding: 10px;
         }
-        .record-row {
-            border-bottom: 1px solid #000; /* 設定底部邊框樣式 */
-            padding-bottom: 5px; /* 增加下方內距，讓分隔線和文字之間有間距 */
-        }
         .record-table {
             border-collapse: collapse; /* 合併邊框 */
             width: 100%; /* 設定表格寬度 */
         }
-
         .record-table th, .record-table td {
             border: 1px solid #000; /* 設定所有單元格的邊框 */
             padding: 8px; /* 設定內距 */
@@ -33,6 +28,25 @@
 
         .record-table tr:first-child th {
             background-color: #f2f2f2; /* 設定表頭背景色 */
+        }
+        @media screen and (max-width: 768px) {
+            html {
+                font-size: 100%;
+            }
+            h2 {
+                font-size: 30px; /* 調整標題的大小 */
+                text-align: center; /* 讓 h2 文字置中 */
+            }
+            main {
+                padding: 5px; /* 調整主要區域的 padding */
+            }
+            .record-table {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .record-table th, .record-table td {
+                padding: 5px; /* 調整表格單元格的 padding */
+            }
         }
         /*hr {*/
             /*border: none;  移除預設的邊框 */

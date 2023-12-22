@@ -195,13 +195,16 @@ const handleCheck = (event) => {
 }
 
 const display = async () => {
+    const rec_title = document.getElementById("rec_title");
     const prev_view_title = document.getElementById("prev_view_title");
     const latest_normal = document.getElementById("latest_normal");
     const latest_bids = document.getElementById("latest_bids");
     const prev_view = document.getElementById("prev_view");
+    const rec = document.getElementById("rec");
     latest_normal.innerHTML = "";
     latest_bids.innerHTML = "";
     prev_view.innerHTML = "";
+    rec.innerHTML = "";
     let url;
     if (window.innerWidth <= 767) {
         url = "api/mobile.html?id=";
@@ -211,11 +214,13 @@ const display = async () => {
     }
     onAuthStateChanged(auth, async(user) => {
         if (user) {
+            rec_title.innerHTML = "為您推薦的商品";
             prev_view_title.innerHTML = "您最近瀏覽的商品";
             userId = user.email;
             const docSnap = await getDoc(doc(db, "users", userId));
             if (docSnap.exists()) {
                 const views = docSnap.data().view;
+                const searches = docSnap.data().search;
                 bidsData = docSnap.data().bids;
                 views.forEach(async (productId) => {
                     console.log(productId);
@@ -273,10 +278,50 @@ const display = async () => {
                 });
                 prev_view.removeEventListener("click", handleCheck);
                 prev_view.addEventListener("click", handleCheck);
+                const querySnapshot = await getDocs(collection(db, "products"));
+                let cnt = 0;
+                let arr = [];
+                querySnapshot.forEach((productDoc) => {
+                    const productData = productDoc.data();
+                    const productName = productData.name.split('#')[0];
+                    const productType = productData.type;
+                    const quantity = productData.quantity;
+                    const seller = productData.seller;
+                    if (quantity > 0 && userId != seller && cnt < 10 && !arr.includes(productDoc.id)) {
+                        searches.forEach(async (keyWord) => {
+                            if (productData.name.includes(keyWord) && !arr.includes(productDoc.id)) {
+                                cnt++;
+                                arr.push(productDoc.id);
+                                if (productType == "normal") {
+                                    rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productDoc.id + '">加入購物車</button></div>';
+                                }
+                                else if (productType == "bids") {
+                                    let endDate = productData.endtime.toDate();
+                                    if (productData.bids_info.modtime) {
+                                        const tmpDate = productData.bids_info.modtime.toDate();
+                                        tmpDate.setHours(tmpDate.getHours() + 8);
+                                        if (tmpDate < endDate) {
+                                            endDate = tmpDate;
+                                        }
+                                    }
+                                    rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productDoc.id + '">加入競標清單</button></div>';
+                                }
+                            }
+                        });
+                    }
+                });
+                if (cnt == 0) {
+                    rec_title.innerHTML = "";
+                }
+                else {
+                    rec.removeEventListener("click", handleCheck);
+                    rec.addEventListener("click", handleCheck);
+                }
             }
         }
         else {
             userId = undefined;
+            rec_title.innerHTML = "";
             prev_view_title.innerHTML = "";
         }
     });
