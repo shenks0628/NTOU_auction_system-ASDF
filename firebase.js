@@ -276,18 +276,22 @@ const display = async () => {
                         });
                     }
                 });
+                prev_view.removeEventListener("click", handleCheck);
+                prev_view.addEventListener("click", handleCheck);
                 const querySnapshot = await getDocs(collection(db, "products"));
                 let cnt = 0;
+                let arr = [];
                 querySnapshot.forEach((productDoc) => {
-                    const productData = doc.data();
+                    const productData = productDoc.data();
                     const productName = productData.name.split('#')[0];
                     const productType = productData.type;
                     const quantity = productData.quantity;
                     const seller = productData.seller;
-                    if (quantity > 0 && userId != seller && cnt < 10) {
+                    if (quantity > 0 && userId != seller && cnt < 10 && !arr.includes(productDoc.id)) {
                         searches.forEach(async (keyWord) => {
-                            if (productData.name.includes(keyWord)) {
+                            if (productData.name.includes(keyWord) && !arr.includes(productDoc.id)) {
                                 cnt++;
+                                arr.push(productDoc.id);
                                 if (productType == "normal") {
                                     rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>不二價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addn' + productDoc.id + '">加入購物車</button></div>';
                                 }
@@ -306,10 +310,13 @@ const display = async () => {
                         });
                     }
                 });
-                prev_view.removeEventListener("click", handleCheck);
-                prev_view.addEventListener("click", handleCheck);
-                rec.removeEventListener("click", handleCheck);
-                rec.addEventListener("click", handleCheck);
+                if (cnt == 0) {
+                    rec_title.innerHTML = "";
+                }
+                else {
+                    rec.removeEventListener("click", handleCheck);
+                    rec.addEventListener("click", handleCheck);
+                }
             }
         }
         else {
