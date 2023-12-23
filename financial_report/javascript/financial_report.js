@@ -36,9 +36,9 @@ const start = () => {
             productsdata = userInfo.sold;
             productsdata = Object.keys(productsdata).map(key => ({ id: key, number: productsdata[key]}));
             console.log(productsdata);
-            showMost(productsdata);
-            showall(productsdata);
-            showhigh(productsdata);
+            await showall(productsdata);
+            await showMost(productsdata);
+            await showhigh(productsdata);
         }else { // 沒有登入
             console.log("沒拿到userid");
             userInfo = undefined;
