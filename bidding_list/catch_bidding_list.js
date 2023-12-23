@@ -218,8 +218,7 @@ const start1 = async () => {
                 let currentDate = new Date();
                 if (currentDate < endDate) {
                     if (productData.canBid == true) {
-                        display_list.innerHTML += '<div class="product" id="' + productId + '"><a href="' + url + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName + 
-                                            '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：<a class="price">' + productData.price + '</a></p><p>您的注金：<a class="price">' + bidsData[key] + '</a></p><p><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
+                        display_list.innerHTML += '<div class="product" id="' + productId + '"><a href="' + url + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName + '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：<a class="price">$' + productData.price + '</a></p><p>您的注金：<a class="price">$' + bidsData[key] + '</a></p><p><button class="btn" type="submit" id="add' + productId + '">加注</button></p><p><button class="btn" type="submit" id="exit' + productId + '">退出</button></p>';
                     }
                     else if (productData.canBid == false) {
                         await updateDoc(doc(db, "users", userId), {
