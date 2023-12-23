@@ -13,9 +13,16 @@
     <main id="product" id="content">
       <section class="infoContainer">
         <div><img src="images/back.png" title="返回上一頁" width="50px" height="50px" style="cursor: pointer; float: left;"
-            onclick="history.back()"></div>
+            onclick="history.back()">
+        </div>
         <div class="productImage">
           <img class="bigImageItem" id="bigImageItem" src="images/loader.gif">
+          <div>
+            <button id="previousImage" style="width: 50%; background-color: unset;">
+              <img src="./images/previous.png" id="previousImage" style="max-height: 30px;"></button><button
+              id="nextImage" style="width: 50%; background-color: unset;">
+              <img src="./images/next.png" id="nextImage" style="max-height: 30px;"></button>
+          </div>
           <hr>
         </div>
         <div id="productName">
@@ -38,9 +45,9 @@
       <hr>
       <section class="itemContainer">
         <div style="display: flex;">
-          <button style="flex:1; background-color: unset; font-size: large;" class="changeInfo" id="ToDiscription"
+          <button style="width: 50%; background-color: unset; font-size: large;" class="changeInfo" id="ToDiscription"
             disabled>商品資訊</button>
-          <button style="flex:1; background-color: unset; font-size: large;" class="changeInfo"
+          <button style="width: 50%; background-color: unset; font-size: large;" class="changeInfo"
             id="ToComment">查看評論</button>
         </div>
         <div id="description" class="overflow-y: auto; flex:1;">
