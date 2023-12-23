@@ -500,7 +500,7 @@ const start1 = () => {
                 }
             }
             else { // 按 cancel
-                window.alert("您已取消！");
+                //window.alert("您已取消！");
             }
             
         }
