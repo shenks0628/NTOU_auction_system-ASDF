@@ -51,7 +51,6 @@ async function addProduct(userData, inputData) {
   try {
     // console.log(inputData);
     const userID = userData.id;
-    const seller_imgSrc = userData.imgSrc;
     const type = inputData.type;
     if (type == "normal") {
       let { productID } = await addDoc(collection(db, "products"), {
@@ -72,6 +71,7 @@ async function addProduct(userData, inputData) {
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
         bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), addAmount: inputData.price },
+        canBid: true,
         comment: {},
         type: type,
         imgs: inputData.imgs,
