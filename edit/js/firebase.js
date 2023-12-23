@@ -40,6 +40,7 @@ async function getProduct(id) { // 讀資料
       }
       else {
         console.log("Product does not exist.");
+        return null;
       }
     })
     .catch((error) => {
@@ -137,10 +138,9 @@ async function uploadImage(inputImage) {
     let dateString = new Date().toISOString();
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
-      console.log("Upload success!");
+      // console.log("Upload success!");
     });
     await getDownloadURL(storageRef).then(async (url) => {
-      console.log(url);
       imageURL.push(url.toString());
     });
   }
@@ -150,10 +150,10 @@ async function deleteStorageFile(fileUrl) {
   const fileRef = ref(storage, fileUrl);
   // Delete the file
   await deleteObject(fileRef).then(() => {
-    console.log("Delete complete!");
+    // console.log("Delete complete!");
   }).catch((error) => {
     console.log(error);
-    // Uh-oh, an error occurred!
+    // An error occurred!
   });
 }
 export { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile };
