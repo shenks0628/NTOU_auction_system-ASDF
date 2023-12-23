@@ -35,7 +35,16 @@ function add(docId) {
     .then(async (productDoc) => {
         if (productDoc.exists()) {
             const productData = productDoc.data();
-            if (productData.canBid == true) {
+            let endDate = productData.endtime.toDate();
+            if (productData.bids_info.modtime) {
+                const tmpDate = productData.bids_info.modtime.toDate();
+                tmpDate.setHours(tmpDate.getHours() + 8);
+                if (tmpDate < endDate) {
+                    endDate = tmpDate;
+                }
+            }
+            let currentDate = new Date();
+            if (productData.canBid == true && currentDate < endDate) {
                 const price = window.prompt("警告：請依您個人經濟能力斟酌下注，若您無法支付您所下注的金額，賣家可以循法律途徑要求您支付！\n請輸入您想下注的最高金額（僅接受數字輸入）：");
                 if (price || price == "") {
                     const isNumeric = /^[0-9]+$/.test(price);
