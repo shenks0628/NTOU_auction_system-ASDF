@@ -100,6 +100,13 @@ async function setProduct(productData) { // 設定顯示的商品
     }
     else if (productData.type == "bids") {
         let endtime = productData.endtime.toDate();
+        if (productData.bids_info.modtime) {
+            let tmpDate = productData.bids_info.modtime.toDate();
+            tmpDate.setHours(tmpDate.getHours() + 8);
+            if (tmpDate < endDate) {
+                endDate = tmpDate;
+            }
+        }
         document.getElementById("itemEndTime").innerHTML = endtime.toLocaleString();
         let now = new Date();
         now.setMinutes(now.getMinutes() + 30);
@@ -126,7 +133,19 @@ async function setProduct(productData) { // 設定顯示的商品
 
     let srcs = productData.imgs;
     let imgs = document.getElementById("bigImageItem");
-    imgs.setAttribute("src", srcs[0]);
+    if (srcs.length > 0) {
+        imgs.setAttribute("src", srcs[0]);
+        if (srcs.length > 1) {
+            document.getElementById("changeImageContainer").style.display = "block";
+        }
+        else {
+            document.getElementById("changeImageContainer").style.display = "none";
+        }
+    }
+    else {
+        imgs.setAttribute("src", "./images/product.png");
+        document.getElementById("changeImageContainer").style.display = "none";
+    }
 
     let itemComment = document.getElementById("itemComment");
     let commentArray = productData.comment;
