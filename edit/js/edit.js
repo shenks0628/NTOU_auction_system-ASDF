@@ -7,17 +7,17 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, 
 // import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
-  authDomain: "ntou-auction-system-112eb.firebaseapp.com",
-  projectId: "ntou-auction-system-112eb",
-  storageBucket: "ntou-auction-system-112eb.appspot.com",
-  messagingSenderId: "320414610227",
-  appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
-  measurementId: "G-FLXQ2BQCZF"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
+//   authDomain: "ntou-auction-system-112eb.firebaseapp.com",
+//   projectId: "ntou-auction-system-112eb",
+//   storageBucket: "ntou-auction-system-112eb.appspot.com",
+//   messagingSenderId: "320414610227",
+//   appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
+//   measurementId: "G-FLXQ2BQCZF"
+// };
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const auth = await getAuth();
 // const db = getFirestore(app);
