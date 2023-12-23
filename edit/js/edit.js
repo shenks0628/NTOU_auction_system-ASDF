@@ -33,7 +33,6 @@ let beDeletedFiles, imageFile = [];
 let userData = "none";
 
 async function start() {
-  window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
     // console.log(user);
@@ -253,7 +252,7 @@ function validateDateTime() {
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  console.log(document.getElementById("inputName").checkValidity());
+  // console.log(document.getElementById("inputName").checkValidity());
   if (document.getElementById("inputName").checkValidity() == false) {
     window.alert("商品名稱格式錯誤，請修改");
   }
