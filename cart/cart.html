@@ -5,16 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>結帳頁面</title>
     <link rel="stylesheet" href="../index.css" type="text/css" media="screen" charset="utf-8">
+    <style>
+        h2{
+            font-size: 40px;
+            font-weight: bolder;
+            text-align: center;
+        }
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 10px;
+        }
+        .cart-table {
+            border-collapse: collapse; /* 合併邊框 */
+            width: 100%; /* 設定表格寬度 */
+        }
+
+        .cart-table th, .cart-table td {
+            border: 1px solid #000; /* 設定所有單元格的邊框 */
+            padding: 8px; /* 設定內距 */
+            text-align: center; /* 設定文字置中 */
+        }
+
+        .cart-table tr:first-child th {
+            background-color: #f2f2f2; /* 設定表頭背景色 */
+        }
+        .total {
+            margin-left: 89%;/*890*/
+        }
+        #billcheck {
+            margin-left: 90%;/*920*/
+        }
+        /* 當螢幕寬度小於或等於 700px 時 */
+        @media screen and (max-width: 768px) {
+            html {
+                font-size: 100%;
+            }
+            h2 {
+                font-size: 30px; /* 調整標題的大小 */
+                text-align: center; /* 讓 h2 文字置中 */
+            }
+            main {
+                padding: 5px; /* 調整主要區域的 padding */
+            }
+            .cart-table {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .cart-table th, .cart-table td {
+                padding: 5px; /* 調整表格單元格的 padding */
+            }
+            .total {
+                margin-left: 60%; /* 移除右邊距 */
+                text-align: center; /* 調整文本對齊方式 */
+            }
+            #billcheck {
+                margin-left: 80%; /* 移除右邊距 */
+                text-align: center; /* 調整文本對齊方式 */
+            }
+        }
+    </style>
 </head>
 <body>
     <main>
         <h2 class="fp_title" id="title">購物車</h2>
         <div id="div_cart">
-            <table id="cart">
+            <table id="cart" class="cart-table">
             </table>
-            
             <div class="total">總計: <span id="totalAmount">0</span> 元</div>
-
             <button id="billcheck" type="submit">下訂單</button>
         </div>
     </main>
@@ -24,11 +82,5 @@
     </footer>
 
     <script src="cart.js" type="module"></script>
-    <script type="text/javascript">
-        function searchProducts() {
-            const key = document.getElementById("product_search").value;
-            window.location.href = "../api/index.html?search=" + key;
-        }
-    </script>
 </body>
 </html>

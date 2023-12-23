@@ -31,6 +31,7 @@ const productID = urlParams.get('id');
 const buyerRef = doc(db, "users", buyer);
 const messagesRef = doc(db, "messages", productID);
 const encodeBuyer = encodeEmail(buyer);
+const mainElement = document.querySelector('main');
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -60,7 +61,6 @@ function isWithinDays(days, time) {
     return Date.now()-time < 86400000*days;
 }
 async function verifyIdentity(email) {
-    const mainElement = document.querySelector('main');
     const docSnap = await getDoc(doc(db, "products", productID));
     if (docSnap.exists() && (email == buyer || email == docSnap.data().seller)) {
         mainElement.innerHTML = '';
@@ -97,7 +97,7 @@ async function verifyIdentity(email) {
                         if (!isWithinDays(1, msg.time))
                             alert('已超過取消時間，無法取消訂單!');
                         else if (confirm('確定要取消訂單嗎?'))
-                            cancelOrder();
+                            cancelOrder(quantity);
                     });
                     document.getElementById('confirmOrderBtn')?.addEventListener('click', () => {
                         if (isWithinDays(1, msg.time))
@@ -129,10 +129,12 @@ async function verifyIdentity(email) {
             `;
             mainElement.appendChild(newDiv);
         }
+        scrollDownBtn.className = isScrolledToBottom() ? '' : 'display';
     }
 }
-async function cancelOrder() {
+async function cancelOrder(quantity) {
     await deleteDoc(messagesRef);
+    await updateDoc(doc(db, "products", productID), { quantity: increment(quantity) });
     window.location.href = 'index.html';
 }
 async function confirmOrder(quantity) {
@@ -147,9 +149,8 @@ async function confirmOrder(quantity) {
         user: 'system'
     });
     if (buyerDoc.exists() && buyerDoc.data().record[productID])
-        await updateDoc(buyerRef, { [`record.${productID}.quantity`]: increment(quantity) });
-    else
-        await updateDoc(buyerRef, { [`record.${productID}`]: {isRate: false, quantity: quantity} });
+        quantity += buyerDoc.data().record[productID].quantity;
+    await updateDoc(buyerRef, { [`record.${productID}`]: {isRate: false, quantity: quantity} });
     await updateDoc(messagesRef, { [encodeBuyer]: messages });
     window.location.href = window.location.href;
 }
@@ -166,7 +167,19 @@ async function uploadMessage() {
         textInput.value = '';
     } catch (e) { window.location.href = window.location.href; }
 }
-
+function isScrolledToBottom() {
+    return mainElement.scrollTop + mainElement.clientHeight >= mainElement.scrollHeight - 1;
+}
+mainElement.addEventListener('scroll', function () {
+    scrollUpBtn.className = mainElement.scrollTop>1 ? 'display' : '';
+    scrollDownBtn.className = isScrolledToBottom() ? '' : 'display';
+});
+scrollUpBtn.onclick = function (e) {
+    mainElement.scrollTop = 0;
+}
+scrollDownBtn.onclick = function (e) {
+    mainElement.scrollTop = mainElement.scrollHeight;
+}
 sendBtn.onclick = function (e) {
     uploadMessage();
 }
@@ -193,7 +206,8 @@ async function uploadFile() {
         }
         textInput.disabled = true;
         const storage = getStorage();
-        const storageRef = ref(storage, 'files/' + file.name);
+        const filename = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const storageRef = ref(storage, 'files/' + filename);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         // Register three observers:

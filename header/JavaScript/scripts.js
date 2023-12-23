@@ -15,6 +15,16 @@ menuBtn.onclick = function () {
         menuSearch.classList.add('straight');
     }
 }
+searchBarMode.onclick = function () {
+    const shop = '<img src="img/shopping-cart.png" alt="search mode">';
+    const user = '<img src="img/users.png" alt="search mode">';
+    searchBarMode.innerHTML = searchBarMode.innerHTML===user ? shop : user;
+}
+menuSearchMode.onclick = function () {
+    const shop = '<img src="img/shopping-cart.png" alt="search mode">';
+    const user = '<img src="img/users.png" alt="search mode">';
+    menuSearchMode.innerHTML = menuSearchMode.innerHTML===user ? shop : user;
+}
 function toUrl(url) {
     mainIframe.src = '../' + url;
 }

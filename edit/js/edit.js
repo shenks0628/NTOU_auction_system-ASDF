@@ -33,10 +33,9 @@ let beDeletedFiles, imageFile = [];
 let userData = "none";
 
 async function start() {
-  window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
-    console.log(user);
+    // console.log(user);
     if (user) {
       userData = {
         id: user.email,
@@ -74,12 +73,12 @@ async function reset() {  // 重置input欄位
     document.getElementById("inputType").setAttribute("disabled", true);
     beDeletedFiles = [];
     let productData = await getProduct(id);
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
   else {
     let productData = await clearProductData();
-    imageFile = productData.imgs;
+    imageFile = Array.from(productData.imgs);
     showData(productData);
   }
 }
@@ -109,6 +108,9 @@ function inputTypeSet(productData) {
 }
 
 async function clearProductData() {
+  let defaultEndTime = new Date();
+  defaultEndTime.setHours(defaultEndTime.getHours() + 8);
+  // console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
@@ -119,10 +121,9 @@ async function clearProductData() {
     price: "",
     quantity: "",
     seller: "",
-    sellerImg: "",
-    time: Timestamp.fromDate(new Date()),
+    time: Timestamp.fromDate(defaultEndTime),
     url: "",
-    endtime: Timestamp.fromDate(new Date())
+    endtime: Timestamp.fromDate(defaultEndTime)
   };
   return productData;
   // document.getElementById("inputName").value = "";
@@ -142,7 +143,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 0;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -173,7 +174,6 @@ function showData(productData) { // 顯示原商品資料
     }
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
-    document.getElementById("inputDate").value
   }
   else if (productData.type == "bids") {
     if (id != null && productData.bids_info.who1.length > 0) {
@@ -184,7 +184,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputType").selectedIndex = 1;
     let str = productData.name.trim().split("#");
     document.getElementById("inputName").value = str[0];
-    document.getElementById("inputDescription").value = productData.description;
+    document.getElementById("inputDescription").value = productData.description.replace(/<br>/g, '\n');;
     document.getElementById("inputPrice").value = productData.price;
     document.getElementById("inputQuantity").value = productData.quantity;
     if (str[1])
@@ -216,8 +216,10 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
 
-    document.getElementById("inputDate").value = productData.endtime.toDate().toISOString().split('T')[0];
-    document.getElementById("inputTime").value = productData.endtime.toDate().toTimeString().substr(0, 8);
+    // console.log(productData.endtime.toDate().getFullYear() + '-' + (productData.endtime.toDate().getMonth() + 1) + '-' + productData.endtime.toDate().getDate());
+    document.getElementById("inputDate").value = productData.endtime.toDate().getFullYear() + '-' + ('0' + (productData.endtime.toDate().getMonth() + 1)).slice(-2) + '-' + ('0' + productData.endtime.toDate().getDate()).slice(-2);
+    // console.log(('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
+    document.getElementById("inputTime").value = (('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
   }
 }
 function temporaryDeleteImage(img, src) {
@@ -244,51 +246,60 @@ function validateDateTime() {
 
   currentDate.setDate(currentDate.getDate() + 7);
 
-  // 檢查所選日期是否在7天以内
+  // 檢查所選日期是否在未來7天以内
   if (selectedDate > currentDate) return false;
   return true;
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  if (document.getElementById("inputName").valid == false || document.getElementById("inputPrice").valid == false || (type == "normal" && document.getElementById("inputQuantity").valid == false)) {
+  // console.log(document.getElementById("inputName").checkValidity());
+  if (document.getElementById("inputName").checkValidity() == false) {
+    window.alert("商品名稱格式錯誤，請修改");
+  }
+  else if (document.getElementById("inputDescription").checkValidity() == false) {
+    window.alert("商品敘述字數超過上限，請修改");
+  }
+  else if (document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
     window.alert("請填寫完整資料");
-    return;
+    // return;
   }
-  else if (document.getElementById("inputURL").valid == false) {
+  else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
-    return;
+    // return;
   }
-  else if (type == "bids" && (document.getElementById("inputDate").valid == false || document.getElementById("inputTime").valid == false || !validateDateTime())) {
-    alert("請選擇未來7天内的時間");
-    return;
+  else if (type == "bids" && (document.getElementById("inputDate").checkValidity() == false || document.getElementById("inputTime").checkValidity() == false || !validateDateTime())) {
+    window.alert("請選擇未來7天内的時間");
+    // return;
   }
   else {
-    // window.alert("比較系統測試中");
     setCheckPage();
-    document.getElementById('overlay').style.display = "flex";
+    document.getElementById("overlay").style.display = "flex";
     document.getElementById("checkPage").style.display = "block";
   }
 }
 function closeCheckPage() {
-  document.getElementById('overlay').style.display = "none";
+  document.getElementById("overlay").style.display = "none";
   document.getElementById("checkPage").style.display = "none";
 }
 async function setCheckPage() {
-  let originProductData = await getProduct();
-  let oldStr = originProductData.name.trim().split("#");
-  document.getElementById("oldName").innerHTML = oldStr[0];
-  document.getElementById("oldDescription").innerHTML = originProductData.description;
-  document.getElementById("oldPrice").innerHTML = originProductData.price;
-  document.getElementById("oldQuantity").innerHTML = originProductData.quantity;
-  let oldTag = document.getElementById("oldTag");
-  oldTag.innerHTML = "";
-  var f = false;
-  for (var i = 1; i < oldStr.length; i++) {
-    if (oldStr[i].length > 0) {
-      if (f) oldTag.innerHTML += ", "
-      oldTag.innerHTML += oldStr[i];
-      f = true;
+  if (id != null) {
+    let originProductData = await getProduct();
+    let oldStr = originProductData.name.trim().split("#");
+    document.getElementById("oldName").innerHTML = oldStr[0];
+    document.getElementById("oldDescription").innerHTML = originProductData.description;
+    document.getElementById("oldPrice").innerHTML = originProductData.price;
+    document.getElementById("oldQuantity").innerHTML = originProductData.quantity;
+    let oldTag = document.getElementById("oldTag");
+    oldTag.innerHTML = "";
+    var f = false;
+    for (var i = 1; i < oldStr.length; i++) {
+      if (oldStr[i].length > 0) {
+        if (f) oldTag.innerHTML += ", "
+        oldTag.innerHTML += oldStr[i];
+        f = true;
+      }
     }
+    document.getElementById("oldURL").innerHTML = originProductData.url;
   }
 
   let newProductData = getInputData();
@@ -307,6 +318,8 @@ async function setCheckPage() {
       f = true;
     }
   }
+  // document.getElementById("newImage").innerHTML;
+  document.getElementById("newURL").innerHTML = newProductData.url;
 }
 
 async function sendCheck() {
@@ -346,7 +359,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(document.getElementById("inputQuantity").value),
       imgs: document.getElementById("inputImage").files,
@@ -358,7 +371,7 @@ function getInputData() {
       id: id,
       type: type,
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
-      description: document.getElementById("inputDescription").value,
+      description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(1),
       imgs: document.getElementById("inputImage").files,

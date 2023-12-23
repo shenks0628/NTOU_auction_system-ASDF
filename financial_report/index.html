@@ -1,0 +1,123 @@
+<html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>financial Report</title>
+        <style>
+            /* 通用樣式 */
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url("ASDF.png");
+                background-repeat: repeat;
+                background-size: 10%;
+                margin-top: 10px;
+            }
+    
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                background-color:aquamarine;
+                padding: 10px;
+                text-align: center;
+                color: #333;
+                font-size: 44px;
+                font-weight: bold;
+            }
+    
+            .pageContainer {
+                display: flex;
+                justify-content: center;
+            }
+    
+            .container {
+                width: 800px;
+                padding: 20px;
+                margin-top: 65px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color:ghostwhite;
+            }
+    
+            label {
+                font-weight: bold;
+                font-size: 32px;
+                margin-top: 10px;
+            }
+    
+            #display_most,
+            #display_high{
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 5px;
+                margin-left: 5px;
+                border-radius: 5px;
+                flex-basis: 30%;
+                display:flex;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                justify-content: space-around;
+            }
+
+            #display_all{
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+                margin-left: 5px;
+                border-radius: 5px;
+                display:flex;
+                flex-direction: row;
+                flex-basis: 30%;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                justify-content: space-around;
+            }
+
+            #display_all div{
+                display: flex;
+                flex-direction: row;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            #display_all > div > p{
+                display: inline-block;
+                flex-direction: column;
+                margin-top: auto;
+                margin-bottom: auto;
+                margin-left: 20px;
+                margin-right: 10px;
+            }
+
+            img{
+                width: 200px;
+            }
+    
+            /* 手機端樣式 */
+            @media (max-width: 768px) {
+                .container {
+                    width: 100%;
+                    padding: 10px;
+                }
+            }
+        </style> 
+    </head>
+    <header>您的銷售紀錄</header>
+<body>
+    <div class="pageContainer">
+        <div class="container">
+            <label class="mostlabel">最高成交量商品</label>
+            <div id="display_most"></div>
+            <label class="highlabel">收入最高商品</label>
+            <div id="display_high"></div>
+            <label class="alllabel">所有商品</label>
+            <div id="display_all"></div>
+        </div> 
+    </div>
+   
+<script src="javascript/financial_report.js" type="module"></script>
+</body>
+</html>

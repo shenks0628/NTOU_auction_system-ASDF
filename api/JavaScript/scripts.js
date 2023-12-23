@@ -1,8 +1,14 @@
 const urlParams = new URLSearchParams(window.location.search);
 const keywords = urlParams.get('search') ? urlParams.get('search') : '';
 let timeSort = '', priceSort = '';
-if (!localStorage.getItem('ASDF-display')) {
+if (!localStorage.getItem('ASDF-display') || localStorage.getItem('ASDF-display') !== 'list') {
+    productContainer.className = '';
+    displayBtn.innerHTML = '<img src="img/list.png">';
     localStorage.setItem('ASDF-display', 'menu');
+} else {
+    productContainer.className = 'row';
+    displayBtn.innerHTML = '<img src="img/menu.png">';
+    localStorage.setItem('ASDF-display', 'list');
 }
 if (urlParams.get('type')) {
     const type = urlParams.get('type');
@@ -12,17 +18,12 @@ if (urlParams.get('type')) {
 
 displayBtn.onclick = function (e) {
     if (localStorage.getItem('ASDF-display') !== 'list') {
-        productContainer.querySelectorAll('section').forEach((section) => {
-            section.className = 'product row';
-        });
+        productContainer.className = 'row';
         displayBtn.innerHTML = '<img src="img/menu.png">';
         localStorage.setItem('ASDF-display', 'list');
     } else {
-        productContainer.querySelectorAll('section').forEach((section) => {
-            section.className = 'product';
-        });
+        productContainer.className = '';
         displayBtn.innerHTML = '<img src="img/list.png">';
         localStorage.setItem('ASDF-display', 'menu');
     }
 }
-//mobile folder

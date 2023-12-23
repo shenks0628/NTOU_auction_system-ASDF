@@ -33,7 +33,7 @@ button {
   border-radius: 10px;
   background-color: rgba(64, 64, 64, 0.9);
   border: 1px solid rgb(0, 0, 0);
-  text-align: justify;
+  align-items: center;
 }
 
 .overlay {
@@ -48,15 +48,36 @@ button {
   align-items: center;
 }
 
+#editBlock {
+  max-width: 500px;
+  width: 100%;
+  font-size: large;
+}
+
+#checkContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#comparePart {
+  height: calc(100% - 30px);
+}
+
+#new,
+#old {
+  margin: 1%;
+}
+
 @media screen and (min-width:768px) {
   #checkPage {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: calc(100%-120px);
     min-width: 50%;
     max-width: 80%;
+    height: calc(100% - 200px);
   }
 
   #comparePart {
@@ -65,8 +86,9 @@ button {
 
   #new,
   #old {
-    height: 100%;
+    overflow-y: auto;
     width: 48%;
+    max-height: 100%;
   }
 }
 
@@ -76,12 +98,13 @@ button {
     top: 50%;
     transform: translateY(-50%);
     width: 80%;
-    max-height: calc(100% - 120px);
+    height: calc(100% - 100px);
     overflow-y: auto;
   }
 
   #comparePart {
     flex-direction: column;
+    overflow-y: auto;
   }
 
   #new,

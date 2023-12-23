@@ -14,27 +14,32 @@
                 <div id="dropdown" class="dropdown-content">
                     <button id="profileBtn">個人頁面</button>
                     <button id="chatBtn">聊天室</button>
+                    <button id="sellBtn">賣東西</button>
                     <button id="logoutBtn">登出</button>
                 </div>
             </div>
             <a href="?" class="title-span"><font color="#007355">A</font><font color="#F65353">S</font><font color="#F59A23">D</font><font color="#82218B">F</font></a>
             <div class="right">
                 <div class="search-bar">
+                    <button class="left" id="searchBarMode">
+                        <img src="img/shopping-cart.png" alt="search mode">
+                    </button>
                     <input id="searchBarInput" type="text" placeholder="Search">
-                    <button onclick="toUrl('api/?search='+searchBarInput.value)">
-                        <img width="32" height="32" src="img/search.png" alt="search">
+                    <button class="right" id="searchBarSearch">
+                        <img src="img/search.png" alt="search">
                     </button>
                 </div>
-                <button id="menuBtn">
-                    <img width="36" height="36" src="img/menu-burger.png" alt="menu-burger">
-                </button>
+                <button id="menuBtn"><img src="img/menu-burger.png" alt="menu-btn"></button>
             </div>
         </div>
         
         <div id="menuSearch">
+            <button class="left" id="menuSearchMode">
+                <img src="img/shopping-cart.png" alt="search mode">
+            </button>
             <input id="menuSearchInput" type="text" placeholder="Search">
-            <button onclick="toUrl('api/?search='+menuSearchInput.value)">
-                <img width="32" height="32" src="img/search.png" alt="search">
+            <button class="right" id="menuSearchSearch">
+                <img src="img/search.png" alt="search">
             </button>
         </div>
 
@@ -42,10 +47,11 @@
             <ul id="menuUl">
                 <li><button onclick="toUrl('api/?type=general')">一般商品</button></li>
                 <li><button onclick="toUrl('api/?type=auction')">競標商品</button></li>
-                <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
-                <li><button onclick="toUrl('selling_list/selling_list.html')">賣東西</button></li>
                 <li><button onclick="toUrl('bidding_list/bidding_list.html')">競標清單</button></li>
-                <li><button>聯絡我們</button></li>
+                <li><button onclick="toUrl('cart/cart.html')">購物車</button></li>
+                <li><button onclick="toUrl('record/record.html')">購買紀錄</button></li>
+                <li><button onclick="toUrl('financial_report')">銷售紀錄</button></li>
+                <li><button onclick="toUrl('')">聯絡我們</button></li>
             </ul>
         </nav>
     </header>

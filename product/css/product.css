@@ -26,27 +26,40 @@ button {
 }
 
 #product {
-  flex: 7;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   box-sizing: border-box;
-  padding: 20px;
-  height: 100%;
+  /* padding: 20px; */
   width: 100%;
+  flex: 1;
 }
 
 .infoContainer {
-  margin: 5px;
-  height: 100%;
-  width: 400px;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
 }
 
 .itemContainer {
+  display: flex;
+  flex-direction: column;
+  /* align-items: normal; */
   flex: 1;
-  margin: 5px;
+  margin: 10px;
   box-sizing: border-box;
   /* width: 50%; */
-  height: 100%;
+}
+
+.sellerImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 25%;
+  border: 2px solid black;
+}
+
+#bidButton {
+  display: none;
+  /*預設隱藏*/
 }
 
 #cartButton {
@@ -56,21 +69,17 @@ button {
 
 #messageBoard {
   width: 100%;
-  flex: 3;
 }
 
 #content {
   display: flex;
   flex-direction: column;
-  flex: 8;
   flex-grow: 1;
   overflow: auto;
 }
 
 #footer {
-  flex: 1;
   width: 100%;
-  /* height: 100px; */
   flex-grow: 0;
   background-color: #333;
   color: white;
@@ -78,25 +87,15 @@ button {
   float: inline-end;
 }
 
-.itemImage {
-  width: 400px;
-  height: 400px;
+.productImage {
+  width: 100%;
+  height: auto;
 }
 
-/* dialog {
-  position: absolute;
-  width: 700px;
-  height: 450px;
-  left: calc(50% - 700px);
-  top: 120px;
-  color: white;
-  border: none;
-  box-shadow: 0 2px 6px #ccc;
-  border-radius: 10px;
-  background-color: rgba(64, 64, 64, 0.9);
-  border: 1px solid rgb(0, 0, 0);
-  text-align: justify;
-} */
+.bigImageItem {
+  width: 100%;
+  height: auto;
+}
 
 .commentBlock {
   border: 1px solid #ccc;
@@ -107,4 +106,99 @@ button {
 .readMore {
   color: darkgray;
   cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#moreInfoPage {
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px #ccc;
+  border-radius: 10px;
+  background-color: rgba(64, 64, 64, 0.9);
+  border: 1px solid rgb(0, 0, 0);
+  align-items: center;
+}
+
+#productVideo {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+#productVideo .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (min-width:768px) {
+  #moreInfoPage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    max-width: 800px;
+    /* height: calc(100% - 200px); */
+  }
+
+  #product {
+    /* display: flex; */
+    height: 100%;
+  }
+
+  .infoContainer {
+    width: 400px;
+  }
+
+
+  .itemContainer,
+  .infoContainer {
+    height: 100%;
+  }
+
+}
+
+@media screen and (max-width: 767px) {
+  #moreInfoPage {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 95%;
+    /* height: calc(100% - 100px); */
+    /* overflow-y: auto; */
+  }
+
+  #product {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #content {
+    flex-direction: column;
+  }
+
+  .infoContainer {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .itemContainer,
+  .infoContainer {
+    width: 96%;
+  }
 }

@@ -40,6 +40,7 @@ async function getProduct(id) { // 讀資料
       }
       else {
         console.log("Product does not exist.");
+        return null;
       }
     })
     .catch((error) => {
@@ -51,7 +52,6 @@ async function addProduct(userData, inputData) {
   try {
     // console.log(inputData);
     const userID = userData.id;
-    const seller_imgSrc = userData.imgSrc;
     const type = inputData.type;
     if (type == "normal") {
       let { productID } = await addDoc(collection(db, "products"), {
@@ -63,7 +63,6 @@ async function addProduct(userData, inputData) {
         price: parseInt(inputData.price),
         quantity: parseInt(inputData.quantity),
         seller: userID,
-        sellerImg: seller_imgSrc,
         time: serverTimestamp(),
         url: inputData.url
       });
@@ -72,7 +71,8 @@ async function addProduct(userData, inputData) {
     }
     else if (type == "bids") {
       let { productID } = await addDoc(collection(db, "products"), {
-        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), modtime: serverTimestamp() },
+        bids_info: { who1: "", who2: "", price1: parseInt(inputData.price), price2: parseInt(0), addAmount: inputData.price },
+        canBid: true,
         comment: {},
         type: type,
         imgs: inputData.imgs,
@@ -81,7 +81,6 @@ async function addProduct(userData, inputData) {
         price: parseInt(inputData.price),
         quantity: parseInt(1),
         seller: userID,
-        sellerImg: seller_imgSrc,
         time: serverTimestamp(),
         url: inputData.url,
         endtime: inputData.endtime
@@ -113,7 +112,6 @@ async function updateProduct(inputData) { // 修改並更新資料庫
       });
     }
     else if (type == "bids") {
-      inputData.bids_info.modtime = Timestamp.fromDate(new Date());
       await updateDoc(productRef, {
         bids_info: inputData.bids_info,
         comment: inputData.comment,
@@ -134,15 +132,15 @@ async function updateProduct(inputData) { // 修改並更新資料庫
   }
 }
 async function uploadImage(inputImage) {
+  // console.log(inputImage);
   let imageURL = [];
-  let dateString = getDateString();
   for (let i = 0; i < inputImage.length; i++) {
+    let dateString = new Date().toISOString();
     const storageRef = ref(storage, "images/" + dateString);
     await uploadBytes(storageRef, inputImage[i]).then((snapshot) => {
-      console.log("Upload success!");
+      // console.log("Upload success!");
     });
     await getDownloadURL(storageRef).then(async (url) => {
-      console.log(url);
       imageURL.push(url.toString());
     });
   }
@@ -152,15 +150,10 @@ async function deleteStorageFile(fileUrl) {
   const fileRef = ref(storage, fileUrl);
   // Delete the file
   await deleteObject(fileRef).then(() => {
-    console.log("Delete complete!");
+    // console.log("Delete complete!");
   }).catch((error) => {
     console.log(error);
-    // Uh-oh, an error occurred!
+    // An error occurred!
   });
-}
-function getDateString() {
-  let date = new Date();
-  let dateString = date.getFullYear().toString() + "-" + date.getMonth().toString() + "-" + date.getDate().toString() + " " + date.getHours().toString() + ":" + date.getMinutes().toString() + ":" + date.getSeconds().toString();
-  return dateString;
 }
 export { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile };

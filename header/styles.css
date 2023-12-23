@@ -41,7 +41,7 @@ main {
     width: 100%;
     height: 100%;
     background-color: #DADADA;
-    padding-top: 108px;
+    padding-top: 103px;
     text-align: center;
     box-sizing: border-box;
     display: flex;
@@ -57,7 +57,7 @@ iframe {
     padding: 0 15px;
     border-bottom: #252525 2px solid;
 }
-.toggle .left {
+.toggle>.left {
     width: 100%;
 }
 #avatarBtn {
@@ -96,7 +96,7 @@ iframe {
     background-color: #ccc;
 }
 
-.toggle .right {
+.toggle>.right {
     width: 100%;
     display: flex;
     justify-content: flex-end;
@@ -110,31 +110,41 @@ iframe {
     width: 180px;
     position: relative;
 }
-.search-bar input {
-    width: calc(100% - 14px);
-    padding: 10px 5px;
+.search-bar input, #menuSearch input {
+    width: 100%;
+    padding: 10px 36px;
+    box-sizing: border-box;
 }
-#menuSearch {
-    display: none;
-    position: relative;
-}
-#menuSearch input {
-    width: calc(100% - 24px);
-    padding: 10px;
+.search-bar img, #menuSearch img {
+    width: 32px;
+    height: 32px;
 }
 .search-bar button, #menuSearch button {
     position: absolute;
     top: 50%;
-    right: 3%;
     transform: translate(0%, -50%);
     height: 32px;
     width: 32px;
     padding: 0;
 }
+.search-bar .left, #menuSearch .left {
+    left: 2px;
+}
+.search-bar .right, #menuSearch .right {
+    right: 2px;
+}
+#menuSearch {
+    display: none;
+    position: relative;
+}
 #menuBtn {
     display: none;
     width: 48px;
     height: 48px;
+}
+#menuBtn img {
+    width: 36px;
+    height: 36px;
 }
 #menuBtn.click {
     background-color: gray;
@@ -158,7 +168,7 @@ iframe {
     color: aquamarine;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
     html {
         font-size: 100%;
     }

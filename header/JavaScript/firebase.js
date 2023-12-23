@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,12 +24,57 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
+searchBarSearch.onclick = async function () {
+    const mode = searchBarMode.innerHTML;
+    const user = '<img src="img/users.png" alt="search mode">';
+    if (mode === user) {
+        toUrl(`api/?email=${searchBarInput.value}`);
+    } else {
+        const docSnap = await getDoc(doc(db, "products", searchBarInput.value));
+        if (docSnap.exists()) {
+            toUrl(`api/mobile.html?id=${searchBarInput.value}`);
+        } else {
+            toUrl(`api/index.html?search=${searchBarInput.value}`);
+            if (auth.currentUser) {
+                const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
+                const search = userSnap.data().search;
+                if (search.length >= 10)
+                    search.pop();
+                search.push(searchBarInput.value);
+                updateDoc(doc(db, "users", auth.currentUser.email), { search: search });
+            }
+        }
+    }
+}
+menuSearchSearch.onclick = async function () {
+    const mode = menuSearchMode.innerHTML;
+    const user = '<img src="img/users.png" alt="search mode">';
+    if (mode === user) {
+        toUrl(`api/?email=${menuSearchInput.value}`);
+    } else {
+        const docSnap = await getDoc(doc(db, "products", menuSearchInput.value));
+        if (docSnap.exists()) {
+            toUrl(`api/mobile.html?id=${menuSearchInput.value}`);
+        } else {
+            toUrl(`api/index.html?search=${menuSearchInput.value}`);
+            if (auth.currentUser) {
+                const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
+                const search = userSnap.data().search;
+                if (search.length >= 10)
+                    search.pop();
+                search.push(menuSearchInput.value);
+                updateDoc(doc(db, "users", auth.currentUser.email), { search: search });
+            }
+        }
+    }
+}
 onAuthStateChanged(auth, (user) => {
     if (user) {
         avatarBtn.innerHTML = `<img class="avatar" src="${user.photoURL}" alt="avatar">`;    
         avatarBtn.onclick = function (e) { toggleDropdown(); }
         profileBtn.onclick = function (e) { toggleDropdown(); toUrl('api?email='+user.email); }
         chatBtn.onclick = function (e) { toggleDropdown(); toUrl('chat'); }
+        sellBtn.onclick = function (e) { toggleDropdown(); toUrl('selling_list/selling_list.html'); }
         logoutBtn.onclick = function (e) { toggleDropdown(); signOut(auth); mainIframe.src = mainIframe.src; }
     } else {
         avatarBtn.innerHTML = '<img class="avatar" src="img/google.png" alt="google">';
@@ -45,6 +90,7 @@ onAuthStateChanged(auth, (user) => {
                         cart: {},
                         message: {},
                         record: {},
+                        sold: {},
                         search: [],
                         view: [],
                         number: 0,

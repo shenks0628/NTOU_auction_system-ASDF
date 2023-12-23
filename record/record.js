@@ -67,7 +67,7 @@ const start1 = () => {
         <th>商品名稱</th>
         <th>價錢</th>
         <th>數量</th>
-        <th></th>
+        <th>評價</th>
     <tr/>
     `;
     for (let key of Object.keys(recordData)){
@@ -81,7 +81,8 @@ const start1 = () => {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
-                const newItem = { name: productData.name, price: parseInt(productData.price, 10), quantity: recordData[key].quantity,key: key,img:productData.imgs[0]};
+                const pName = productData.name.split('#')[0];
+                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: recordData[key].quantity,key: key,img:productData.imgs[0]};
                 console.log(recordData[key].isRate);
                 if(recordData[key].isRate){
                     recordItems.push(newItem)
@@ -89,14 +90,14 @@ const start1 = () => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
-                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                            <a href="../product/?id=${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
                         <td>${newItem.name}</td>
                         <td>${newItem.price} 元</td>
                         <td>${newItem.quantity}</td>
-                        <td></td>
+                        <td>已評價</td>
                     `;
                     recordTable.appendChild(row);
                 }
@@ -106,7 +107,7 @@ const start1 = () => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
-                            <a href="https://shenks0628.github.io/NTOU_auction_system-ASDF/header/?path=product/?id=${newItem.key}">
+                            <a href="../product/?id=${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
@@ -138,7 +139,17 @@ const start1 = () => {
                 //recordTable.appendChild(separatorRow);
             } 
             else {
-            console.log("Product with ID", productId, "does not exist.");
+                (async () => {
+                    try {
+                        await updateDoc(doc(db, "users", userId), {
+                            ['record.' + productId]: deleteField()
+                        });
+                        console.log('資料更新成功！');
+                    } catch (error) {
+                        console.error('更新資料時出現錯誤：', error);
+                    }
+                })();
+                console.log("Product with ID", productId, "does not exist.");
             }
         })
         .catch((error) => {
