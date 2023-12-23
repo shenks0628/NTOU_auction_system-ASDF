@@ -60,7 +60,7 @@ async function showMost(Mostdata){
 
     let mostImg = document.createElement("img");
     mostImg.src = mostSnapshot.data().imgs[0];
-    mostImg.addEventListener("click", () => {window.location.href = "product/index.html?id=" + most.id});
+    mostImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + most.id});
     mostProduct.appendChild(mostImg);
 
     let transactionCount = document.createElement("p");
@@ -82,7 +82,7 @@ async function showall(alldata){
         const allDiv = document.createElement("div");
         let allImg = document.createElement("img");
         allImg.src = allSnapshot.data().imgs[0];
-        allImg.addEventListener("click", () => {window.location.href = "product/index.html?id=" + alldata[i].id});
+        allImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + alldata[i].id});
         allDiv.appendChild(allImg);
 
         let transactionCount = document.createElement("p");
@@ -117,7 +117,7 @@ async function showhigh(highdata){
     console.log(highdata);
     let highImg = document.createElement("img");
     highImg.src = finalSnapshot.data().imgs[0];
-    highImg.addEventListener("click", () => {window.location.href = "product/index.html?id=" + finalSnapshot.id});
+    highImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + finalSnapshot.id});
     highProduct.appendChild(highImg);
 
     let transactionCount = document.createElement("p");

@@ -33,7 +33,6 @@ let beDeletedFiles, imageFile = [];
 let userData = "none";
 
 async function start() {
-  window.alert("歡迎來到新增/編輯頁面");
   eventSetting();
   await onAuthStateChanged(auth, (user) => {
     // console.log(user);
@@ -217,9 +216,10 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
 
-    document.getElementById("inputDate").value = productData.endtime.toDate().getFullYear() + '-' + productData.endtime.toDate().getMonth() + '-' + productData.endtime.toDate().getDate();
-    console.log(('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes() + ':' + productData.endtime.toDate().getSeconds());
-    document.getElementById("inputTime").value = ('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + productData.endtime.toDate().getMinutes();
+    // console.log(productData.endtime.toDate().getFullYear() + '-' + (productData.endtime.toDate().getMonth() + 1) + '-' + productData.endtime.toDate().getDate());
+    document.getElementById("inputDate").value = productData.endtime.toDate().getFullYear() + '-' + ('0' + (productData.endtime.toDate().getMonth() + 1)).slice(-2) + '-' + ('0' + productData.endtime.toDate().getDate()).slice(-2);
+    // console.log(('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
+    document.getElementById("inputTime").value = (('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
   }
 }
 function temporaryDeleteImage(img, src) {
@@ -252,7 +252,7 @@ function validateDateTime() {
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  console.log(document.getElementById("inputName").checkValidity());
+  // console.log(document.getElementById("inputName").checkValidity());
   if (document.getElementById("inputName").checkValidity() == false) {
     window.alert("商品名稱格式錯誤，請修改");
   }
