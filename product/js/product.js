@@ -100,6 +100,13 @@ async function setProduct(productData) { // 設定顯示的商品
     }
     else if (productData.type == "bids") {
         let endtime = productData.endtime.toDate();
+        if (productData.bids_info.modtime) {
+            let tmpDate = productData.bids_info.modtime.toDate();
+            tmpDate.setHours(tmpDate.getHours() + 8);
+            if (tmpDate < endDate) {
+                endDate = tmpDate;
+            }
+        }
         document.getElementById("itemEndTime").innerHTML = endtime.toLocaleString();
         let now = new Date();
         now.setMinutes(now.getMinutes() + 30);
