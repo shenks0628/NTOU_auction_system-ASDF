@@ -24,7 +24,7 @@ const auth = getAuth();
 // const db = getFirestore(app);
 // const storage = getStorage();
 
-var imgs;
+// var imgs;
 var userID = "none", productOwnerID = "none";
 let productData;
 let id = "dd6VioVhhtD3p6P2r49r";
@@ -52,9 +52,10 @@ async function start() {
     await updateView(userID, id);
 };
 function eventSetting() {
-    imgs = document.getElementById("bigImageItem"), imgs.addEventListener("click", changeImage, false);
-    document.getElementById("ToDiscription").addEventListener("click", changeInfo, false);
-    document.getElementById("ToComment").addEventListener("click", changeInfo, false);
+    document.getElementById("previousImage").addEventListener("click", function (event) { changeImages(event); }, false);
+    document.getElementById("nextImage").addEventListener("click", function (event) { changeImages(event); }, false);
+    document.getElementById("ToDiscription").addEventListener("click", function (event) { changeInfo(event) }, false);
+    document.getElementById("ToComment").addEventListener("click", function (event) { changeInfo(event) }, false);
 
     document.getElementById("editButton").addEventListener("click", toEditPage, false);
     document.getElementById("cartButton").addEventListener("click", addToCart, false);
@@ -62,6 +63,28 @@ function eventSetting() {
 
     document.getElementById("watchMoreInfo").addEventListener("click", showMoreInfoPage, false);
     document.getElementById("overlay").addEventListener("click", closeMoreInfoPage, false);
+}
+function changeImages(event) {
+    var target = event.target;
+
+    let srcs = productData.imgs;
+    let imgs = document.getElementById("bigImageItem");
+    if (target.getAttribute("id") == "previousImage") { // previous image
+        for (var i = 0; i < srcs.length; i++) {
+            if (srcs[i] == imgs.getAttribute("src")) {
+                imgs.setAttribute("src", srcs[(i - 1 + srcs.length) % srcs.length]);
+                break;
+            }
+        }
+    }
+    else if (target.getAttribute("id") == "nextImage") { // next image
+        for (var i = 0; i < srcs.length; i++) {
+            if (srcs[i] == imgs.getAttribute("src")) {
+                imgs.setAttribute("src", srcs[(i + 1) % srcs.length]);
+                break;
+            }
+        }
+    }
 }
 
 async function setProduct(productData) { // 設定顯示的商品
@@ -77,6 +100,13 @@ async function setProduct(productData) { // 設定顯示的商品
     }
     else if (productData.type == "bids") {
         let endtime = productData.endtime.toDate();
+        if (productData.bids_info.modtime) {
+            let tmpDate = productData.bids_info.modtime.toDate();
+            tmpDate.setHours(tmpDate.getHours() + 8);
+            if (tmpDate < endDate) {
+                endDate = tmpDate;
+            }
+        }
         document.getElementById("itemEndTime").innerHTML = endtime.toLocaleString();
         let now = new Date();
         now.setMinutes(now.getMinutes() + 30);
@@ -102,7 +132,20 @@ async function setProduct(productData) { // 設定顯示的商品
     if (f == false) itemTag.innerHTML = "無";
 
     let srcs = productData.imgs;
-    imgs.setAttribute("src", srcs[0]);
+    let imgs = document.getElementById("bigImageItem");
+    if (srcs.length > 0) {
+        imgs.setAttribute("src", srcs[0]);
+        if (srcs.length > 1) {
+            document.getElementById("changeImageContainer").style.display = "block";
+        }
+        else {
+            document.getElementById("changeImageContainer").style.display = "none";
+        }
+    }
+    else {
+        imgs.setAttribute("src", "./images/product.png");
+        document.getElementById("changeImageContainer").style.display = "none";
+    }
 
     let itemComment = document.getElementById("itemComment");
     let commentArray = productData.comment;
@@ -160,24 +203,14 @@ function setting() { // 判定是否為買 or 賣家
     }
 }
 
-function changeImage() { // 切換商品照片
-    let srcs = productData.imgs;
-    for (var i = 0; i < srcs.length; i++) {
-        if (srcs[i] == imgs.getAttribute("src")) {
-            imgs.setAttribute("src", srcs[(i + 1) % srcs.length]);
-            break;
-        }
-    }
-}
-
-function changeInfo() { // 切換商品資訊/評論
-    if (document.getElementById("description").style.display == "none") {
+function changeInfo(event) { // 切換商品資訊/評論
+    if (event.target.getAttribute("id") == "ToDiscription") {
         document.getElementById("ToDiscription").disabled = true;
         document.getElementById("ToComment").disabled = false;
         document.getElementById("description").style.display = "block";
         document.getElementById("review").style.display = "none";
     }
-    else {
+    else if (event.target.getAttribute("id") == "ToComment") {
         document.getElementById("ToDiscription").disabled = false;
         document.getElementById("ToComment").disabled = true;
         document.getElementById("description").style.display = "none";

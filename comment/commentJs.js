@@ -23,7 +23,9 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 const images =[];
-
+let seller;
+let buyer;
+let product;
 
 const start = () => {
 
@@ -32,8 +34,8 @@ const start = () => {
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
             const userEmail = user.email;
-            const userRef = await getDoc(doc(db, "users", userEmail));
-            const userInfo = userRef.data();
+            buyer = await getDoc(doc(db, "users", userEmail));
+            const buyerInfo = buyer.data();
 
             const urlParams = new URLSearchParams(window.location.search);
             console.log(urlParams);
@@ -42,10 +44,10 @@ const start = () => {
 
             var avarta = document.getElementById("avartar");
             var imgAvarta = document.createElement("img");
-            imgAvarta.src = userInfo.imgSrc;
+            imgAvarta.src = buyerInfo.imgSrc;
             avarta.appendChild(imgAvarta);
 
-            addItemImg(itemName).then(async() => {
+            await addItemImg(itemName).then(() => {
               display_pic();
             })
             var submitBtn = document.getElementById("submitBtn");
@@ -88,7 +90,7 @@ const start = () => {
 
 async function addItemImg(id) {
     console.log(id);
-    const product = await getDoc(doc(db, "products", id));
+    product = await getDoc(doc(db, "products", id));
     const productData = product.data();
     console.log(productData);
     const imgs = productData.imgs;
@@ -100,20 +102,21 @@ async function addItemImg(id) {
 }
 
 const updateOther = async(id,userEmail) => {
-  await getDoc(doc(db, "users", userEmail)).then(async(docx) => {//更改record的isRate為true
-    const data = docx.data();
+    const data = buyer.data();
     const originalQuantity = data.record[id].quantity; // 獲取原始的quantity值
     data.record[id] = {isRate: true, quantity: originalQuantity};
     console.log(data.record[id]);
-    updateDoc(doc(db, "users", userEmail), data);
-  })
+    await updateDoc(doc(db, "users", userEmail), data);
+
   await getDoc(doc(db, "messages", id)).then((docx3) => {//刪除聊天室
-    const data3 = docx3.data();
-    var modifiedEmail = userEmail.replace(/\./g, '_');
-    console.log(modifiedEmail,data3[modifiedEmail]);
-    updateDoc(doc(db, "messages", id),{
-      [modifiedEmail]: deleteField()
-    })
+    if(docx3.exists()) {
+      const data3 = docx3.data();
+      let modifiedEmail = userEmail.replace(/\./g, '_');
+      console.log(modifiedEmail,data3[modifiedEmail]);
+      updateDoc(doc(db, "messages", id),{
+        [modifiedEmail]: deleteField()
+      })
+    }
   })
 }
 
@@ -125,12 +128,11 @@ const addcomment = async(id,userEmail) => {
   console.log(rating, comment);
   const updatedComment = rating + comment.toString();
 
-  await getDoc(doc(db, "products", id)).then(async(docx) => {//新增評論
-    const data = docx.data();
-    data.comment[userEmail] = updatedComment;
-    updateDoc(doc(db, "products", id), data);
-    const sellerEmail = data.seller;
-    await getDoc(doc(db, "users", sellerEmail)).then(async(docx2) => {//添加星數到賣家評分
+  const data = product.data();
+  data.comment[userEmail] = updatedComment;
+  updateDoc(doc(db, "products", id), data);
+  const sellerEmail = data.seller;
+  await getDoc(doc(db, "users", sellerEmail)).then(async(docx2) => {//添加星數到賣家評分
       const data2 = docx2.data();
       data2.score+=parseInt(rating);
       data2.number++;
@@ -146,8 +148,9 @@ const addcomment = async(id,userEmail) => {
       });
       data2.sold[id] = total;
       console.log("sold",data2.sold[id]);
-      await updateDoc(doc(db, "users", sellerEmail), data2);//更新賣家評分及販賣商品數量
-    })
+      await updateDoc(doc(db, "users", sellerEmail), data2).then(() => {//更新賣家評分及販賣數量
+        console.log("更新成功");
+      })
   })
 };
 

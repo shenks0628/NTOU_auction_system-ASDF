@@ -24,49 +24,37 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-searchBarSearch.onclick = async function () {
-    const mode = searchBarMode.innerHTML;
-    const user = '<img src="img/users.png" alt="search mode">';
-    if (mode === user) {
-        toUrl(`api/?email=${searchBarInput.value}`);
+async function inputSearch(mode, value) {
+    if (mode === '<img src="img/users.png" alt="search mode">') {
+        toUrl(`api/?email=${value}`);
     } else {
-        const docSnap = await getDoc(doc(db, "products", searchBarInput.value));
+        const docSnap = await getDoc(doc(db, "products", value));
         if (docSnap.exists()) {
-            toUrl(`api/mobile.html?id=${searchBarInput.value}`);
+            toUrl(`api/mobile.html?id=${value}`);
         } else {
-            toUrl(`api/index.html?search=${searchBarInput.value}`);
+            toUrl(`api/index.html?search=${value}`);
             if (auth.currentUser) {
                 const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
                 const search = userSnap.data().search;
                 if (search.length >= 10)
                     search.pop();
-                search.push(searchBarInput.value);
+                search.push(value);
                 updateDoc(doc(db, "users", auth.currentUser.email), { search: search });
             }
         }
     }
 }
+searchBarSearch.onclick = async function () {
+    if (searchBarInput.value)
+        await inputSearch(searchBarMode.innerHTML, searchBarInput.value);
+    else
+        toUrl('api');
+}
 menuSearchSearch.onclick = async function () {
-    const mode = menuSearchMode.innerHTML;
-    const user = '<img src="img/users.png" alt="search mode">';
-    if (mode === user) {
-        toUrl(`api/?email=${menuSearchInput.value}`);
-    } else {
-        const docSnap = await getDoc(doc(db, "products", menuSearchInput.value));
-        if (docSnap.exists()) {
-            toUrl(`api/mobile.html?id=${menuSearchInput.value}`);
-        } else {
-            toUrl(`api/index.html?search=${menuSearchInput.value}`);
-            if (auth.currentUser) {
-                const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
-                const search = userSnap.data().search;
-                if (search.length >= 10)
-                    search.pop();
-                search.push(menuSearchInput.value);
-                updateDoc(doc(db, "users", auth.currentUser.email), { search: search });
-            }
-        }
-    }
+    if (menuSearchInput.value)
+        await inputSearch(menuSearchMode.innerHTML, menuSearchInput.value);
+    else
+        toUrl('api');
 }
 onAuthStateChanged(auth, (user) => {
     if (user) {
