@@ -165,7 +165,8 @@ async function addToBids(docId) {
                 }
             }
             else {
-                window.alert("此商品已結標！")
+                window.alert("此商品已結標！");
+                display();
             }
         }
         else {
@@ -270,7 +271,15 @@ const display = async () => {
                                         endDate = tmpDate;
                                     }
                                 }
-                                prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="' + url + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
+                                let currentDate = new Date();
+                                if (currentDate < endDate) {
+                                    if (productData.canBid == true) {
+                                        prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="' + url + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
+                                    }
+                                    else if (productData.canBid == false) {
+                                        prev_view.innerHTML += '<div class="product" id="' + productId + '"><a href="' + url + productId + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button disabled class="disabled_btn" type="submit" id="addb' + productId + '">加入競標清單</button></div>';
+                                    }
+                                }
                             }
                         }
                     }
@@ -309,7 +318,15 @@ const display = async () => {
                                             endDate = tmpDate;
                                         }
                                     }
-                                    rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productDoc.id + '">加入競標清單</button></div>';
+                                    let currentDate = new Date();
+                                    if (currentDate < endDate) {
+                                        if (productData.canBid == true) {
+                                            rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="submit" id="addb' + productDoc.id + '">加入競標清單</button></div>';
+                                        }
+                                        else if (productData.canBid == false) {
+                                            rec.innerHTML += '<div class="product" id="' + productDoc.id + '"><a href="' + url + productDoc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button disabled class="disabled_btn" type="submit" id="addb' + productDoc.id + '">加入競標清單</button></div>';
+                                        }
+                                    }
                                 }
                             }
                         });
@@ -364,11 +381,19 @@ const display = async () => {
                     endDate = tmpDate;
                 }
             }
-            if (userId == seller) {
-                latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
-            }
-            else {
-                latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+            let currentDate = new Date();
+            if (currentDate < endDate) {
+                if (userId == seller) {
+                    latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><p><button class="btn" type="submit" id="edit' + doc.id + '">編輯商品</button></p><p><button class="btn" type="submit" id="del' + doc.id + '">刪除商品</button></p></div>';
+                }
+                else {
+                    if (productData.canBid == true) {
+                        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button class="btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+                    }
+                    else if (productData.canBid == false) {
+                        latest_bids.innerHTML += '<div class="product" id="' + doc.id + '"><a href="' + url + doc.id + '"><img src="' + productData.imgs[0] + '" alt="product"></a><h3>' + productName +  '</h3><p>結標時間：<a class="price">' + endDate.toLocaleString() + '</a></p><p>目前競價：</p><p class="price">' + productData.price + '</p><button disabled class="disabled_btn" type="sumbit" id="addb' + doc.id + '">加入競標清單</button></div>';
+                    }
+                }
             }
         }
     });
