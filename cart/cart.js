@@ -243,7 +243,7 @@ const start1 = () => {
                             // 檢查文件中是否有特定欄位，例如欄位 "a"
                             if (messDoc.data().hasOwnProperty(newid)) {
                                 const pName = productData.name.split('#')[0];
-                                window.alert("您的"+pName+"商品尚未完成訂單，請完成後訂單再來下單");
+                                window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
                                 const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"有"};
                                 cartItems.push(newItem);
                                 console.log(cartItems);
@@ -338,7 +338,7 @@ const start1 = () => {
                                 if (messDoc.data().hasOwnProperty(newid)) {
                                     a="有";
                                     const pName = productData.name.split('#')[0];
-                                    window.alert("您的"+pName+"商品尚未完成訂單，請完成後訂單再來下單");
+                                    window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
                                     console.log("使用者文件中有 'a' 欄位。");
                                 } 
                                 else {
