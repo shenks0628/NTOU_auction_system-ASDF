@@ -103,8 +103,8 @@ async function setProduct(productData) { // 設定顯示的商品
         if (productData.bids_info.modtime) {
             let tmpDate = productData.bids_info.modtime.toDate();
             tmpDate.setHours(tmpDate.getHours() + 8);
-            if (tmpDate < endDate) {
-                endDate = tmpDate;
+            if (tmpDate < endtime) {
+                endtime = tmpDate;
             }
         }
         document.getElementById("itemEndTime").innerHTML = endtime.toLocaleString();
