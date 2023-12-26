@@ -41,32 +41,6 @@ async function del(docId) {
     }
 }
 
-function shn() {
-    let normal_display_list = document.getElementById("normal_display_list");
-    if (normal_display_list.style.display == "") {
-        normal_display_list.style.display = "none";
-    }
-    else if (normal_display_list.style.display == "none") {
-        normal_display_list.style.display = "";
-    }
-    else {
-        normal_display_list.style.display = "none";
-    }
-}
-
-function shb() {
-    let bids_display_list = document.getElementById("bids_display_list");
-    if (bids_display_list.style.display == "") {
-        bids_display_list.style.display = "none";
-    }
-    else if (bids_display_list.style.display == "none") {
-        bids_display_list.style.display = "";
-    }
-    else {
-        bids_display_list.style.display = "none";
-    }
-}
-
 const handleCheck = (event) => {
     const targetId = event.target.id;
     console.log(targetId);
