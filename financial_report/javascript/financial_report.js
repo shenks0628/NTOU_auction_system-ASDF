@@ -26,7 +26,10 @@ const db = getFirestore(app);
 let productsdata={};
 let userEmail;
 
-const start = () => {
+const start = async() => {
+    const header = document.getElementsByTagName("header")[0];
+    const container = document.getElementsByClassName("pageContainer")[0];
+    console.log(header,container);
     onAuthStateChanged(auth, async (user) =>{
         if (user) {
             userEmail = user.email;
@@ -41,9 +44,9 @@ const start = () => {
             await showhigh(productsdata);
         }else { // 沒有登入
             console.log("沒拿到userid");
-            userInfo = undefined;
-           title.innerHTML = "請先登入後再來查看";
-            comment.style.display = "none";
+            //userInfo = undefined;
+            header.innerHTML = "請先登入後再來查看";
+            container.style.display = "none";
        }
     })
 
