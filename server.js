@@ -7,59 +7,77 @@ const { response } = require('express');
 const schedule = require('node-schedule');
 
 // Import Firebase
-const { initializeApp } = require('firebase/app');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
-const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
+// const { initializeApp } = require('firebase/app');
+// const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
+// const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
 
-const firebaseConfig = {
-    apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
-    authDomain: "ntou-auction-system-112eb.firebaseapp.com",
-    projectId: "ntou-auction-system-112eb",
-    storageBucket: "ntou-auction-system-112eb.appspot.com",
-    messagingSenderId: "320414610227",
-    appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
-    measurementId: "G-FLXQ2BQCZF"
-};
+// const firebaseConfig = {
+//     apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
+//     authDomain: "ntou-auction-system-112eb.firebaseapp.com",
+//     projectId: "ntou-auction-system-112eb",
+//     storageBucket: "ntou-auction-system-112eb.appspot.com",
+//     messagingSenderId: "320414610227",
+//     appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
+//     measurementId: "G-FLXQ2BQCZF"
+// };
 
-// Initialize Firebase
-const firebase = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore(firebase);
+// // Initialize Firebase
+// const firebase = initializeApp(firebaseConfig);
+// const auth = getAuth();
+// const db = getFirestore(firebase);
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("ntou-auction-system-112eb-firebase-adminsdk-rkjlt-a386ef742c.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://ntou-auction-system-112eb.firebaseio.com'
+});
+
+const db = admin.firestore();
+const productsRef = db.collection("products");
+const usersRef = db.collection("users");
+const queryRef = productsRef.where("type", "==", "bids");
 
 schedule.scheduleJob('0 * * * * *', async () => {
-    const q = query(collection(db, "products"), where("type", "==", "bids"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (productDoc) => {
-        const productData = productDoc.data();
-        if (productData.canBid == true) {
-            if (productData.bids_info.modtime) {
-                let endDate = productData.endtime.toDate();
-                let endDate1 = productData.bids_info.modtime.toDate();
-                endDate1.setHours(endDate.getHours() + 8);
-                if (endDate1 < endDate) {
-                    endDate = endDate1;
+    queryRef.get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach(async (productDoc) => {
+            const productData = productDoc.data();
+            if (productData.canBid == true) {
+                if (productData.bids_info.modtime) {
+                    let endDate = productData.endtime.toDate();
+                    let endDate1 = productData.bids_info.modtime.toDate();
+                    endDate1.setHours(endDate.getHours() + 8);
+                    if (endDate1 < endDate) {
+                        endDate = endDate1;
+                    }
+                    let currentDate = new Date();
+                    if (currentDate >= endDate) {
+                        const res1 = await usersRef.doc(productData.bids_info.who1).update({
+                            ['cart.' + productDoc.id]: 1,
+                            ['bids.' + productDoc.id]: admin.firestore.FieldValue.delete()
+                        });
+                        const res2 = await productsRef.doc(productDoc.id).update({
+                            canBid: false
+                        });
+                    }
                 }
-                let currentDate = new Date();
-                if (currentDate >= endDate) {
-                    await updateDoc(doc(db, "users", productData.bids_info.who1), {
-                        ['cart.' + productDoc.id]: 1,
-                        ['bids.' + productDoc.id]: deleteField()
-                    });
-                    await updateDoc(doc(db, "products", productDoc.id), {
-                        canBid: false
-                    });
+                else {
+                    let endDate = productData.endtime.toDate();
+                    let currentDate = new Date();
+                    if (currentDate >= endDate) {
+                        const res2 = await productsRef.doc(productDoc.id).update({
+                            canBid: false
+                        });
+                    }
                 }
             }
-            else {
-                let endDate = productData.endtime.toDate();
-                let currentDate = new Date();
-                if (currentDate >= endDate) {
-                    await updateDoc(doc(db, "products", productDoc.id), {
-                        canBid: false
-                    });
-                }
-            }
-        }
+        });
+    })
+    .catch((error) => {
+        console.error('Error getting documents: ', error);
     });
 })
 
