@@ -42,8 +42,8 @@ const queryRef = productsRef.where("type", "==", "bids");
 
 let rule = new schedule.RecurrenceRule();
 rule.second = [0, 10, 20, 30, 40, 50];
-
-schedule.scheduleJob('0 * * * * *', async () => {
+// scheduleJob: https://segmentfault.com/a/1190000022455361
+schedule.scheduleJob(rule, async () => {
     queryRef.get()
     .then((querySnapshot) => {
         querySnapshot.forEach(async (productDoc) => {
