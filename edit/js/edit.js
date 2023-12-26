@@ -29,7 +29,7 @@ if (urlParams.get('id')) {
   id = urlParams.get('id');
 }
 
-let beDeletedFiles, imageFile = [];
+let beDeletedFiles = [], beInsertedFiles = [], imageFile = [];
 let userData = "none";
 
 async function start() {
@@ -159,8 +159,8 @@ function showData(productData) { // 顯示原商品資料
     else
       document.getElementById("inputTag3").value = "";
     let uploadImage = productData.imgs;
-    let oldImage = document.getElementById("oldImage");
-    oldImage.innerHTML = "";
+    let originImage = document.getElementById("originImage");
+    originImage.innerHTML = "";
     for (let i = 0; i < uploadImage.length; i++) {
       var img = document.createElement("img");
       img.setAttribute("src", uploadImage[i]);
@@ -170,7 +170,7 @@ function showData(productData) { // 顯示原商品資料
       img.setAttribute("title", "點擊以刪除圖片");
       img.style.cursor = "pointer";
       img.onclick = temporaryDeleteImage(img, uploadImage[i]);
-      oldImage.appendChild(img);
+      originImage.appendChild(img);
     }
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
@@ -200,8 +200,8 @@ function showData(productData) { // 顯示原商品資料
     else
       document.getElementById("inputTag3").value = "";
     let uploadImage = productData.imgs;
-    let oldImage = document.getElementById("oldImage");
-    oldImage.innerHTML = "";
+    let originImage = document.getElementById("originImage");
+    originImage.innerHTML = "";
     for (let i = 0; i < uploadImage.length; i++) {
       var img = document.createElement("img");
       img.setAttribute("src", uploadImage[i]);
@@ -211,7 +211,7 @@ function showData(productData) { // 顯示原商品資料
       img.setAttribute("title", "點擊以刪除圖片");
       img.style.cursor = "pointer";
       img.onclick = temporaryDeleteImage(img, uploadImage[i]);
-      oldImage.appendChild(img);
+      originImage.appendChild(img);
     }
     document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
@@ -318,7 +318,15 @@ async function setCheckPage() {
       f = true;
     }
   }
-  // document.getElementById("newImage").innerHTML;
+  document.getElementById("newImage").innerHTML = "";
+  // if (newProductData.imgs.length == 0 && beDeletedFiles.length == 0)
+  document.getElementById("newImage").style.display = "none";
+  // else
+  //   document.getElementById("newImage").style.display = "block";
+  // if (newProductData.imgs.length > 0)
+  //   document.getElementById("newImage").innerHTML += "<br>新增" + newProductData.imgs.length + "張";
+  // if (beDeletedFiles.length > 0)
+  //   document.getElementById("newImage").innerHTML += "<br>刪除" + beDeletedFiles.length + "張";
   document.getElementById("newURL").innerHTML = newProductData.url;
 }
 
