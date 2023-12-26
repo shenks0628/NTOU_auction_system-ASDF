@@ -7,7 +7,7 @@ const { response } = require('express');
 const schedule = require('node-schedule');
 
 // Import Firebase
-const { initializeApp } = require('firebase/app');
+const { initializeApp } = require('firebase-admin/app');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
 const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
 
