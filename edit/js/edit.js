@@ -244,7 +244,7 @@ function temporaryDeleteImage(src) { // 刪除圖片
         break;
       }
     }
-    for (let i = 0; i < beInsertedFiles.length; i++) {
+    for (let i = 0; i < shownFiles.length; i++) {
       if (shownFiles[i] == src) {
         shownFiles.splice(i, 1);
         beInsertedFiles.splice(i, 1);
