@@ -40,12 +40,16 @@ const productsRef = db.collection("products");
 const usersRef = db.collection("users");
 const queryRef = productsRef.where("type", "==", "bids");
 
-schedule.scheduleJob('0 * * * * *', async () => {
+let rule = new schedule.RecurrenceRule();
+rule.second = [0, 10, 20, 30, 40, 50];
+// scheduleJob: https://segmentfault.com/a/1190000022455361
+schedule.scheduleJob(rule, async () => {
     queryRef.get()
     .then((querySnapshot) => {
         querySnapshot.forEach(async (productDoc) => {
             const productData = productDoc.data();
             if (productData.canBid == true) {
+                console.log("checking...");
                 if (productData.bids_info.modtime) {
                     let endDate = productData.endtime.toDate();
                     let endDate1 = productData.bids_info.modtime.toDate();
@@ -55,6 +59,7 @@ schedule.scheduleJob('0 * * * * *', async () => {
                     }
                     let currentDate = new Date();
                     if (currentDate >= endDate) {
+                        console.log("The bidding of product with id: " + productDoc.id + " has ended.");
                         const res1 = await usersRef.doc(productData.bids_info.who1).update({
                             ['cart.' + productDoc.id]: 1,
                             ['bids.' + productDoc.id]: admin.firestore.FieldValue.delete()
@@ -68,6 +73,7 @@ schedule.scheduleJob('0 * * * * *', async () => {
                     let endDate = productData.endtime.toDate();
                     let currentDate = new Date();
                     if (currentDate >= endDate) {
+                        console.log("The bidding of product with id: " + productDoc.id + " has ended.");
                         const res2 = await productsRef.doc(productDoc.id).update({
                             canBid: false
                         });
