@@ -31,7 +31,7 @@ button {
   border: none;
   box-shadow: 0 2px 6px #ccc;
   border-radius: 10px;
-  background-color: rgba(64, 64, 64, 0.9);
+  background-color: rgba(120, 120, 120, 0.9);
   border: 1px solid rgb(0, 0, 0);
   align-items: center;
 }
@@ -86,7 +86,7 @@ button {
 
   #new,
   #old {
-    overflow-y: auto;
+    overflow: none auto;
     width: 48%;
     max-height: 100%;
   }

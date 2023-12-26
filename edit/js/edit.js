@@ -29,7 +29,7 @@ if (urlParams.get('id')) {
   id = urlParams.get('id');
 }
 
-let beDeletedFiles = [], beInsertedFiles = [], imageFile = [];
+let beDeletedFiles = [], beInsertedFiles = [], shownFiles = [], originFile = [], imageFile = [];
 let userData = "none";
 
 async function start() {
@@ -72,14 +72,17 @@ function eventSetting() {
 async function reset() {  // 重置input欄位
   beDeletedFiles = [];
   beInsertedFiles = [];
+  shownFiles = []
   if (id != null) {
     document.getElementById("inputType").setAttribute("disabled", true);
     let productData = await getProduct(id);
+    originFile = Array.from(productData.imgs);
     imageFile = Array.from(productData.imgs);
     showData(productData);
   }
   else {
     let productData = await clearProductData();
+    originFile = Array.from(productData.imgs);
     imageFile = Array.from(productData.imgs);
     showData(productData);
   }
@@ -114,17 +117,17 @@ function showImage() {
   for (let i = 0; i < files.length; i++) {
     beInsertedFiles.push(files[i]);
     let src = URL.createObjectURL(files[i]);
+    shownFiles.push(src);
     var img = document.createElement("img");
     img.setAttribute("src", src);
     img.setAttribute("alt", src);
-    img.setAttribute("height", "50px");
-    img.setAttribute("width", "50px");
+    img.setAttribute("height", "100px");
+    img.setAttribute("width", "100px");
     img.setAttribute("title", "點擊以刪除圖片");
     img.style.cursor = "pointer";
-    img.onclick = temporaryDeleteImage(img, src);
+    img.onclick = temporaryDeleteImage(src);
     originImage.appendChild(img);
   }
-  console.log(beInsertedFiles);
   document.getElementById("inputImage").value = "";
 }
 
@@ -186,11 +189,11 @@ function showData(productData) { // 顯示原商品資料
       var img = document.createElement("img");
       img.setAttribute("src", uploadImage[i]);
       img.setAttribute("alt", uploadImage[i]);
-      img.setAttribute("height", "50px");
-      img.setAttribute("width", "50px");
+      img.setAttribute("height", "100px");
+      img.setAttribute("width", "100px");
       img.setAttribute("title", "點擊以刪除圖片");
       img.style.cursor = "pointer";
-      img.onclick = temporaryDeleteImage(img, uploadImage[i]);
+      img.onclick = temporaryDeleteImage(uploadImage[i]);
       originImage.appendChild(img);
     }
     document.getElementById("inputImage").value = "";
@@ -231,7 +234,7 @@ function showData(productData) { // 顯示原商品資料
       img.setAttribute("width", "50px");
       img.setAttribute("title", "點擊以刪除圖片");
       img.style.cursor = "pointer";
-      img.onclick = temporaryDeleteImage(img, uploadImage[i]);
+      img.onclick = temporaryDeleteImage(uploadImage[i]);
       originImage.appendChild(img);
     }
     document.getElementById("inputImage").value = "";
@@ -243,9 +246,8 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputTime").value = (('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
   }
 }
-function temporaryDeleteImage(img, src) {
-  return function updateBeDelted() {
-    img.style.display = "none";
+function temporaryDeleteImage(src) {
+  return function updateBeDelted(event) {
     for (let i = 0; i < imageFile.length; i++) {
       if (imageFile[i] == src) {
         beDeletedFiles.push(src);
@@ -254,11 +256,13 @@ function temporaryDeleteImage(img, src) {
       }
     }
     for (let i = 0; i < beInsertedFiles.length; i++) {
-      if (beInsertedFiles[i] == src) {
+      if (shownFiles[i] == src) {
+        shownFiles.splice(i, 1);
         beInsertedFiles.splice(i, 1);
         break;
       }
     }
+    document.getElementById("originImage").removeChild(event.target);
   }
 }
 
@@ -286,9 +290,11 @@ function showCheckPage() {
   else if (document.getElementById("inputDescription").checkValidity() == false) {
     window.alert("商品敘述字數超過上限，請修改");
   }
+  else if (document.getElementById("inputTag1").checkValidity() == false || document.getElementById("inputTag2").checkValidity() == false || document.getElementById("inputTag3").checkValidity() == false) {
+    window.alert("商品標籤格式錯誤，請修改");
+  }
   else if (document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
-    window.alert("請填寫完整資料");
-    // return;
+    window.alert("請確認數量以及價格部分");
   }
   else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
@@ -326,6 +332,16 @@ async function setCheckPage() {
         f = true;
       }
     }
+    document.getElementById("oldImage").innerHTML = "";
+    for (let i = 0; i < originFile.length; i++) {
+      var img = document.createElement("img");
+      img.setAttribute("src", originFile[i]);
+      img.setAttribute("alt", originFile[i]);
+      img.setAttribute("height", "80px");
+      img.setAttribute("width", "80px");
+      document.getElementById("oldImage").appendChild(img);
+    }
+
     document.getElementById("oldURL").innerHTML = originProductData.url;
   }
 
@@ -346,7 +362,22 @@ async function setCheckPage() {
     }
   }
   document.getElementById("newImage").innerHTML = "";
-  document.getElementById("newImage").style.display = "none";
+  for (let i = 0; i < imageFile.length; i++) {
+    var img = document.createElement("img");
+    img.setAttribute("src", imageFile[i]);
+    img.setAttribute("alt", imageFile[i]);
+    img.setAttribute("height", "80px");
+    img.setAttribute("width", "80px");
+    document.getElementById("newImage").appendChild(img);
+  }
+  for (let i = 0; i < beInsertedFiles.length; i++) {
+    var img = document.createElement("img");
+    img.setAttribute("src", beInsertedFiles[i]);
+    img.setAttribute("alt", beInsertedFiles[i]);
+    img.setAttribute("height", "80px");
+    img.setAttribute("width", "80px");
+    document.getElementById("newImage").appendChild(img);
+  }
 
   document.getElementById("newURL").innerHTML = newProductData.url;
 }
@@ -402,7 +433,7 @@ function getInputData() {
       name: document.getElementById("inputName").value + ("#" + document.getElementById("inputTag1").value) + ("#" + document.getElementById("inputTag2").value) + ("#" + document.getElementById("inputTag3").value),
       description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
-      quantity: parseInt(1),
+      quantity: parseInt(document.getElementById("inputQuantity").value),
       imgs: beInsertedFiles,
       url: document.getElementById("inputURL").value,
       endtime: Timestamp.fromDate(new Date(document.getElementById("inputDate").value + "T" + document.getElementById("inputTime").value))
