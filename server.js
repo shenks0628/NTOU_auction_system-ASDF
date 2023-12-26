@@ -33,8 +33,12 @@ schedule.scheduleJob('1 * * * * *', async () => {
         const productData = productDoc.data();
         if (productData.canBid == true) {
             if (productData.bids_info.modtime) {
-                let endDate = productData.bids_info.modtime.toDate();
-                endDate.setHours(endDate.getHours() + 8);
+                let endDate = productData.endtime.toDate();
+                let endDate1 = productData.bids_info.modtime.toDate();
+                endDate1.setHours(endDate.getHours() + 8);
+                if (endDate1 < endDate) {
+                    endDate = endDate1;
+                }
                 let currentDate = new Date();
                 if (currentDate >= endDate) {
                     await updateDoc(doc(db, "users", productData.bids_info.who1), {
