@@ -356,10 +356,10 @@ async function setCheckPage() {
     img.setAttribute("width", "80px");
     document.getElementById("newImage").appendChild(img);
   }
-  for (let i = 0; i < beInsertedFiles.length; i++) {
+  for (let i = 0; i < shownFiles.length; i++) {
     var img = document.createElement("img");
-    img.setAttribute("src", beInsertedFiles[i]);
-    img.setAttribute("alt", beInsertedFiles[i]);
+    img.setAttribute("src", shownFiles[i]);
+    img.setAttribute("alt", shownFiles[i]);
     img.setAttribute("height", "80px");
     img.setAttribute("width", "80px");
     document.getElementById("newImage").appendChild(img);
