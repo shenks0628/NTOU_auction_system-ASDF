@@ -85,8 +85,6 @@ const start = async () => {
     const title = document.getElementById("title");
     const normal_title = document.getElementById("normal_title");
     const bids_title = document.getElementById("bids_title");
-    const show_hide_normal = document.getElementById("show_hide_normal");
-    const show_hide_bids = document.getElementById("show_hide_bids");
     const add_btn = document.getElementById("add");
     let url;
     if (window.innerWidth <= 970) {
@@ -100,8 +98,6 @@ const start = async () => {
             title.innerHTML = "賣場清單";
             normal_title.style.display = "";
             bids_title.style.display = "";
-            show_hide_normal.style.display = "";
-            show_hide_bids.style.display = "";
             add_btn.style.display = "";
             const userId = user.email;
 
@@ -138,10 +134,6 @@ const start = async () => {
             normal_display_list.addEventListener("click", handleCheck);
             bids_display_list.removeEventListener("click", handleCheck);
             bids_display_list.addEventListener("click", handleCheck);
-            show_hide_normal.removeEventListener("click", shn);
-            show_hide_normal.addEventListener("click", shn);
-            show_hide_bids.removeEventListener("click", shb);
-            show_hide_bids.addEventListener("click", shb);
             add_btn.removeEventListener("click", add);
             add_btn.addEventListener("click", add);
         }
@@ -149,8 +141,6 @@ const start = async () => {
             title.innerHTML = "請先登入後再來查看";
             normal_title.style.display = "none";
             bids_title.style.display = "none";
-            show_hide_normal.style.display = "none";
-            show_hide_bids.style.display = "none";
             add_btn.style.display = "none";
         }
     });
