@@ -78,14 +78,14 @@ button {
   overflow: auto;
 }
 
-#footer {
+/* #footer {
   width: 100%;
   flex-grow: 0;
   background-color: #333;
   color: white;
   text-align: center;
   float: inline-end;
-}
+} */
 
 .productImage {
   width: 100%;
