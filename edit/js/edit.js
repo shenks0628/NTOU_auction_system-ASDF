@@ -67,11 +67,13 @@ function eventSetting() {
   document.getElementById("checkPageCloseButton").addEventListener("click", closeCheckPage, false);
   document.getElementById("sendButton").addEventListener("click", sendCheck, false);
   document.getElementById("inputType").addEventListener("change", changeType, false);
+  document.getElementById("inputImage").addEventListener("change", showImage, false);
 }
 async function reset() {  // 重置input欄位
+  beDeletedFiles = [];
+  beInsertedFiles = [];
   if (id != null) {
     document.getElementById("inputType").setAttribute("disabled", true);
-    beDeletedFiles = [];
     let productData = await getProduct(id);
     imageFile = Array.from(productData.imgs);
     showData(productData);
@@ -105,6 +107,25 @@ function inputTypeSet(productData) {
     document.getElementById("quantityContainer").style.display = "none";
     document.getElementById("endTimeContainer").style.display = "block";
   }
+}
+
+function showImage() {
+  let files = document.getElementById("inputImage").files;
+  for (let i = 0; i < files.length; i++) {
+    beInsertedFiles.push(files[i]);
+    let src = URL.createObjectURL(files[i]);
+    var img = document.createElement("img");
+    img.setAttribute("src", src);
+    img.setAttribute("alt", src);
+    img.setAttribute("height", "50px");
+    img.setAttribute("width", "50px");
+    img.setAttribute("title", "點擊以刪除圖片");
+    img.style.cursor = "pointer";
+    img.onclick = temporaryDeleteImage(img, src);
+    originImage.appendChild(img);
+  }
+  console.log(beInsertedFiles);
+  document.getElementById("inputImage").value = "";
 }
 
 async function clearProductData() {
@@ -224,11 +245,17 @@ function showData(productData) { // 顯示原商品資料
 }
 function temporaryDeleteImage(img, src) {
   return function updateBeDelted() {
-    beDeletedFiles.push(src);
     img.style.display = "none";
     for (let i = 0; i < imageFile.length; i++) {
       if (imageFile[i] == src) {
+        beDeletedFiles.push(src);
         imageFile.splice(i, 1);
+        break;
+      }
+    }
+    for (let i = 0; i < beInsertedFiles.length; i++) {
+      if (beInsertedFiles[i] == src) {
+        beInsertedFiles.splice(i, 1);
         break;
       }
     }
@@ -319,14 +346,8 @@ async function setCheckPage() {
     }
   }
   document.getElementById("newImage").innerHTML = "";
-  // if (newProductData.imgs.length == 0 && beDeletedFiles.length == 0)
   document.getElementById("newImage").style.display = "none";
-  // else
-  //   document.getElementById("newImage").style.display = "block";
-  // if (newProductData.imgs.length > 0)
-  //   document.getElementById("newImage").innerHTML += "<br>新增" + newProductData.imgs.length + "張";
-  // if (beDeletedFiles.length > 0)
-  //   document.getElementById("newImage").innerHTML += "<br>刪除" + beDeletedFiles.length + "張";
+
   document.getElementById("newURL").innerHTML = newProductData.url;
 }
 
@@ -370,7 +391,7 @@ function getInputData() {
       description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(document.getElementById("inputQuantity").value),
-      imgs: document.getElementById("inputImage").files,
+      imgs: beInsertedFiles,
       url: document.getElementById("inputURL").value
     }
   }
@@ -382,7 +403,7 @@ function getInputData() {
       description: document.getElementById("inputDescription").value.replace(/\n/g, "<br>"),
       price: parseInt(document.getElementById("inputPrice").value),
       quantity: parseInt(1),
-      imgs: document.getElementById("inputImage").files,
+      imgs: beInsertedFiles,
       url: document.getElementById("inputURL").value,
       endtime: Timestamp.fromDate(new Date(document.getElementById("inputDate").value + "T" + document.getElementById("inputTime").value))
     }
