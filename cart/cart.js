@@ -110,7 +110,7 @@ function displayCart() {
     console.log("有進來這裡面");
     let totalAmount = 0;
     for(var item of cartItems){
-        if(item.check==="有貨"){
+        if(item.check==="有貨"&&item.mes==="沒有"){
             const subtotal = item.price * item.quantity;
             totalAmount += subtotal;
             const row = document.createElement('tr');
@@ -234,53 +234,200 @@ const start1 = () => {
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
                 if(cartData[key]<=productData.quantity){
-                    const pName = productData.name.split('#')[0];
-                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0]};
-                    cartItems.push(newItem);
-                    console.log(cartItems);
-                    totalAmount += newItem.price * newItem.quantity;
-                    //totalAmountElement.textContent = 0;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
-                        <td>
-                            <a href="../product/?id=${newItem.key}" >
-                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                            </a>
-                        </td>
-                        <td>${newItem.name}</td>
-                        <td>${newItem.price} 元</td>
-                        <td>${newItem.quantity}</td>
-                        <td>${newItem.price * newItem.quantity} 元</td>
-                        <td>${newItem.check}</td>
-                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
-                    `;
-                    cartTable.appendChild(row);
+                    const messRef = doc(db, "messages", key);
+                    // 取得文件資料
+                    getDoc(messRef)
+                    .then((messDoc) => {
+                        if (messDoc.exists()) {
+                            const newid=encodeEmail(userId);
+                            // 檢查文件中是否有特定欄位，例如欄位 "a"
+                            if (messDoc.data().hasOwnProperty(newid)) {
+                                const pName = productData.name.split('#')[0];
+                                window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
+                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"有"};
+                                cartItems.push(newItem);
+                                console.log(cartItems);
+                                totalAmount += newItem.price * newItem.quantity;
+                                //totalAmountElement.textContent = 0;
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td></td>
+                                    <td>
+                                        <a href="../product/?id=${newItem.key}" >
+                                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                        </a>
+                                    </td>
+                                    <td>${newItem.name}</td>
+                                    <td>${newItem.price} 元</td>
+                                    <td>${newItem.quantity}</td>
+                                    <td>${newItem.price * newItem.quantity} 元</td>
+                                    <td>${newItem.check}</td>
+                                    <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                    <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                `;
+                                cartTable.appendChild(row);
+                                console.log("文件 'x' 中有 'a' 欄位。");
+                            } 
+                            else {
+                                const pName = productData.name.split('#')[0];
+                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有"};
+                                cartItems.push(newItem);
+                                console.log(cartItems);
+                                totalAmount += newItem.price * newItem.quantity;
+                                //totalAmountElement.textContent = 0;
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
+                                    <td>
+                                        <a href="../product/?id=${newItem.key}" >
+                                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                        </a>
+                                    </td>
+                                    <td>${newItem.name}</td>
+                                    <td>${newItem.price} 元</td>
+                                    <td>${newItem.quantity}</td>
+                                    <td>${newItem.price * newItem.quantity} 元</td>
+                                    <td>${newItem.check}</td>
+                                    <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                    <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                `;
+                                cartTable.appendChild(row);
+                                console.log("文件 'x' 中有 'a' 欄位。");
+                            }
+                        } 
+                        else {
+                            const pName = productData.name.split('#')[0];
+                            const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有"};
+                            cartItems.push(newItem);
+                            console.log(cartItems);
+                            totalAmount += newItem.price * newItem.quantity;
+                            //totalAmountElement.textContent = 0;
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
+                                <td>
+                                    <a href="../product/?id=${newItem.key}" >
+                                        <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                    </a>
+                                </td>
+                                <td>${newItem.name}</td>
+                                <td>${newItem.price} 元</td>
+                                <td>${newItem.quantity}</td>
+                                <td>${newItem.price * newItem.quantity} 元</td>
+                                <td>${newItem.check}</td>
+                                <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                            `;
+                            cartTable.appendChild(row);
+                            console.log("找不到文件 'x'。");
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("取得使用者文件時發生錯誤：", error);
+                    });
                 }
                 else{
-                    const prName = productData.name.split('#')[0];
-                    window.alert("你所選的商品:"+prName+"數量不足,請更新商品數量或移除購物車");
-                    const newItem = { name: prName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0]};
-                    cartItems.push(newItem);
-                    console.log(cartItems);
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td></td>
-                        <td>
-                            <a href="../product/?id=${newItem.key}">
-                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                            </a>
-                        </td>
-                        <td>${newItem.name}</td>
-                        <td>${newItem.price} 元</td>
-                        <td>${newItem.quantity}</td>
-                        <td>${newItem.price * newItem.quantity} 元</td>
-                        <td>${newItem.check}</td>
-                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>
-                    `;
-                    cartTable.appendChild(row);
+                    const newid=encodeEmail(userId);
+                    const messRef = doc(db, "messages", key);
+                    // 使用 getDoc 取得文件快照
+                    getDoc( messRef )
+                        .then((messDoc) => {
+                            if (messDoc.exists()) {
+                                // 檢查文件中是否有特定欄位，例如欄位 "a"
+                                if (messDoc.data().hasOwnProperty(newid)) {
+                                    const a="有";
+                                    const pName = productData.name.split('#')[0];
+                                    window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
+                                    window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
+                                    console.log(a);
+                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
+                                    cartItems.push(newItem);
+                                    console.log(cartItems);
+                                    totalAmount += newItem.price * newItem.quantity;
+                                    //totalAmountElement.textContent = 0;
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td></td>
+                                        <td>
+                                            <a href="../product/?id=${newItem.key}" >
+                                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                            </a>
+                                        </td>
+                                        <td>${newItem.name}</td>
+                                        <td>${newItem.price} 元</td>
+                                        <td>${newItem.quantity}</td>
+                                        <td>${newItem.price * newItem.quantity} 元</td>
+                                        <td>${newItem.check}</td>
+                                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                    `;
+                                    cartTable.appendChild(row);
+                                    console.log("使用者文件中有 'a' 欄位。");
+                                } 
+                                else {
+                                    const a="沒有";
+                                    const pName = productData.name.split('#')[0];
+                                    window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
+                                    console.log(a);
+                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
+                                    cartItems.push(newItem);
+                                    console.log(cartItems);
+                                    totalAmount += newItem.price * newItem.quantity;
+                                    //totalAmountElement.textContent = 0;
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td></td>
+                                        <td>
+                                            <a href="../product/?id=${newItem.key}" >
+                                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                            </a>
+                                        </td>
+                                        <td>${newItem.name}</td>
+                                        <td>${newItem.price} 元</td>
+                                        <td>${newItem.quantity}</td>
+                                        <td>${newItem.price * newItem.quantity} 元</td>
+                                        <td>${newItem.check}</td>
+                                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                    `;
+                                    cartTable.appendChild(row);
+                                    console.log("使用者文件中沒有 'a' 欄位。");
+                                }
+                            } 
+                            else {
+                                const a="沒有";
+                                const pName = productData.name.split('#')[0];
+                                window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
+                                console.log(a);
+                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
+                                cartItems.push(newItem);
+                                console.log(cartItems);
+                                totalAmount += newItem.price * newItem.quantity;
+                                //totalAmountElement.textContent = 0;
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td></td>
+                                    <td>
+                                        <a href="../product/?id=${newItem.key}" >
+                                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                        </a>
+                                    </td>
+                                    <td>${newItem.name}</td>
+                                    <td>${newItem.price} 元</td>
+                                    <td>${newItem.quantity}</td>
+                                    <td>${newItem.price * newItem.quantity} 元</td>
+                                    <td>${newItem.check}</td>
+                                    <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                    <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                `;
+                                cartTable.appendChild(row);
+                                console.log("找不到使用者文件。");
+                            }
+                        })
+                        .catch((error) => {
+                            console.log("取得使用者文件時發生錯誤：", error);
+                        });
+                    
                 }
             } 
             else {
@@ -353,7 +500,7 @@ const start1 = () => {
                 }
             }
             else { // 按 cancel
-                window.alert("您已取消！");
+                //window.alert("您已取消！");
             }
             
         }

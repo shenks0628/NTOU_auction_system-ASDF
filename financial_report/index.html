@@ -2,6 +2,7 @@
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>financial Report</title>
         <style>
             /* 通用樣式 */
@@ -25,6 +26,13 @@
                 color: #333;
                 font-size: 44px;
                 font-weight: bold;
+            }
+
+            header::after{
+                content: "點擊圖片可去觀看評論";
+                display: block;
+                font-size: 14px;
+                opacity: 0.3;
             }
     
             .pageContainer {
@@ -101,6 +109,9 @@
                 .container {
                     width: 100%;
                     padding: 10px;
+                }
+                #display_all>div{
+                    transform: scale(0.8);
                 }
             }
         </style> 
