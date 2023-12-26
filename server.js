@@ -26,7 +26,7 @@ const firebase = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(firebase);
 
-schedule.scheduleJob('0 * * * * *', async () => {
+schedule.scheduleJob('1 * * * * *', async () => {
     const q = query(collection(db, "products"), where("type", "==", "bids"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (productDoc) => {
