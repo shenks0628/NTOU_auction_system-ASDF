@@ -26,38 +26,42 @@ const firebase = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(firebase);
 
-// schedule.scheduleJob('1 * * * * *', async () => {
-//     const q = query(collection(db, "products"), where("type", "==", "bids"));
-//     const querySnapshot = await getDocs(q);
-//     querySnapshot.forEach(async (productDoc) => {
-//         const productData = productDoc.data();
-//         if (productData.canBid == true) {
-//             if (productData.bids_info.modtime) {
-//                 let endDate = productData.bids_info.modtime.toDate();
-//                 endDate.setHours(endDate.getHours() + 8);
-//                 let currentDate = new Date();
-//                 if (currentDate >= endDate) {
-//                     await updateDoc(doc(db, "users", productData.bids_info.who1), {
-//                         ['cart.' + productDoc.id]: 1,
-//                         ['bids.' + productDoc.id]: deleteField()
-//                     });
-//                     await updateDoc(doc(db, "products", productDoc.id), {
-//                         canBid: false
-//                     });
-//                 }
-//             }
-//             else {
-//                 let endDate = productData.endtime.toDate();
-//                 let currentDate = new Date();
-//                 if (currentDate >= endDate) {
-//                     await updateDoc(doc(db, "products", productDoc.id), {
-//                         canBid: false
-//                     });
-//                 }
-//             }
-//         }
-//     });
-// })
+schedule.scheduleJob('1 * * * * *', async () => {
+    const q = query(collection(db, "products"), where("type", "==", "bids"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (productDoc) => {
+        const productData = productDoc.data();
+        if (productData.canBid == true) {
+            if (productData.bids_info.modtime) {
+                let endDate = productData.endtime.toDate();
+                let endDate1 = productData.bids_info.modtime.toDate();
+                endDate1.setHours(endDate.getHours() + 8);
+                if (endDate1 < endDate) {
+                    endDate = endDate1;
+                }
+                let currentDate = new Date();
+                if (currentDate >= endDate) {
+                    await updateDoc(doc(db, "users", productData.bids_info.who1), {
+                        ['cart.' + productDoc.id]: 1,
+                        ['bids.' + productDoc.id]: deleteField()
+                    });
+                    await updateDoc(doc(db, "products", productDoc.id), {
+                        canBid: false
+                    });
+                }
+            }
+            else {
+                let endDate = productData.endtime.toDate();
+                let currentDate = new Date();
+                if (currentDate >= endDate) {
+                    await updateDoc(doc(db, "products", productDoc.id), {
+                        canBid: false
+                    });
+                }
+            }
+        }
+    });
+})
 
 const app = express()
 const PORT = process.env.PORT || 3000
