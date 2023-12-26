@@ -51,7 +51,7 @@ async function start() {
     // console.log(userID, id);
     await updateView(userID, id);
 };
-function eventSetting() {
+function eventSetting() { // 設定event
     document.getElementById("previousImage").addEventListener("click", function (event) { changeImages(event); }, false);
     document.getElementById("nextImage").addEventListener("click", function (event) { changeImages(event); }, false);
     document.getElementById("ToDiscription").addEventListener("click", function (event) { changeInfo(event) }, false);
@@ -63,28 +63,6 @@ function eventSetting() {
 
     document.getElementById("watchMoreInfo").addEventListener("click", showMoreInfoPage, false);
     document.getElementById("overlay").addEventListener("click", closeMoreInfoPage, false);
-}
-function changeImages(event) {
-    var target = event.target;
-
-    let srcs = productData.imgs;
-    let imgs = document.getElementById("bigImageItem");
-    if (target.getAttribute("id") == "previousImage") { // previous image
-        for (var i = 0; i < srcs.length; i++) {
-            if (srcs[i] == imgs.getAttribute("src")) {
-                imgs.setAttribute("src", srcs[(i - 1 + srcs.length) % srcs.length]);
-                break;
-            }
-        }
-    }
-    else if (target.getAttribute("id") == "nextImage") { // next image
-        for (var i = 0; i < srcs.length; i++) {
-            if (srcs[i] == imgs.getAttribute("src")) {
-                imgs.setAttribute("src", srcs[(i + 1) % srcs.length]);
-                break;
-            }
-        }
-    }
 }
 
 async function setProduct(productData) { // 設定顯示的商品
@@ -175,8 +153,6 @@ async function setProduct(productData) { // 設定顯示的商品
     }
 }
 
-
-
 function setting() { // 判定是否為買 or 賣家
     // console.log(userID, productOwnerID);
     if (productOwnerID == "none") return;
@@ -203,6 +179,28 @@ function setting() { // 判定是否為買 or 賣家
     }
 }
 
+function changeImages(event) { // 更改顯示的圖片
+    var target = event.target;
+    let srcs = productData.imgs;
+    let imgs = document.getElementById("bigImageItem");
+    if (target.getAttribute("id") == "previousImage") { // previous image
+        for (var i = 0; i < srcs.length; i++) {
+            if (srcs[i] == imgs.getAttribute("src")) {
+                imgs.setAttribute("src", srcs[(i - 1 + srcs.length) % srcs.length]);
+                break;
+            }
+        }
+    }
+    else if (target.getAttribute("id") == "nextImage") { // next image
+        for (var i = 0; i < srcs.length; i++) {
+            if (srcs[i] == imgs.getAttribute("src")) {
+                imgs.setAttribute("src", srcs[(i + 1) % srcs.length]);
+                break;
+            }
+        }
+    }
+}
+
 function changeInfo(event) { // 切換商品資訊/評論
     if (event.target.getAttribute("id") == "ToDiscription") {
         document.getElementById("ToDiscription").disabled = true;
@@ -218,24 +216,21 @@ function changeInfo(event) { // 切換商品資訊/評論
     }
 }
 
-function showMoreInfoPage() {
+function showMoreInfoPage() { // 顯示更多(影片)
     document.getElementById('overlay').style.display = "flex";
-    // document.getElementById("productVideo").style.display = "block";
     document.getElementById("moreInfoPage").style.display = "block";
 }
-function closeMoreInfoPage() {
+function closeMoreInfoPage() { // 關閉顯示更多(影片)
     document.getElementById('overlay').style.display = "none";
     document.getElementById("moreInfoPage").style.display = "none";
     let url = document.getElementById("video").getAttribute("src");
     document.getElementById("video").setAttribute("src", url);
-    // document.getElementById("productVideo").style.display = "none";
 }
 
-function toEditPage() {
+function toEditPage() { // 前往編輯頁面
     window.location.href = "../edit?id=" + id;
 }
-
-function addToCart() {
+function addToCart() { // 加入購物車
     if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;
@@ -244,7 +239,7 @@ function addToCart() {
         setCart(userID, id);
     }
 }
-function addToBidList() {
+function addToBidList() { // 加入競標
     if (userID == "none") {
         window.alert("請先登入後再來使用此功能！");
         return;

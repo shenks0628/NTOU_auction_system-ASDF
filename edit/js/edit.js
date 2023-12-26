@@ -61,7 +61,7 @@ async function start() {
   inputTypeSet(originProductData);
   await reset();
 };
-function eventSetting() {
+function eventSetting() { // 設定event
   document.getElementById("resetButton").addEventListener("click", reset, false);
   document.getElementById("completeButton").addEventListener("click", showCheckPage, false);
   document.getElementById("checkPageCloseButton").addEventListener("click", closeCheckPage, false);
@@ -69,7 +69,7 @@ function eventSetting() {
   document.getElementById("inputType").addEventListener("change", changeType, false);
   document.getElementById("inputImage").addEventListener("change", showImage, false);
 }
-async function reset() {  // 重置input欄位
+async function reset() {  // 重置input欄位回原資料
   beDeletedFiles = [];
   beInsertedFiles = [];
   shownFiles = []
@@ -87,7 +87,7 @@ async function reset() {  // 重置input欄位
     showData(productData);
   }
 }
-function changeType() {
+function changeType() { // 根據商品種類調整顯示的欄位
   if (document.getElementById("inputType").value == "normal") {
     // console.log("normal");
     document.getElementById("quantityContainer").style.display = "block";
@@ -99,7 +99,7 @@ function changeType() {
     document.getElementById("endTimeContainer").style.display = "block";
   }
 }
-function inputTypeSet(productData) {
+function inputTypeSet(productData) { // 根據商品種類調整顯示的欄位
   if (productData.type == "normal") {
     // console.log("normal");
     document.getElementById("quantityContainer").style.display = "block";
@@ -112,7 +112,7 @@ function inputTypeSet(productData) {
   }
 }
 
-function showImage() {
+function showImage() { // 顯示上傳圖片
   let files = document.getElementById("inputImage").files;
   for (let i = 0; i < files.length; i++) {
     beInsertedFiles.push(files[i]);
@@ -131,10 +131,9 @@ function showImage() {
   document.getElementById("inputImage").value = "";
 }
 
-async function clearProductData() {
+async function clearProductData() { // 無資料的productData
   let defaultEndTime = new Date();
   defaultEndTime.setHours(defaultEndTime.getHours() + 8);
-  // console.log(defaultEndTime);
   let productData = {
     bids_info: {},
     type: document.getElementById("inputType").value,
@@ -150,15 +149,6 @@ async function clearProductData() {
     endtime: Timestamp.fromDate(defaultEndTime)
   };
   return productData;
-  // document.getElementById("inputName").value = "";
-  // document.getElementById("inputDescription").value = "";
-  // document.getElementById("inputPrice").value = "";
-  // document.getElementById("inputQuantity").value = "";
-  // document.getElementById("inputTag1").value = "";
-  // document.getElementById("inputTag2").value = "";
-  // document.getElementById("inputTag3").value = "";
-  // document.getElementById("inputImage").value = "";
-  // document.getElementById("inputURL").value = "";
 }
 
 function showData(productData) { // 顯示原商品資料
@@ -196,7 +186,6 @@ function showData(productData) { // 顯示原商品資料
       img.onclick = temporaryDeleteImage(uploadImage[i]);
       originImage.appendChild(img);
     }
-    document.getElementById("inputImage").value = "";
     document.getElementById("inputURL").value = productData.url;
   }
   else if (productData.type == "bids") {
@@ -246,7 +235,7 @@ function showData(productData) { // 顯示原商品資料
     document.getElementById("inputTime").value = (('0' + productData.endtime.toDate().getHours()).slice(-2) + ':' + ('0' + productData.endtime.toDate().getMinutes()).slice(-2));
   }
 }
-function temporaryDeleteImage(src) {
+function temporaryDeleteImage(src) { // 刪除圖片
   return function updateBeDelted(event) {
     for (let i = 0; i < imageFile.length; i++) {
       if (imageFile[i] == src) {
@@ -266,7 +255,7 @@ function temporaryDeleteImage(src) {
   }
 }
 
-function preview() { // 預覽 目前不想做
+function preview() { // 預覽 欲開發功能
   // 想法：開一個新table，預覽完之後刪除
 }
 function validateDateTime() {
@@ -298,11 +287,9 @@ function showCheckPage() {
   }
   else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
-    // return;
   }
   else if (type == "bids" && (document.getElementById("inputDate").checkValidity() == false || document.getElementById("inputTime").checkValidity() == false || !validateDateTime())) {
     window.alert("請選擇未來7天内的時間");
-    // return;
   }
   else {
     setCheckPage();
@@ -341,7 +328,6 @@ async function setCheckPage() {
       img.setAttribute("width", "80px");
       document.getElementById("oldImage").appendChild(img);
     }
-
     document.getElementById("oldURL").innerHTML = originProductData.url;
   }
 
@@ -378,7 +364,6 @@ async function setCheckPage() {
     img.setAttribute("width", "80px");
     document.getElementById("newImage").appendChild(img);
   }
-
   document.getElementById("newURL").innerHTML = newProductData.url;
 }
 
@@ -411,7 +396,7 @@ async function sendCheck() {
   }
 }
 
-function getInputData() {
+function getInputData() { // 讀取輸入的資料
   let type = document.getElementById("inputType").options[document.getElementById("inputType").selectedIndex].value;
   var inputData;
   if (type == "normal") {
