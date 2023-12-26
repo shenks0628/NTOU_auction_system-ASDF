@@ -36,10 +36,11 @@ async function inputSearch(mode, value) {
             if (auth.currentUser) {
                 const userSnap = await getDoc(doc(db, "users", auth.currentUser.email));
                 const search = userSnap.data().search;
-                if (search.length >= 10)
-                    search.pop();
+                if (search.length >= 10) {
+                    search = search.slice(-9);
+                }
                 search.push(value);
-                updateDoc(doc(db, "users", auth.currentUser.email), { search: search });
+                updateDoc(doc(db, "users", auth.currentUser.email), { search: search });                
             }
         }
     }
