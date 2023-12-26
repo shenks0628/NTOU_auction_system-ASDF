@@ -26,7 +26,7 @@ main {
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    width: -webkit-fill-available;
+    width: 400px;
 }
 .chat img {
     border-radius: 50%;
@@ -62,4 +62,10 @@ main {
     border-radius: 10px;
     font-size: 12px;
     margin-left: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .chat {
+        width: -webkit-fill-available;
+    }
 }
