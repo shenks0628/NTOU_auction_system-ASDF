@@ -86,7 +86,7 @@ button {
 
   #new,
   #old {
-    overflow: none auto;
+    overflow-y: auto;
     width: 48%;
     max-height: 100%;
   }
