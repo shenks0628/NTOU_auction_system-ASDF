@@ -7,30 +7,24 @@ const { response } = require('express');
 const schedule = require('node-schedule');
 
 // Import Firebase
-const { initializeApp } = require('firebase-admin/app');
+const { initializeApp } = require('firebase/app');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
 const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
 
-// const firebaseConfig = {
-//     apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
-//     authDomain: "ntou-auction-system-112eb.firebaseapp.com",
-//     projectId: "ntou-auction-system-112eb",
-//     storageBucket: "ntou-auction-system-112eb.appspot.com",
-//     messagingSenderId: "320414610227",
-//     appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
-//     measurementId: "G-FLXQ2BQCZF"
-// };
+const firebaseConfig = {
+    apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
+    authDomain: "ntou-auction-system-112eb.firebaseapp.com",
+    projectId: "ntou-auction-system-112eb",
+    storageBucket: "ntou-auction-system-112eb.appspot.com",
+    messagingSenderId: "320414610227",
+    appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
+    measurementId: "G-FLXQ2BQCZF"
+};
 
-var admin = require("firebase-admin");
-
-var serviceAccount = require("ntou-auction-system-112eb-firebase-adminsdk-rkjlt-a386ef742c.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://ntou-auction-system-112eb.firebaseio.com'
-});
-
-const db = admin.firestore();
+// Initialize Firebase
+const firebase = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(firebase);
 
 schedule.scheduleJob('1 * * * * *', async () => {
     const q = query(collection(db, "products"), where("type", "==", "bids"));
