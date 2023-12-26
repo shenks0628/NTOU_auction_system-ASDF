@@ -81,11 +81,12 @@ async function verifyIdentity(email) {
                 headerText.innerHTML = name;
                 headerText.href = `../api/?id=${productID}`;
                 msg.content = `
-                    商品編號: ${productID}<br>
+                    商品編號: <a href="../api/mobile.html?id=${productID}">${productID}</a><br>
                     商品名稱: ${name}<br>
-                    購買數量: ${quantity}<br>
+                    購買數量: ${quantity}
                     訂單總額: ${price*quantity}<br>
-                    下單日期: ${formatDateTime(msg.time)}<br><br>
+                    下單日期: ${formatDateTime(msg.time)}<br>
+                    買家信箱: <a href="../api/?email=${buyer}">${buyer}</a><br><br>
                 `;
                 if (!msg.isRecord) {
                     msg.content += email == buyer ? '<button id="cancelOrderBtn">取消訂單</button>' : '<button id="confirmOrderBtn">確認訂單</button>';
