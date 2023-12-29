@@ -27,20 +27,26 @@ const schedule = require('node-schedule');
 // const db = getFirestore(firebase);
 
 const admin = require("firebase-admin");
-const { decryptTpString } = require("secure-file.js")
+const { decryptTpString } = require("secure-file.js");
+const { initializeApp } = require('firebase-admin/app');
 const secureFileName = "serviceAccount.json.secure";
-const jsonStr = await decryptTpString(secureFileName);
-const serviceAccount = JSON.parse(jsonStr);
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://ntou-auction-system-112eb.firebaseio.com'
-});
+let db, productsRef, usersRef, queryRef;
 
-const db = admin.firestore();
-const productsRef = db.collection("products");
-const usersRef = db.collection("users");
-const queryRef = productsRef.where("type", "==", "bids");
+const initializeFirebase = async () => {
+    const jsonStr = await decryptTpString(secureFileName);
+    const serviceAccount = JSON.parse(jsonStr);
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://ntou-auction-system-112eb.firebaseio.com'
+    });
+    db = admin.firestore();
+    productsRef = db.collection("products");
+    usersRef = db.collection("users");
+    queryRef = productsRef.where("type", "==", "bids");
+};
+
+initializeFirebase();
 
 let rule = new schedule.RecurrenceRule();
 rule.second = [0, 10, 20, 30, 40, 50];
