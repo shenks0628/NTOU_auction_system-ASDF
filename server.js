@@ -26,9 +26,11 @@ const schedule = require('node-schedule');
 // const auth = getAuth();
 // const db = getFirestore(firebase);
 
-var admin = require("firebase-admin");
-
-var serviceAccount = require("ntou-auction-system-112eb-firebase-adminsdk-rkjlt-a386ef742c.json");
+const admin = require("firebase-admin");
+const { decryptTpString } = require("secure-file.js")
+const secureFileName = "serviceAccount.json.secure";
+const jsonStr = await decryptTpString(secureFileName);
+const serviceAccount = JSON.parse(jsonStr);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
