@@ -27,14 +27,14 @@ const schedule = require('node-schedule');
 // const db = getFirestore(firebase);
 
 const admin = require("firebase-admin");
-const { decryptTpString } = require("./src/secure-file.js");
+const { decryptToString } = require("./src/secure-file.js");
 const { initializeApp } = require('firebase-admin/app');
 const secureFileName = "serviceAccount.json.secure";
 
 let db, productsRef, usersRef, queryRef;
 
 const initializeFirebase = async () => {
-    const jsonStr = await decryptTpString(secureFileName);
+    const jsonStr = await decryptToString(secureFileName);
     const serviceAccount = JSON.parse(jsonStr);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
