@@ -27,9 +27,13 @@ let recordData;
 let url;
 let recordTable = document.getElementById('record');
 const start = () => {
+    const title = document.getElementById("title");
+    const div_cart = document.getElementById("record");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
             userId = user.email; // 取得當前登入的使用者信箱 (id)
+            title.innerHTML = "購買紀錄";
+            div_cart.style.display = "";
             console.log(userId);
             const userRef = doc(db, "users", userId);
             // 使用 getDoc 函數取得該使用者的文件快照
