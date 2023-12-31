@@ -65,10 +65,10 @@ async function showMost(Mostdata){
     mostImg.src = mostSnapshot.data().imgs[0];
     mostImg.addEventListener("click", () => {
         if (window.innerWidth <= 768) {
-            url = "api/mobile.html?id="+ most.id;
+            url = "../api/mobile.html?id="+ most.id;
         }
         else {
-            url = "product/index.html?id="+ most.id;
+            url = "../product/index.html?id="+ most.id;
         }
         window.location.href = url;
     });
@@ -95,10 +95,10 @@ async function showall(alldata){
         allImg.src = allSnapshot.data().imgs[0];
         allImg.addEventListener("click", () => {
             if (window.innerWidth <= 768) {
-                url = "api/mobile.html?id="+ alldata[i].id;
+                url = "../api/mobile.html?id="+ alldata[i].id;
             }
             else {
-                url = "product/index.html?id="+ alldata[i].id;
+                url = "../product/index.html?id="+ alldata[i].id;
             }
             window.location.href = url;
         });
