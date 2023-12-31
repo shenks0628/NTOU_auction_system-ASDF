@@ -88,9 +88,19 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    let url;
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
+                
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
@@ -105,9 +115,18 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    let url;
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
