@@ -30,7 +30,10 @@ async function inputSearch(mode, value) {
     } else {
         const docSnap = await getDoc(doc(db, "products", value));
         if (docSnap.exists()) {
-            toUrl(`api/mobile.html?id=${value}`);
+            if (document.body.clientWidth >= 768)
+                toUrl(`product/index.html?id=${value}`);
+            else
+                toUrl(`api/mobile.html?id=${value}`);
         } else {
             toUrl(`api/index.html?search=${value}`);
             if (auth.currentUser) {
