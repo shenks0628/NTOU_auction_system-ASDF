@@ -25,16 +25,13 @@ const storage = getStorage();
 let productData = null;
 async function getProduct(id) { // 讀資料
   if (productData != null) return productData;
-  const productId = id; // 替換成實際的產品 ID
-  // 使用 doc 函數構建該產品的參考路徑
+  const productId = id;
   const productRef = doc(db, "products", productId);
-  // 使用 getDoc 函數取得該產品的文件快照
   productData = await getDoc(productRef)
     .then((productDoc) => {
       if (productDoc.exists()) {
         // 取得該產品的資料
         let productData = productDoc.data();
-        // productOwnerID = productData.seller;
         console.log("Product data for product with ID", productId, ":", productData);
         return productData;
       }
@@ -95,8 +92,7 @@ async function addProduct(userData, inputData) {
 }
 async function updateProduct(inputData) { // 修改並更新資料庫
   try {
-    const productId = inputData.id; // 替換成實際的產品 ID
-    // 使用 doc 函數構建該產品的參考路徑
+    const productId = inputData.id;
     const productRef = doc(db, "products", productId);
     const type = inputData.type;
     if (type == "normal") {
@@ -107,7 +103,6 @@ async function updateProduct(inputData) { // 修改並更新資料庫
         description: inputData.description,
         price: parseInt(inputData.price),
         quantity: parseInt(inputData.quantity),
-        // time: serverTimestamp(),
         url: inputData.url
       });
     }
@@ -121,18 +116,16 @@ async function updateProduct(inputData) { // 修改並更新資料庫
         description: inputData.description,
         price: parseInt(inputData.price),
         quantity: parseInt(inputData.quantity),
-        // time: serverTimestamp(),
         url: inputData.url,
         endtime: inputData.endtime
       });
     }
     window.alert("修改成功！");
-  } catch (err) {
-    console.error("Error: ", err);
+  } catch (error) {
+    console.error(error);
   }
 }
 async function uploadImage(inputImage) {
-  // console.log(inputImage);
   let imageURL = [];
   for (let i = 0; i < inputImage.length; i++) {
     let dateString = new Date().toISOString();
@@ -153,7 +146,6 @@ async function deleteStorageFile(fileUrl) {
     // console.log("Delete complete!");
   }).catch((error) => {
     console.log(error);
-    // An error occurred!
   });
 }
 export { getProduct, addProduct, updateProduct, uploadImage, deleteStorageFile };
