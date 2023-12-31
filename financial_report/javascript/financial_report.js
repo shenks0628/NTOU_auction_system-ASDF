@@ -63,7 +63,15 @@ async function showMost(Mostdata){
 
     let mostImg = document.createElement("img");
     mostImg.src = mostSnapshot.data().imgs[0];
-    mostImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + most.id});
+    mostImg.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            url = "api/mobile.html?id="+ most.id;
+        }
+        else {
+            url = "product/index.html?id="+ most.id;
+        }
+        window.location.href = url;
+    });
     mostProduct.appendChild(mostImg);
 
     let transactionCount = document.createElement("p");
@@ -85,7 +93,15 @@ async function showall(alldata){
         const allDiv = document.createElement("div");
         let allImg = document.createElement("img");
         allImg.src = allSnapshot.data().imgs[0];
-        allImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + alldata[i].id});
+        allImg.addEventListener("click", () => {
+            if (window.innerWidth <= 768) {
+                url = "api/mobile.html?id="+ alldata[i].id;
+            }
+            else {
+                url = "product/index.html?id="+ alldata[i].id;
+            }
+            window.location.href = url;
+        });
         allDiv.appendChild(allImg);
 
         let transactionCount = document.createElement("p");
@@ -120,7 +136,15 @@ async function showhigh(highdata){
     console.log(highdata);
     let highImg = document.createElement("img");
     highImg.src = finalSnapshot.data().imgs[0];
-    highImg.addEventListener("click", () => {window.location.href = "../product/index.html?id=" + finalSnapshot.id});
+    highImg.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            url = "../api/mobile.html?id="+ highdata[finalindex].id;
+        }
+        else {
+            url = "../product/index.html?id="+ highdata[finalindex].id;
+        }
+        window.location.href = url;
+    });
     highProduct.appendChild(highImg);
 
     let transactionCount = document.createElement("p");
