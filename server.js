@@ -61,7 +61,7 @@ schedule.scheduleJob(rule, async () => {
                 if (productData.bids_info.modtime) {
                     let endDate = productData.endtime.toDate();
                     let endDate1 = productData.bids_info.modtime.toDate();
-                    endDate1.setHours(endDate.getHours() + 8);
+                    endDate1.setHours(endDate1.getHours() + 8);
                     if (endDate1 < endDate) {
                         endDate = endDate1;
                     }
