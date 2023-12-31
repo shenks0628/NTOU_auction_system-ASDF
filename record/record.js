@@ -24,6 +24,7 @@ const db = getFirestore(app);
 let userId;
 let recordItems = [];//購物車的陣列
 let recordData;
+let url;
 let recordTable = document.getElementById('record');
 const start = () => {
     onAuthStateChanged(auth, async (user) => {
@@ -56,6 +57,9 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            userId = undefined;
+            title.innerHTML = "請先登入後再來查看";
+            div_cart.style.display = "none";
         }
     });
     
@@ -88,9 +92,18 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
+                
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
@@ -105,9 +118,17 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
