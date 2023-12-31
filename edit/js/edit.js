@@ -74,7 +74,7 @@ async function reset() {  // 重置input欄位回原資料
   beInsertedFiles = [];
   shownFiles = []
   if (id != null) {
-    document.getElementById("inputType").setAttribute("disabled", true);
+    document.getElementById("inputType").disabled = true;
     let productData = await getProduct(id);
     originFile = Array.from(productData.imgs);
     imageFile = Array.from(productData.imgs);
@@ -87,27 +87,31 @@ async function reset() {  // 重置input欄位回原資料
     showData(productData);
   }
 }
+let quantityTmp = "";
 function changeType() { // 根據商品種類調整顯示的欄位
   if (document.getElementById("inputType").value == "normal") {
     // console.log("normal");
-    document.getElementById("quantityContainer").style.display = "block";
+    document.getElementById("inputQuantity").disabled = false;
     document.getElementById("endTimeContainer").style.display = "none";
+    document.getElementById("inputQuantity").value = quantityTmp;
   }
   else if (document.getElementById("inputType").value == "bids") {
     // console.log("bids");
-    document.getElementById("quantityContainer").style.display = "none";
+    document.getElementById("inputQuantity").disabled = true;
     document.getElementById("endTimeContainer").style.display = "block";
+    quantityTmp = document.getElementById("inputQuantity").value;
+    document.getElementById("inputQuantity").value = 1;
   }
 }
 function inputTypeSet(productData) { // 根據商品種類調整顯示的欄位
   if (productData.type == "normal") {
     // console.log("normal");
-    document.getElementById("quantityContainer").style.display = "block";
+    document.getElementById("inputQuantity").disabled = false;
     document.getElementById("endTimeContainer").style.display = "none";
   }
   else if (productData.type == "bids") {
     // console.log("bids");
-    document.getElementById("quantityContainer").style.display = "none";
+    document.getElementById("inputQuantity").disabled = true;
     document.getElementById("endTimeContainer").style.display = "block";
   }
 }
@@ -190,9 +194,9 @@ function showData(productData) { // 顯示原商品資料
   }
   else if (productData.type == "bids") {
     if (id != null && productData.bids_info.who1.length > 0) {
-      document.getElementById("inputPrice").setAttribute("disabled", true);
-      document.getElementById("inputDate").setAttribute("disabled", true);
-      document.getElementById("inputTime").setAttribute("disabled", true);
+      document.getElementById("inputPrice").disabled = true;;
+      document.getElementById("inputDate").disabled = true;
+      document.getElementById("inputTime").disabled = true;
     }
     document.getElementById("inputType").selectedIndex = 1;
     let str = productData.name.trim().split("#");
