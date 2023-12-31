@@ -68,6 +68,7 @@ schedule.scheduleJob(rule, async () => {
                     let currentDate = new Date();
                     if (currentDate >= endDate) {
                         console.log("The bidding of product with id: " + productDoc.id + " has ended.");
+                        console.log(productData.bids_info.who1 + " has won the bid.");
                         const res1 = await usersRef.doc(productData.bids_info.who1).update({
                             ['cart.' + productDoc.id]: 1,
                             ['bids.' + productDoc.id]: admin.firestore.FieldValue.delete()
@@ -82,9 +83,7 @@ schedule.scheduleJob(rule, async () => {
                     let currentDate = new Date();
                     if (currentDate >= endDate) {
                         console.log("The bidding of product with id: " + productDoc.id + " has ended.");
-                        const res2 = await productsRef.doc(productDoc.id).update({
-                            canBid: false
-                        });
+                        const res2 = await productsRef.doc(productDoc.id).delete();
                     }
                 }
             }
