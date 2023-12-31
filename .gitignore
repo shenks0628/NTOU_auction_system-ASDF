@@ -130,4 +130,5 @@ dist
 .pnp.*
 
 .DS_Store
-ntou-auction-system-112eb-firebase-adminsdk-rkjlt-a386ef742c.json
+serviceAccount.json
+local_server.js
