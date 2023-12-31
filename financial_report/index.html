@@ -7,6 +7,7 @@
         <style>
             /* 通用樣式 */
             body {
+                position: relative;
                 font-family: Arial, sans-serif;
                 background-image: url("ASDF.png");
                 background-repeat: repeat;
@@ -18,14 +19,16 @@
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 100%;
+                right: 0;
                 margin: 0;
+                width: 100%;
                 background-color:aquamarine;
-                padding: 10px;
+                padding: 5px;
                 text-align: center;
                 color: #333;
-                font-size: 44px;
+                font-size: 36px;
                 font-weight: bold;
+                z-index: 999;
             }
 
             header::after{
@@ -36,17 +39,22 @@
             }
     
             .pageContainer {
+                padding-top: 1px;
+                position: relative;
                 display: flex;
                 justify-content: center;
+                z-index: 1;
             }
     
             .container {
+                position: relative;
                 width: 800px;
                 padding: 20px;
                 margin-top: 65px;
                 border: 1px solid #ccc;
                 border-radius: 5px;
                 background-color:ghostwhite;
+                z-index: 1;
             }
     
             label {
@@ -106,6 +114,10 @@
     
             /* 手機端樣式 */
             @media (max-width: 768px) {
+                body{
+                    overflow-x: hidden;
+                    overscroll-behavior: none;
+                }
                 .container {
                     width: 100%;
                     padding: 10px;
@@ -116,18 +128,19 @@
             }
         </style> 
     </head>
+    
+<body>   
     <header>您的銷售紀錄</header>
-<body>
-    <div class="pageContainer">
-        <div class="container">
-            <label class="mostlabel">最高成交量商品</label>
-            <div id="display_most"></div>
-            <label class="highlabel">收入最高商品</label>
-            <div id="display_high"></div>
-            <label class="alllabel">所有商品</label>
-            <div id="display_all"></div>
-        </div> 
-    </div>
+        <div class="pageContainer">
+            <div class="container">
+                <label class="mostlabel">最高成交量商品</label>
+                <div id="display_most"></div>
+                <label class="highlabel">收入最高商品</label>
+                <div id="display_high"></div>
+                <label class="alllabel">所有商品</label>
+                <div id="display_all"></div>
+            </div> 
+        </div>
    
 <script src="javascript/financial_report.js" type="module"></script>
 </body>
