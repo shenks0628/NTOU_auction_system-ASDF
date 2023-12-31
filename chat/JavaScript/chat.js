@@ -81,7 +81,7 @@ async function verifyIdentity(email) {
                 headerText.innerHTML = name;
                 headerText.href = `../api/?id=${productID}`;
                 msg.content = `
-                    商品編號: <a href="../api/mobile.html?id=${productID}">${productID}</a><br>
+                    商品編號: <a href="../${document.body.clientWidth >= 768 ? 'product/index' : 'api/mobile'}.html?id=${productID}">${productID}</a><br>
                     商品名稱: ${name}<br>
                     購買數量: ${quantity}
                     訂單總額: ${price*quantity}<br>
