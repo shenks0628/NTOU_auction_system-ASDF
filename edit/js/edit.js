@@ -378,8 +378,14 @@ async function sendCheck() {
       for (let i = 0; i < beDeletedFiles.length; i++) {
         await deleteStorageFile(beDeletedFiles[i]);
       }
-      if (id != null)
-        window.location.href = "../product?id=" + inputData.id;
+      if (id != null) {
+        if (window.innerWidth < 768)
+          window.location.href = "../api/mobile.html?id=" + inputData.id;
+        else
+          window.location.href = "../product?id=" + inputData.id;
+      }
+      else
+        window.location.href = "../";
     }
   }
   else {
@@ -388,8 +394,12 @@ async function sendCheck() {
       let inputImage = await uploadImage(inputData.imgs);
       inputData.imgs = inputImage;
       id = await addProduct(userData, inputData);
-      if (id != null)
-        window.location.href = "../product?id=" + id;
+      if (id != null) {
+        if (window.innerWidth < 768)
+          window.location.href = "../api/mobile.html?id=" + id;
+        else
+          window.location.href = "../product?id=" + id;
+      }
       else
         window.location.href = "../";
     }
