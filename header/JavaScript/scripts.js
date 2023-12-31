@@ -3,6 +3,9 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('path')) {
     toUrl(urlParams.get('path'));
 }
+shareBtn.onclick = function () {
+    copyPageUrl();
+}
 menuBtn.onclick = function () {
     dropdown.style.display = "none";
     if (menuBtn.classList.contains('click')) {
@@ -33,4 +36,17 @@ function contact() {
 }
 function toggleDropdown() {
     dropdown.style.display = dropdown.style.display !== "block" ? "block" : "none";
+}
+function copyPageUrl() {
+    const dummy = document.createElement('input');
+    const url = new URL(mainIframe.src);
+    const text = url.hostname + '/header/?path=' + url.pathname + url.search;
+
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand('copy');
+    document.body.removeChild(dummy);
+
+    alert("連結已複製！");
 }

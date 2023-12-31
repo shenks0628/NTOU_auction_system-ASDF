@@ -7,59 +7,91 @@ const { response } = require('express');
 const schedule = require('node-schedule');
 
 // Import Firebase
-const { initializeApp } = require('firebase/app');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
-const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
+// const { initializeApp } = require('firebase/app');
+// const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = require('firebase/auth');
+// const { getFirestore, collection, doc, setDoc, getDoc, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, deleteDoc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, deleteField } = require('firebase/firestore');
 
-const firebaseConfig = {
-    apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
-    authDomain: "ntou-auction-system-112eb.firebaseapp.com",
-    projectId: "ntou-auction-system-112eb",
-    storageBucket: "ntou-auction-system-112eb.appspot.com",
-    messagingSenderId: "320414610227",
-    appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
-    measurementId: "G-FLXQ2BQCZF"
+// const firebaseConfig = {
+//     apiKey: "AIzaSyClpUY1NfcCO_HEHPOi6ma9RXdsSxCGWy4",
+//     authDomain: "ntou-auction-system-112eb.firebaseapp.com",
+//     projectId: "ntou-auction-system-112eb",
+//     storageBucket: "ntou-auction-system-112eb.appspot.com",
+//     messagingSenderId: "320414610227",
+//     appId: "1:320414610227:web:0ec7e2571126d3b2fd4446",
+//     measurementId: "G-FLXQ2BQCZF"
+// };
+
+// // Initialize Firebase
+// const firebase = initializeApp(firebaseConfig);
+// const auth = getAuth();
+// const db = getFirestore(firebase);
+
+const admin = require("firebase-admin");
+const { decryptToString } = require("./src/secure-file.js");
+const { initializeApp } = require('firebase-admin/app');
+const secureFileName = "serviceAccount.json.secure";
+
+let db, productsRef, usersRef, queryRef;
+
+const initializeFirebase = async () => {
+    const jsonStr = await decryptToString(secureFileName);
+    const serviceAccount = JSON.parse(jsonStr);
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://ntou-auction-system-112eb.firebaseio.com'
+    });
+    db = admin.firestore();
+    productsRef = db.collection("products");
+    usersRef = db.collection("users");
+    queryRef = productsRef.where("type", "==", "bids");
 };
 
-// Initialize Firebase
-const firebase = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore(firebase);
+initializeFirebase();
 
-schedule.scheduleJob('1 * * * * *', async () => {
-    const q = query(collection(db, "products"), where("type", "==", "bids"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (productDoc) => {
-        const productData = productDoc.data();
-        if (productData.canBid == true) {
-            if (productData.bids_info.modtime) {
-                let endDate = productData.endtime.toDate();
-                let endDate1 = productData.bids_info.modtime.toDate();
-                endDate1.setHours(endDate.getHours() + 8);
-                if (endDate1 < endDate) {
-                    endDate = endDate1;
+let rule = new schedule.RecurrenceRule();
+rule.second = [0, 10, 20, 30, 40, 50];
+// scheduleJob: https://segmentfault.com/a/1190000022455361
+schedule.scheduleJob(rule, async () => {
+    queryRef.get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach(async (productDoc) => {
+            const productData = productDoc.data();
+            if (productData.canBid == true) {
+                console.log("Checking...");
+                if (productData.bids_info.modtime) {
+                    let endDate = productData.endtime.toDate();
+                    let endDate1 = productData.bids_info.modtime.toDate();
+                    endDate1.setHours(endDate.getHours() + 8);
+                    if (endDate1 < endDate) {
+                        endDate = endDate1;
+                    }
+                    let currentDate = new Date();
+                    if (currentDate >= endDate) {
+                        console.log("The bidding of product with id: " + productDoc.id + " has ended.");
+                        const res1 = await usersRef.doc(productData.bids_info.who1).update({
+                            ['cart.' + productDoc.id]: 1,
+                            ['bids.' + productDoc.id]: admin.firestore.FieldValue.delete()
+                        });
+                        const res2 = await productsRef.doc(productDoc.id).update({
+                            canBid: false
+                        });
+                    }
                 }
-                let currentDate = new Date();
-                if (currentDate >= endDate) {
-                    await updateDoc(doc(db, "users", productData.bids_info.who1), {
-                        ['cart.' + productDoc.id]: 1,
-                        ['bids.' + productDoc.id]: deleteField()
-                    });
-                    await updateDoc(doc(db, "products", productDoc.id), {
-                        canBid: false
-                    });
+                else {
+                    let endDate = productData.endtime.toDate();
+                    let currentDate = new Date();
+                    if (currentDate >= endDate) {
+                        console.log("The bidding of product with id: " + productDoc.id + " has ended.");
+                        const res2 = await productsRef.doc(productDoc.id).update({
+                            canBid: false
+                        });
+                    }
                 }
             }
-            else {
-                let endDate = productData.endtime.toDate();
-                let currentDate = new Date();
-                if (currentDate >= endDate) {
-                    await updateDoc(doc(db, "products", productDoc.id), {
-                        canBid: false
-                    });
-                }
-            }
-        }
+        });
+    })
+    .catch((error) => {
+        console.error('Error getting documents: ', error);
     });
 })
 

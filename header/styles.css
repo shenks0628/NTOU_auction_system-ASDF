@@ -57,6 +57,11 @@ iframe {
     padding: 0 15px;
     border-bottom: #252525 2px solid;
 }
+.title-span {
+    white-space:nowrap;
+    font-size: 2.5em;
+    -webkit-text-stroke: 1.5px black;
+}
 .toggle>.left {
     width: 100%;
 }
@@ -100,11 +105,15 @@ iframe {
     width: 100%;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
 }
-.title-span {
-    white-space:nowrap;
-    font-size: 2.5em;
-    -webkit-text-stroke: 1.5px black;
+.toggle>.right>button {
+    width: 48px;
+    height: 48px;
+}
+.toggle>.right>button>img {
+    width: 36px;
+    height: 36px;
 }
 .toggle .search-bar {
     width: 180px;
@@ -139,12 +148,6 @@ iframe {
 }
 #menuBtn {
     display: none;
-    width: 48px;
-    height: 48px;
-}
-#menuBtn img {
-    width: 36px;
-    height: 36px;
 }
 #menuBtn.click {
     background-color: gray;
