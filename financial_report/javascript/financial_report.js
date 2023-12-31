@@ -25,6 +25,7 @@ const db = getFirestore(app);
 
 let productsdata={};
 let userEmail;
+let url;
 
 const start = async() => {
     const header = document.getElementsByTagName("header")[0];
