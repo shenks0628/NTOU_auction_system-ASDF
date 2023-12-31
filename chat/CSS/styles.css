@@ -63,3 +63,9 @@ main {
     font-size: 12px;
     margin-left: auto;
 }
+
+@media screen and (max-width: 768px) {
+    .chat {
+        width: -webkit-fill-available;
+    }
+}

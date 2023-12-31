@@ -79,7 +79,7 @@ function productSection(id, data) {
                 window.location.href = 'mobile.html?id=' + id;
         } else {
             if (e.target.alt === 'edit') {
-
+                window.location.href = '../edit/?id=' + id;
             } else if (e.target.alt === 'remove') {
                 if (confirm('確定要刪除嗎')) {
                     await deleteDoc(doc(db, "products", id));
