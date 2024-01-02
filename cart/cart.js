@@ -111,7 +111,7 @@ function displayCart() {
     console.log("有進來這裡面");
     let totalAmount = 0;
     for(var item of cartItems){
-        if(item.check==="有貨"&&item.mes==="沒有"){
+        if(item.bid==="是"){
             const subtotal = item.price * item.quantity;
             totalAmount += subtotal;
             const row = document.createElement('tr');
@@ -135,40 +135,70 @@ function displayCart() {
                 <td>${item.quantity}</td>
                 <td>${subtotal} 元</td>
                 <td>${item.check}</td>
-                <td><button class="remove-button" data-item-name="${item.key}">移除</button></td>
-                <td><button class="another-button" data-item-name="${item.key}">修改數量</button></td>
+                <td></td>
+                <td></td>
             `;
             cartTable.appendChild(row);
         }
         else{
-            const row = document.createElement('tr');
-            const subtotal = item.price * item.quantity;
-            if (window.innerWidth <= 767) {
-                url = "../api/mobile.html?id=";
-                console.log("手機");
+            if(item.check==="有貨"&&item.mes==="沒有"){
+                const subtotal = item.price * item.quantity;
+                totalAmount += subtotal;
+                const row = document.createElement('tr');
+                if (window.innerWidth <= 767) {
+                    url = "../api/mobile.html?id=";
+                    console.log("手機");
+                }
+                else {
+                    console.log("電腦");
+                    url = "../product/index.html?id=";
+                }
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-item-name="${item.key}"></td>
+                    <td>
+                        <a href="${url}${item.key}" >
+                            <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
+                        </a>
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.price} 元</td>
+                    <td>${item.quantity}</td>
+                    <td>${subtotal} 元</td>
+                    <td>${item.check}</td>
+                    <td><button class="remove-button" data-item-name="${item.key}">移除</button></td>
+                    <td><button class="another-button" data-item-name="${item.key}">修改數量</button></td>
+                `;
+                cartTable.appendChild(row);
             }
-            else {
-                console.log("電腦");
-                url = "../product/index.html?id=";
+            else{
+                const row = document.createElement('tr');
+                const subtotal = item.price * item.quantity;
+                if (window.innerWidth <= 767) {
+                    url = "../api/mobile.html?id=";
+                    console.log("手機");
+                }
+                else {
+                    console.log("電腦");
+                    url = "../product/index.html?id=";
+                }
+                row.innerHTML = `
+                    <td></td>
+                    <td>
+                        <a href="${url}${item.key}">
+                            <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
+                        </a>
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.price} 元</td>
+                    <td>${item.quantity}</td>
+                    <td>${subtotal} 元</td>
+                    <td>${item.check}</td>
+                    <td><button class="remove-button" data-item-name="${item.key}">移除</button></td>
+                    <td><button class="another-button" data-item-name="${item.key}">修改數量</button></td>
+                `;
+                cartTable.appendChild(row);
             }
-            row.innerHTML = `
-                <td></td>
-                <td>
-                    <a href="${url}${item.key}">
-                        <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
-                    </a>
-                </td>
-                <td>${item.name}</td>
-                <td>${item.price} 元</td>
-                <td>${item.quantity}</td>
-                <td>${subtotal} 元</td>
-                <td>${item.check}</td>
-                <td><button class="remove-button" data-item-name="${item.key}">移除</button></td>
-                <td><button class="another-button" data-item-name="${item.key}">修改數量</button></td>
-            `;
-            cartTable.appendChild(row);
         }
-        
     };
     totalSelectedPrice = 0;
     totalAmountElement.textContent = totalSelectedPrice ;
@@ -250,52 +280,122 @@ const start1 = () => {
                 // 取得該產品的資料
                 const productData = productDoc.data();
                 console.log("Product data for product with ID", productId, ":", productData);
-                if(cartData[key]<=productData.quantity){
-                    const messRef = doc(db, "messages", key);
-                    // 取得文件資料
-                    getDoc(messRef)
-                    .then((messDoc) => {
-                        if (messDoc.exists()) {
-                            const newid=encodeEmail(userId);
-                            // 檢查文件中是否有特定欄位，例如欄位 "a"
-                            if (messDoc.data().hasOwnProperty(newid)) {
-                                const pName = productData.name.split('#')[0];
-                                window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
-                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"有"};
-                                cartItems.push(newItem);
-                                console.log(cartItems);
-                                totalAmount += newItem.price * newItem.quantity;
-                                //totalAmountElement.textContent = 0;
-                                const row = document.createElement('tr');
-                                if (window.innerWidth <= 767) {
-                                    url = "../api/mobile.html?id=";
-                                    console.log("手機");
-                                }
+                if (productData.type == "bids") {
+                    const pName = productData.name.split('#')[0];
+                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有",bid:"是"};
+                    cartItems.push(newItem);
+                    console.log(cartItems);
+                    totalAmount += newItem.price * newItem.quantity;
+                    //totalAmountElement.textContent = 0;
+                    const row = document.createElement('tr');
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
+                        <td>
+                            <a href="${url}${newItem.key}" >
+                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                            </a>
+                        </td>
+                        <td>${newItem.name}</td>
+                        <td>${newItem.price} 元</td>
+                        <td>${newItem.quantity}</td>
+                        <td>${newItem.price * newItem.quantity} 元</td>
+                        <td>${newItem.check}</td>
+                        <td></td>
+                        <td></td>   
+                    `;
+                    cartTable.appendChild(row);
+                    console.log("文件 'x' 中有 'a' 欄位。");
+                }
+                else{
+                    if(cartData[key]<=productData.quantity){
+                        const messRef = doc(db, "messages", key);
+                        // 取得文件資料
+                        getDoc(messRef)
+                        .then((messDoc) => {
+                            if (messDoc.exists()) {
+                                const newid=encodeEmail(userId);
+                                // 檢查文件中是否有特定欄位，例如欄位 "a"
+                                if (messDoc.data().hasOwnProperty(newid)) {
+                                    const pName = productData.name.split('#')[0];
+                                    window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
+                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"有",bid:"不是"};
+                                    cartItems.push(newItem);
+                                    console.log(cartItems);
+                                    totalAmount += newItem.price * newItem.quantity;
+                                    //totalAmountElement.textContent = 0;
+                                    const row = document.createElement('tr');
+                                    if (window.innerWidth <= 767) {
+                                        url = "../api/mobile.html?id=";
+                                        console.log("手機");
+                                    }
+                                    else {
+                                        console.log("電腦");
+                                        url = "../product/index.html?id=";
+                                    }
+                                    row.innerHTML = `
+                                        <td></td>
+                                        <td>
+                                            <a href="${url}${newItem.key}" >
+                                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                            </a>
+                                        </td>
+                                        <td>${newItem.name}</td>
+                                        <td>${newItem.price} 元</td>
+                                        <td>${newItem.quantity}</td>
+                                        <td>${newItem.price * newItem.quantity} 元</td>
+                                        <td>${newItem.check}</td>
+                                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                    `;
+                                    cartTable.appendChild(row);
+                                    console.log("文件 'x' 中有 'a' 欄位。");
+                                } 
                                 else {
-                                    console.log("電腦");
-                                    url = "../product/index.html?id=";
+                                    const pName = productData.name.split('#')[0];
+                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有",bid:"不是"};
+                                    cartItems.push(newItem);
+                                    console.log(cartItems);
+                                    totalAmount += newItem.price * newItem.quantity;
+                                    //totalAmountElement.textContent = 0;
+                                    const row = document.createElement('tr');
+                                    if (window.innerWidth <= 767) {
+                                        url = "../api/mobile.html?id=";
+                                        console.log("手機");
+                                    }
+                                    else {
+                                        console.log("電腦");
+                                        url = "../product/index.html?id=";
+                                    }
+                                    row.innerHTML = `
+                                        <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
+                                        <td>
+                                            <a href="${url}${newItem.key}" >
+                                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                            </a>
+                                        </td>
+                                        <td>${newItem.name}</td>
+                                        <td>${newItem.price} 元</td>
+                                        <td>${newItem.quantity}</td>
+                                        <td>${newItem.price * newItem.quantity} 元</td>
+                                        <td>${newItem.check}</td>
+                                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                    `;
+                                    cartTable.appendChild(row);
+                                    console.log("文件 'x' 中有 'a' 欄位。");
                                 }
-                                row.innerHTML = `
-                                    <td></td>
-                                    <td>
-                                        <a href="${url}${newItem.key}" >
-                                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                                        </a>
-                                    </td>
-                                    <td>${newItem.name}</td>
-                                    <td>${newItem.price} 元</td>
-                                    <td>${newItem.quantity}</td>
-                                    <td>${newItem.price * newItem.quantity} 元</td>
-                                    <td>${newItem.check}</td>
-                                    <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                                    <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
-                                `;
-                                cartTable.appendChild(row);
-                                console.log("文件 'x' 中有 'a' 欄位。");
                             } 
                             else {
                                 const pName = productData.name.split('#')[0];
-                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有"};
+                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有",bid:"不是"};
                                 cartItems.push(newItem);
                                 console.log(cartItems);
                                 totalAmount += newItem.price * newItem.quantity;
@@ -325,100 +425,103 @@ const start1 = () => {
                                     <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
                                 `;
                                 cartTable.appendChild(row);
-                                console.log("文件 'x' 中有 'a' 欄位。");
+                                console.log("找不到文件 'x'。");
                             }
-                        } 
-                        else {
-                            const pName = productData.name.split('#')[0];
-                            const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"有貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:"沒有"};
-                            cartItems.push(newItem);
-                            console.log(cartItems);
-                            totalAmount += newItem.price * newItem.quantity;
-                            //totalAmountElement.textContent = 0;
-                            const row = document.createElement('tr');
-                            if (window.innerWidth <= 767) {
-                                url = "../api/mobile.html?id=";
-                                console.log("手機");
-                            }
-                            else {
-                                console.log("電腦");
-                                url = "../product/index.html?id=";
-                            }
-                            row.innerHTML = `
-                                <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
-                                <td>
-                                    <a href="${url}${newItem.key}" >
-                                        <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                                    </a>
-                                </td>
-                                <td>${newItem.name}</td>
-                                <td>${newItem.price} 元</td>
-                                <td>${newItem.quantity}</td>
-                                <td>${newItem.price * newItem.quantity} 元</td>
-                                <td>${newItem.check}</td>
-                                <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                                <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
-                            `;
-                            cartTable.appendChild(row);
-                            console.log("找不到文件 'x'。");
-                        }
-                    })
-                    .catch((error) => {
-                        console.log("取得使用者文件時發生錯誤：", error);
-                    });
-                }
-                else{
-                    const newid=encodeEmail(userId);
-                    const messRef = doc(db, "messages", key);
-                    // 使用 getDoc 取得文件快照
-                    getDoc( messRef )
-                        .then((messDoc) => {
-                            if (messDoc.exists()) {
-                                // 檢查文件中是否有特定欄位，例如欄位 "a"
-                                if (messDoc.data().hasOwnProperty(newid)) {
-                                    const a="有";
-                                    const pName = productData.name.split('#')[0];
-                                    window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
-                                    window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
-                                    console.log(a);
-                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
-                                    cartItems.push(newItem);
-                                    console.log(cartItems);
-                                    totalAmount += newItem.price * newItem.quantity;
-                                    //totalAmountElement.textContent = 0;
-                                    const row = document.createElement('tr');
-                                    if (window.innerWidth <= 767) {
-                                        url = "../api/mobile.html?id=";
-                                        console.log("手機");
-                                    }
+                        })
+                        .catch((error) => {
+                            console.log("取得使用者文件時發生錯誤：", error);
+                        });
+                    }
+                    else{
+                        const newid=encodeEmail(userId);
+                        const messRef = doc(db, "messages", key);
+                        // 使用 getDoc 取得文件快照
+                        getDoc( messRef )
+                            .then((messDoc) => {
+                                if (messDoc.exists()) {
+                                    // 檢查文件中是否有特定欄位，例如欄位 "a"
+                                    if (messDoc.data().hasOwnProperty(newid)) {
+                                        const a="有";
+                                        const pName = productData.name.split('#')[0];
+                                        window.alert("您的"+pName+"商品尚未完成訂單，請完成訂單後再來下單");
+                                        window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
+                                        console.log(a);
+                                        const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a,bid:"不是"};
+                                        cartItems.push(newItem);
+                                        console.log(cartItems);
+                                        totalAmount += newItem.price * newItem.quantity;
+                                        //totalAmountElement.textContent = 0;
+                                        const row = document.createElement('tr');
+                                        if (window.innerWidth <= 767) {
+                                            url = "../api/mobile.html?id=";
+                                            console.log("手機");
+                                        }
+                                        else {
+                                            console.log("電腦");
+                                            url = "../product/index.html?id=";
+                                        }
+                                        row.innerHTML = `
+                                            <td></td>
+                                            <td>
+                                                <a href="${url}${newItem.key}" >
+                                                    <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                                </a>
+                                            </td>
+                                            <td>${newItem.name}</td>
+                                            <td>${newItem.price} 元</td>
+                                            <td>${newItem.quantity}</td>
+                                            <td>${newItem.price * newItem.quantity} 元</td>
+                                            <td>${newItem.check}</td>
+                                            <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                            <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                        `;
+                                        cartTable.appendChild(row);
+                                        console.log("使用者文件中有 'a' 欄位。");
+                                    } 
                                     else {
-                                        console.log("電腦");
-                                        url = "../product/index.html?id=";
+                                        const a="沒有";
+                                        const pName = productData.name.split('#')[0];
+                                        window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
+                                        console.log(a);
+                                        const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a,bid:"不是"};
+                                        cartItems.push(newItem);
+                                        console.log(cartItems);
+                                        totalAmount += newItem.price * newItem.quantity;
+                                        //totalAmountElement.textContent = 0;
+                                        const row = document.createElement('tr');
+                                        if (window.innerWidth <= 767) {
+                                            url = "../api/mobile.html?id=";
+                                            console.log("手機");
+                                        }
+                                        else {
+                                            console.log("電腦");
+                                            url = "../product/index.html?id=";
+                                        }
+                                        row.innerHTML = `
+                                            <td></td>
+                                            <td>
+                                                <a href="${url}${newItem.key}" >
+                                                    <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
+                                                </a>
+                                            </td>
+                                            <td>${newItem.name}</td>
+                                            <td>${newItem.price} 元</td>
+                                            <td>${newItem.quantity}</td>
+                                            <td>${newItem.price * newItem.quantity} 元</td>
+                                            <td>${newItem.check}</td>
+                                            <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
+                                            <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
+                                        `;
+                                        cartTable.appendChild(row);
+                                        console.log("使用者文件中沒有 'a' 欄位。");
                                     }
-                                    row.innerHTML = `
-                                        <td></td>
-                                        <td>
-                                            <a href="${url}${newItem.key}" >
-                                                <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                                            </a>
-                                        </td>
-                                        <td>${newItem.name}</td>
-                                        <td>${newItem.price} 元</td>
-                                        <td>${newItem.quantity}</td>
-                                        <td>${newItem.price * newItem.quantity} 元</td>
-                                        <td>${newItem.check}</td>
-                                        <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                                        <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
-                                    `;
-                                    cartTable.appendChild(row);
-                                    console.log("使用者文件中有 'a' 欄位。");
                                 } 
                                 else {
                                     const a="沒有";
                                     const pName = productData.name.split('#')[0];
                                     window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
                                     console.log(a);
-                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
+                                    const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a,bid:"不是"};
                                     cartItems.push(newItem);
                                     console.log(cartItems);
                                     totalAmount += newItem.price * newItem.quantity;
@@ -448,51 +551,14 @@ const start1 = () => {
                                         <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
                                     `;
                                     cartTable.appendChild(row);
-                                    console.log("使用者文件中沒有 'a' 欄位。");
+                                    console.log("找不到使用者文件。");
                                 }
-                            } 
-                            else {
-                                const a="沒有";
-                                const pName = productData.name.split('#')[0];
-                                window.alert("你所選的商品:"+pName+"數量不足,請更新商品數量或移除購物車");
-                                console.log(a);
-                                const newItem = { name: pName, price: parseInt(productData.price, 10), quantity: cartData[key],key: key,check:"沒貨",Stockquantity:productData.quantity,img:productData.imgs[0],mes:a};
-                                cartItems.push(newItem);
-                                console.log(cartItems);
-                                totalAmount += newItem.price * newItem.quantity;
-                                //totalAmountElement.textContent = 0;
-                                const row = document.createElement('tr');
-                                if (window.innerWidth <= 767) {
-                                    url = "../api/mobile.html?id=";
-                                    console.log("手機");
-                                }
-                                else {
-                                    console.log("電腦");
-                                    url = "../product/index.html?id=";
-                                }
-                                row.innerHTML = `
-                                    <td></td>
-                                    <td>
-                                        <a href="${url}${newItem.key}" >
-                                            <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
-                                        </a>
-                                    </td>
-                                    <td>${newItem.name}</td>
-                                    <td>${newItem.price} 元</td>
-                                    <td>${newItem.quantity}</td>
-                                    <td>${newItem.price * newItem.quantity} 元</td>
-                                    <td>${newItem.check}</td>
-                                    <td><button class="remove-button" data-item-name="${newItem.key}">移除</button></td>
-                                    <td><button class="another-button" data-item-name="${newItem.key}">修改數量</button></td>   
-                                `;
-                                cartTable.appendChild(row);
-                                console.log("找不到使用者文件。");
-                            }
-                        })
-                        .catch((error) => {
-                            console.log("取得使用者文件時發生錯誤：", error);
-                        });
-                    
+                            })
+                            .catch((error) => {
+                                console.log("取得使用者文件時發生錯誤：", error);
+                            });
+                        
+                    }
                 }
             } 
             else {
