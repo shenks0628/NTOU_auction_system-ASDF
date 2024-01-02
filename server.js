@@ -27,6 +27,7 @@ const schedule = require('node-schedule');
 // const db = getFirestore(firebase);
 
 const admin = require("firebase-admin");
+const nodemailer = require('nodemailer');
 const { decryptToString } = require("./src/secure-file.js");
 const { initializeApp } = require('firebase-admin/app');
 const secureFileName = "serviceAccount.json.secure";
