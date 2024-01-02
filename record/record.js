@@ -24,11 +24,16 @@ const db = getFirestore(app);
 let userId;
 let recordItems = [];//購物車的陣列
 let recordData;
+let url;
 let recordTable = document.getElementById('record');
 const start = () => {
+    const title = document.getElementById("title");
+    const div_cart = document.getElementById("record");
     onAuthStateChanged(auth, async (user) => {
         if (user) { // 有登入
             userId = user.email; // 取得當前登入的使用者信箱 (id)
+            title.innerHTML = "購買紀錄";
+            div_cart.style.display = "";
             console.log(userId);
             const userRef = doc(db, "users", userId);
             // 使用 getDoc 函數取得該使用者的文件快照
@@ -56,6 +61,9 @@ const start = () => {
         }
         else { // 沒有登入
             console.log("沒拿到userid");
+            userId = undefined;
+            title.innerHTML = "請先登入後再來查看";
+            div_cart.style.display = "none";
         }
     });
     
@@ -88,9 +96,18 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
+                
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>
@@ -105,9 +122,17 @@ const start1 = () => {
                     recordItems.push(newItem)
                     console.log(recordItems);
                     const row = document.createElement('tr');
+                    if (window.innerWidth <= 767) {
+                        url = "../api/mobile.html?id=";
+                        console.log("手機");
+                    }
+                    else {
+                        console.log("電腦");
+                        url = "../product/index.html?id=";
+                    }
                     row.innerHTML = `
                         <td>
-                            <a href="../product/?id=${newItem.key}">
+                            <a href="${url}${newItem.key}">
                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                             </a>
                         </td>

@@ -28,6 +28,7 @@ let userId;//使用者id
 let cartTable = document.getElementById('cart');
 let billcheckBtn = document.getElementById('billcheck');//下訂單
 let totalAmountElement = document.getElementById('totalAmount');
+let url;
 async function removeItem(itemid) {
     if (itemid === undefined) {
         console.error("Item name is undefined.");
@@ -114,10 +115,18 @@ function displayCart() {
             const subtotal = item.price * item.quantity;
             totalAmount += subtotal;
             const row = document.createElement('tr');
+            if (window.innerWidth <= 767) {
+                url = "../api/mobile.html?id=";
+                console.log("手機");
+            }
+            else {
+                console.log("電腦");
+                url = "../product/index.html?id=";
+            }
             row.innerHTML = `
                 <td><input type="checkbox" class="item-checkbox" data-item-name="${item.key}"></td>
                 <td>
-                    <a href="../product/?id=${item.key}" >
+                    <a href="${url}${item.key}" >
                         <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
                     </a>
                 </td>
@@ -134,10 +143,18 @@ function displayCart() {
         else{
             const row = document.createElement('tr');
             const subtotal = item.price * item.quantity;
+            if (window.innerWidth <= 767) {
+                url = "../api/mobile.html?id=";
+                console.log("手機");
+            }
+            else {
+                console.log("電腦");
+                url = "../product/index.html?id=";
+            }
             row.innerHTML = `
                 <td></td>
                 <td>
-                    <a href="../product/?id=${item.key}">
+                    <a href="${url}${item.key}">
                         <img src="${item.img}" alt="圖片描述" width="100px" height="100px">
                     </a>
                 </td>
@@ -250,10 +267,18 @@ const start1 = () => {
                                 totalAmount += newItem.price * newItem.quantity;
                                 //totalAmountElement.textContent = 0;
                                 const row = document.createElement('tr');
+                                if (window.innerWidth <= 767) {
+                                    url = "../api/mobile.html?id=";
+                                    console.log("手機");
+                                }
+                                else {
+                                    console.log("電腦");
+                                    url = "../product/index.html?id=";
+                                }
                                 row.innerHTML = `
                                     <td></td>
                                     <td>
-                                        <a href="../product/?id=${newItem.key}" >
+                                        <a href="${url}${newItem.key}" >
                                             <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                         </a>
                                     </td>
@@ -276,10 +301,18 @@ const start1 = () => {
                                 totalAmount += newItem.price * newItem.quantity;
                                 //totalAmountElement.textContent = 0;
                                 const row = document.createElement('tr');
+                                if (window.innerWidth <= 767) {
+                                    url = "../api/mobile.html?id=";
+                                    console.log("手機");
+                                }
+                                else {
+                                    console.log("電腦");
+                                    url = "../product/index.html?id=";
+                                }
                                 row.innerHTML = `
                                     <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
                                     <td>
-                                        <a href="../product/?id=${newItem.key}" >
+                                        <a href="${url}${newItem.key}" >
                                             <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                         </a>
                                     </td>
@@ -303,10 +336,18 @@ const start1 = () => {
                             totalAmount += newItem.price * newItem.quantity;
                             //totalAmountElement.textContent = 0;
                             const row = document.createElement('tr');
+                            if (window.innerWidth <= 767) {
+                                url = "../api/mobile.html?id=";
+                                console.log("手機");
+                            }
+                            else {
+                                console.log("電腦");
+                                url = "../product/index.html?id=";
+                            }
                             row.innerHTML = `
                                 <td><input type="checkbox" class="item-checkbox" data-item-name="${newItem.key}"></td>
                                 <td>
-                                    <a href="../product/?id=${newItem.key}" >
+                                    <a href="${url}${newItem.key}" >
                                         <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                     </a>
                                 </td>
@@ -346,10 +387,18 @@ const start1 = () => {
                                     totalAmount += newItem.price * newItem.quantity;
                                     //totalAmountElement.textContent = 0;
                                     const row = document.createElement('tr');
+                                    if (window.innerWidth <= 767) {
+                                        url = "../api/mobile.html?id=";
+                                        console.log("手機");
+                                    }
+                                    else {
+                                        console.log("電腦");
+                                        url = "../product/index.html?id=";
+                                    }
                                     row.innerHTML = `
                                         <td></td>
                                         <td>
-                                            <a href="../product/?id=${newItem.key}" >
+                                            <a href="${url}${newItem.key}" >
                                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                             </a>
                                         </td>
@@ -375,10 +424,18 @@ const start1 = () => {
                                     totalAmount += newItem.price * newItem.quantity;
                                     //totalAmountElement.textContent = 0;
                                     const row = document.createElement('tr');
+                                    if (window.innerWidth <= 767) {
+                                        url = "../api/mobile.html?id=";
+                                        console.log("手機");
+                                    }
+                                    else {
+                                        console.log("電腦");
+                                        url = "../product/index.html?id=";
+                                    }
                                     row.innerHTML = `
                                         <td></td>
                                         <td>
-                                            <a href="../product/?id=${newItem.key}" >
+                                            <a href="${url}${newItem.key}" >
                                                 <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                             </a>
                                         </td>
@@ -405,10 +462,18 @@ const start1 = () => {
                                 totalAmount += newItem.price * newItem.quantity;
                                 //totalAmountElement.textContent = 0;
                                 const row = document.createElement('tr');
+                                if (window.innerWidth <= 767) {
+                                    url = "../api/mobile.html?id=";
+                                    console.log("手機");
+                                }
+                                else {
+                                    console.log("電腦");
+                                    url = "../product/index.html?id=";
+                                }
                                 row.innerHTML = `
                                     <td></td>
                                     <td>
-                                        <a href="../product/?id=${newItem.key}" >
+                                        <a href="${url}${newItem.key}" >
                                             <img src="${newItem.img}" alt="圖片描述" width="100px" height="100px">
                                         </a>
                                     </td>
