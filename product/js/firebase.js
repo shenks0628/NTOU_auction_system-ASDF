@@ -157,8 +157,15 @@ async function addToBids(userId, docId) {
               // console.log("Product data for product with ID", docId, ":", productData);
               let userData = await getUser(userId);
               let bidsData = userData.bids;
-              if (parseInt(price) < parseInt(bidsData[docId])) {
-                window.alert("無效加注！因為您的新注金比您原先的注金低！");
+              let currentDate1 = new Date();
+              console.log("Product data for product with ID", docId, ":", productData);
+              if (parseInt(price) < parseInt(bidsData[docId]) || currentDate1 >= endDate) {
+                if (currentDate1 >= endDate) {
+                  window.alert("此商品已於剛剛結束競標！");
+                }
+                else {
+                  window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                }
               }
               else if (userId == productData.bids_info.who1) {
                 await updateDoc(doc(db, "products", docId), {
