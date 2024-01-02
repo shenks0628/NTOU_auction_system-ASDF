@@ -276,18 +276,21 @@ function validateDateTime() {
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  // console.log(document.getElementById("inputName").checkValidity());
+  console.log(shownFiles.length);
   if (document.getElementById("inputName").checkValidity() == false) {
     window.alert("商品名稱格式錯誤，請修改");
   }
   else if (document.getElementById("inputDescription").checkValidity() == false) {
     window.alert("商品敘述字數超過上限，請修改");
   }
+  else if (document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
+    window.alert("請確認數量以及價格部分");
+  }
   else if (document.getElementById("inputTag1").checkValidity() == false || document.getElementById("inputTag2").checkValidity() == false || document.getElementById("inputTag3").checkValidity() == false) {
     window.alert("商品標籤格式錯誤，請修改");
   }
-  else if (document.getElementById("inputPrice").checkValidity() == false || (type == "normal" && document.getElementById("inputQuantity").checkValidity() == false)) {
-    window.alert("請確認數量以及價格部分");
+  else if (imageFile.length + shownFiles.length > 10) {
+    window.alert("圖片張數超過上限，請刪除部分圖片");
   }
   else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
