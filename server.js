@@ -90,7 +90,7 @@ schedule.scheduleJob(rule, async () => {
                     let currentDate = new Date();
                     if (currentDate >= endDate) {
                         const sellerTitle = 'NTOU-ASDF 您的競標商品「' + productData.name.split('#')[0] + '」未拍出';
-                        const sellerText = `尊敬的賣家，您的競標商品「${productData.name.split('#')[0]}」並未被拍出，故此商品已被自動下架\n\n。如有任何疑問，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
+                        const sellerText = `尊敬的賣家，您的競標商品「${productData.name.split('#')[0]}」並未被拍出，故此商品已被自動下架。\n\n如有任何疑問，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
                         sendEmail(productData.seller, sellerTitle, sellerText);
                         console.log("The bidding of product with id: " + productDoc.id + " has ended.");
                         const res2 = await productsRef.doc(productDoc.id).delete();
