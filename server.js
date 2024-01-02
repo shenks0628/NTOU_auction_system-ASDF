@@ -139,11 +139,11 @@ schedule.scheduleJob(rule, async () => {
                         const msg = messages[key][value];
                         if (msg.sendEmail) {
                             if (msg.content === '訂單已確認') {
-                                const title = 'NTOU-ASDF 您有一個訂單被確認';
+                                const title = `NTOU-ASDF 「${doc.data().name}」已被確認訂單`;
                                 const text = `尊敬的買家，感謝您在我們的網站上下訂單。我們很高興告訴您，您的訂單已得到確認。以下是訂單的通知連結：\nhttps://ntou-asdf.onrender.com/header/?path=chat/chat.html?id=${messageDoc.id}&email=${decodeEmail(key)}\n\n如有任何疑問或需要協助，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
                                 sendEmail(decodeEmail(key), title, text);
                             } else {
-                                const title = 'NTOU-ASDF 您有一個新的訂單需要處理';
+                                const title = `NTOU-ASDF 「${doc.data().name}」已被買家下單`;
                                 const text = `尊敬的賣家，您有一個新的訂單需要處理。以下是訂單的通知連結：\nhttps://ntou-asdf.onrender.com/header/?path=chat/chat.html?id=${messageDoc.id}&email=${decodeEmail(key)}\n\n請盡快處理訂單，並透過系統更新訂單狀態。如有任何疑問或需要協助，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
                                 sendEmail(doc.data().seller, title, text);
                             }
