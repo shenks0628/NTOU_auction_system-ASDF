@@ -1,7 +1,7 @@
 const mainElement = document.querySelector('main');
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('path')) {
-    toUrl(urlParams.get('path'));
+    toUrl(window.location.search.split('?path=')[1]);
 }
 shareBtn.onclick = function () {
     copyPageUrl();

@@ -92,6 +92,67 @@ schedule.scheduleJob(rule, async () => {
     .catch((error) => {
         console.error('Error getting documents: ', error);
     });
+
+    
+    //send email
+    const messagesRef = db.collection("messages");
+    messagesRef.get().then((querySnapshot) => {
+        querySnapshot.forEach(async (messageDoc) => {
+            const messages = messageDoc.data();
+            for (let key in messages) {
+                const doc = await db.collection('products').doc(messageDoc.id).get();
+                if (doc.exists) {
+                    console.log('Product seller:', doc.data().seller);
+                    for (let value in messages[key]) {
+                        const msg = messages[key][value];
+                        if (msg.sendEmail) {
+                            if (msg.content === '訂單已確認') {
+                                const title = 'NTOU-ASDF 您有一個訂單被確認。';
+                                const text = `尊敬的買家，感謝您在我們的網站上下訂單。我們很高興告訴您，您的訂單已得到確認。以下是訂單的通知連結：\nhttps://ntou-asdf.onrender.com/header/?path=chat/chat.html?id=${messageDoc.id}&email=${decodeEmail(key)}\n\n如有任何疑問或需要協助，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
+                                sendEmail(decodeEmail(key), title, text);
+                            } else {
+                                const title = 'NTOU-ASDF 您有一個新的訂單需要處理。';
+                                const text = `尊敬的賣家，您有一個新的訂單需要處理。以下是訂單的通知連結：\nhttps://ntou-asdf.onrender.com/header/?path=chat/chat.html?id=${messageDoc.id}&email=${decodeEmail(key)}\n\n請盡快處理訂單，並透過系統更新訂單狀態。 如有任何問題，請隨時聯絡我們的客戶服務團隊。\n\n謝謝！\nNTOU-ASDF`;
+                                sendEmail(doc.data().seller, title, text);
+                            }
+                            messages[key][value].sendEmail = false;
+                            const res = await messagesRef.doc(messageDoc.id).update({
+                                [key]: messages[key]
+                            });
+                        }
+                    }
+                }
+            }
+        });
+        function decodeEmail(email) {
+            return email.replace(/_/g, '.');
+        }
+        function sendEmail(to, title, text) {
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'ethan147852369@gmail.com',
+                    pass: 'alwm ivni bgev nhcs'
+                }
+            });
+            var mailOptions = {
+                from: 'ntouasdf@gmail.com',
+                to: to,
+                subject: title,
+                text: text
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+        }
+    })
+    .catch((error) => {
+        console.error('Error getting documents: ', error);
+    });
 })
 
 const app = express()
