@@ -138,7 +138,7 @@ async function setProduct(productData) { // 設定顯示的商品
             commentBlock.className = "commentBlock";
 
             // 顯示使用者和部分內容
-            commentBlock.innerHTML = '<div class="comment" style="display:flex;"><img src="' + await getUserImg(key) + '" alt="' + key + '" width="50px" height="50px" style="border-radius: 50%;">&nbsp<div class="conmmentMessage"><div class="commentScore">' + '⭐'.repeat(commentArray[key][0]) + '</div><div class="commentText">' + commentArray[key].substr(1) + '</div></div></div>';
+            commentBlock.innerHTML = '<div class="comment" style="display:flex;"><a href="../api/index.html?email=' + key + '"><img src="' + await getUserImg(key) + '" alt="' + key + '" width="50px" height="50px" style="border-radius: 50%;"></a>&nbsp<div class="conmmentMessage"><div class="commentScore">' + '⭐'.repeat(commentArray[key][0]) + '</div><div class="commentText">' + commentArray[key].substr(1) + '</div></div></div>';
             itemComment.appendChild(commentBlock);
         }
     }
