@@ -134,7 +134,7 @@ schedule.scheduleJob(rule, async () => {
             for (let key in messages) {
                 const doc = await db.collection('products').doc(messageDoc.id).get();
                 if (doc.exists) {
-                    console.log('Product seller:', doc.data().seller);
+                    // console.log('Product seller:', doc.data().seller);
                     for (let value in messages[key]) {
                         const msg = messages[key][value];
                         if (msg.sendEmail) {
