@@ -134,7 +134,7 @@ async function verifyIdentity(email) {
     }
 }
 async function cancelOrder(quantity) {
-    await updateDoc(messagesRef, { [buyer]: deleteField() });
+    await updateDoc(messagesRef, { [encodeEmail(buyer)]: deleteField() });
     await updateDoc(doc(db, "products", productID), { quantity: increment(quantity) });
     window.location.href = 'index.html';
 }
