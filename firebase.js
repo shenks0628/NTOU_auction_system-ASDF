@@ -362,8 +362,8 @@ const display = async () => {
             prev_view_title.innerHTML = "";
         }
     });
-    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(20));
-    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(20));
+    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(10));
+    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(10));
     const queryNormalSnapshot = await getDocs(q_noraml);
     const queryBidsSnapshot = await getDocs(q_bids);
     queryNormalSnapshot.forEach((doc) => {
