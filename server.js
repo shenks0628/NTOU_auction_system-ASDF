@@ -50,7 +50,7 @@ const initializeFirebase = async () => {
 initializeFirebase();
 
 let rule = new schedule.RecurrenceRule();
-rule.second = [0, 10, 20, 30, 40, 50];
+rule.second = [0, 30];
 // scheduleJob: https://segmentfault.com/a/1190000022455361
 schedule.scheduleJob(rule, async () => {
     queryRef.get()

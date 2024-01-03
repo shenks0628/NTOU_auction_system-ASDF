@@ -107,9 +107,15 @@ async function addToBids(docId) {
                                 window.alert("無效金額！因為您的輸入格式有問題！");
                             }
                             else {
+                                let currentDate1 = new Date();
                                 console.log("Product data for product with ID", docId, ":", productData);
-                                if (parseInt(price) < parseInt(bidsData[docId])) {
-                                    window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                                if (parseInt(price) < parseInt(bidsData[docId]) || currentDate1 >= endDate) {
+                                    if (currentDate1 >= endDate) {
+                                        window.alert("此商品已於剛剛結束競標！");
+                                    }
+                                    else {
+                                        window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                                    }
                                 }
                                 else if (userId == productData.bids_info.who1) {
                                     await updateDoc(doc(db, "products", docId), {
@@ -356,8 +362,8 @@ const display = async () => {
             prev_view_title.innerHTML = "";
         }
     });
-    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(20));
-    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(20));
+    const q_noraml = query(collection(db, "products"), where("type", "==", "normal"), orderBy("time", "desc"), limit(10));
+    const q_bids = query(collection(db, "products"), where("type", "==", "bids"), orderBy("time", "desc"), limit(10));
     const queryNormalSnapshot = await getDocs(q_noraml);
     const queryBidsSnapshot = await getDocs(q_bids);
     queryNormalSnapshot.forEach((doc) => {
