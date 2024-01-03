@@ -23,7 +23,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
-let productsdata={};
+let productsdata = {};
 let userEmail;
 let url;
 
@@ -35,9 +35,15 @@ const start = async() => {
         if (user) {
             userEmail = user.email;
             console.log(userEmail);
-            const userRef = await getDoc(doc(db, "users", userEmail));
-            const userInfo = userRef.data();
+            let userRef = await getDoc(doc(db, "users", userEmail));
+            let userInfo = userRef.data();
             productsdata = userInfo.sold;
+            console.log(productsdata);
+            await isOnsale(productsdata).then(async()=>{
+                userRef = await getDoc(doc(db, "users", userEmail));
+                userInfo = userRef.data();
+                productsdata = userInfo.sold;
+            })
             productsdata = Object.keys(productsdata).map(key => ({ id: key, number: productsdata[key]}));
             console.log(productsdata);
             await showall(productsdata);
@@ -159,5 +165,27 @@ async function showhigh(highdata){
     highDiv.appendChild(transactionPrice);
     highProduct.appendChild(highDiv);
     
+}
+
+async function isOnsale(product){
+    let allProducts = await getDocs(collection(db, "products"));
+    let userRef = doc(db, "users", userEmail);
+    let userDoc = await getDoc(userRef);
+    let userdata = userDoc.data();
+    let allproductId = [];
+    allProducts.forEach((doc) => {
+        const productId = doc.id;
+        allproductId.push(productId);
+    });
+
+    for (let key in product) {
+        if (allproductId.includes(key)) {
+            continue;
+        } else {
+            console.log(userdata.sold[key]);
+            delete userdata.sold[key];         
+        }
+    }
+    await setDoc(userRef, userdata);
 }
 window.addEventListener("load", start);
