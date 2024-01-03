@@ -52,7 +52,7 @@
 * 買家：可以搜尋商品、查看商品與賣家的資料、與賣家討論、競標商品、將商品加入購物車、確認與完成訂單、撰寫評價、查看購買記錄。
 * 賣家：可以新增或刪除商品、查看買家的資料、確認接收與完成訂單、查看銷售紀錄。
 
-## 相關網址與資訊
+## 相關網址
 * 部署好的系統網址：https://ntou-asdf.onrender.com/header/
 * GitHub repo: https://github.com/shenks0628/NTOU_auction_system-ASDF
 * Trello: https://trello.com/w/user71211891
