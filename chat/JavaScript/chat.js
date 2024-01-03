@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
-import { getFirestore, doc, onSnapshot, updateDoc, increment, arrayUnion, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, updateDoc, deleteField, increment, arrayUnion, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getStorage, ref, uploadBytesResumable , getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -134,7 +134,7 @@ async function verifyIdentity(email) {
     }
 }
 async function cancelOrder(quantity) {
-    await deleteDoc(messagesRef);
+    await updateDoc(messagesRef, { [encodeEmail(buyer)]: deleteField() });
     await updateDoc(doc(db, "products", productID), { quantity: increment(quantity) });
     window.location.href = 'index.html';
 }

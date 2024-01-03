@@ -149,8 +149,12 @@ function addBids(docId) {
                                 }
                                 else {
                                     const docSnap = await getDoc(doc(db, "users", userId));
+                                    let currentDate1 = new Date();
                                     if (docSnap.exists() && parseInt(price) < parseInt(docSnap.data().bids[docId])) {
                                         window.alert("無效加注！因為您的新注金比您原先的注金低！");
+                                    }
+                                    else if (currentDate1 >= endDate) {
+                                        window.alert("此商品已於剛剛結束競標！");
                                     }
                                     else if (userId == productData.bids_info.who1) {
                                         await updateDoc(doc(db, "products", docId), {

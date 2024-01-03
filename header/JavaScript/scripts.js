@@ -1,7 +1,7 @@
 const mainElement = document.querySelector('main');
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('path')) {
-    toUrl(urlParams.get('path'));
+    toUrl(window.location.search.split('?path=')[1]);
 }
 shareBtn.onclick = function () {
     copyPageUrl();
@@ -39,8 +39,8 @@ function toggleDropdown() {
 }
 function copyPageUrl() {
     const dummy = document.createElement('input');
-    const url = new URL(mainIframe.src);
-    const text = url.hostname + '/header/?path=' + url.pathname + url.search;
+    const url = new URL(mainIframe.contentWindow.location.href);
+    const text = url.origin + '/header/?path=' + url.pathname + url.search;
 
     document.body.appendChild(dummy);
     dummy.value = text;
