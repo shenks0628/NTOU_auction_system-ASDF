@@ -39,7 +39,7 @@ function toggleDropdown() {
 }
 function copyPageUrl() {
     const dummy = document.createElement('input');
-    const url = new URL(mainIframe.src);
+    const url = new URL(mainIframe.contentWindow.location.href);
     const text = url.origin + '/header/?path=' + url.pathname + url.search;
 
     document.body.appendChild(dummy);
