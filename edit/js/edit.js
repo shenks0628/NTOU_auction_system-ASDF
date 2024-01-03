@@ -294,7 +294,7 @@ function showCheckPage() {
   else if (document.getElementById("inputURL").checkValidity() == false) {
     window.alert("影片格式不正確，請修改");
   }
-  else if (type == "bids" && (document.getElementById("inputDate").checkValidity() == false || document.getElementById("inputTime").checkValidity() == false || !validateDateTime())) {
+  else if (type == "bids" && ((document.getElementById("inputDate").disabled == false || document.getElementById("inputTime").disabled == false) && (document.getElementById("inputDate").checkValidity() == false || document.getElementById("inputTime").checkValidity() == false || !validateDateTime()))) {
     window.alert("請選擇未來7天内的時間");
   }
   else {
