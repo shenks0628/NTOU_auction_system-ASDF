@@ -276,7 +276,6 @@ function validateDateTime() {
 }
 function showCheckPage() {
   let type = document.getElementById("inputType").value;
-  console.log(shownFiles.length);
   if (document.getElementById("inputName").checkValidity() == false) {
     window.alert("商品名稱格式錯誤，請修改");
   }
