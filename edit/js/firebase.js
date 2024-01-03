@@ -32,7 +32,7 @@ async function getProduct(id) { // 讀資料
       if (productDoc.exists()) {
         // 取得該產品的資料
         let productData = productDoc.data();
-        console.log("Product data for product with ID", productId, ":", productData);
+        // console.log("Product data for product with ID", productId, ":", productData);
         return productData;
       }
       else {
@@ -108,8 +108,6 @@ async function updateProduct(inputData) { // 修改並更新資料庫
     }
     else if (type == "bids") {
       await updateDoc(productRef, {
-        bids_info: inputData.bids_info,
-        comment: inputData.comment,
         type: type,
         imgs: inputData.imgs,
         name: inputData.name,
