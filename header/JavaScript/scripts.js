@@ -32,7 +32,7 @@ function toUrl(url) {
     mainIframe.src = '../' + url;
 }
 function contact() {
-    window.location.href = "https://discord.gg/qpfvyhBxq7";
+    // window.location.href = "https://discord.gg/qpfvyhBxq7";
 }
 function toggleDropdown() {
     dropdown.style.display = dropdown.style.display !== "block" ? "block" : "none";
